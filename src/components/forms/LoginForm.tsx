@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import { signIn } from 'next-auth/react';
@@ -6,14 +7,46 @@ import Link from 'next/link';
 
 import React from 'react';
 
+type formDataTypes = {
+   email: string;
+   password: string;
+};
+
 const LoginForm = () => {
+   const [formData, setFormData] = useState<formDataTypes>({
+      email: '',
+      password: '',
+   });
+
+   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+   };
+
    return (
       <div className="w-1/4 min-w-[20rem]">
          <form className="flex flex-col w-full bg-gray-900 px-4 md:px-8 py-6 rounded-lg transition-all">
             <h1 className="text-2xl text-center mb-6">Sign In</h1>
             <div className="flex flex-col w-full gap-3">
-               <Input label="Email" isRequired size="sm" radius="sm" />
-               <Input label="Password" isRequired size="sm" radius="sm" />
+               <Input
+                  label="Email"
+                  required
+                  size="sm"
+                  radius="sm"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={e => handleFormChange(e)}
+               />
+               <Input
+                  label="Password"
+                  required
+                  size="sm"
+                  radius="sm"
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={e => handleFormChange(e)}
+               />
                <Button radius="full">Login</Button>
             </div>
             <div className="relative h-0.5 mt-8 mb-6 bg-black">
