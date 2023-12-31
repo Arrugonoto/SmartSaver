@@ -1,11 +1,11 @@
 'use client';
+import React from 'react';
 import { useState } from 'react';
 import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
-
-import React from 'react';
+import FormButton from '@/components/buttons/FormButton';
 
 type formDataTypes = {
    email: string;
@@ -26,7 +26,7 @@ const LoginForm = () => {
       <div className="w-1/4 min-w-[20rem]">
          <form className="flex flex-col w-full bg-gray-900 px-4 md:px-8 py-6 rounded-lg transition-all">
             <h1 className="text-2xl text-center mb-6">Sign In</h1>
-            <div className="flex flex-col w-full gap-3">
+            <div className="flex flex-col w-full items-center gap-3">
                <Input
                   label="Email"
                   required
@@ -47,22 +47,29 @@ const LoginForm = () => {
                   value={formData.password}
                   onChange={e => handleFormChange(e)}
                />
-               <Button radius="full">Login</Button>
+               <FormButton type="submit">Login</FormButton>
             </div>
             <div className="relative h-0.5 mt-8 mb-6 bg-black">
                <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-900 px-3">
                   OR
                </p>
             </div>
-            <div className="flex flex-col w-full gap-3">
+            <div className="flex flex-col w-full items-center gap-3">
                <h2 className="w-full text-center text-md">Continue with</h2>
-               <Button radius="full" onPress={() => signIn('github')}>
+               <FormButton
+                  onPress={() =>
+                     signIn('github', { callbackUrl: '/dashboard' })
+                  }
+               >
                   GitHub
-               </Button>
-
-               <Button radius="full" onPress={() => signIn('google')}>
+               </FormButton>
+               <FormButton
+                  onPress={() =>
+                     signIn('google', { callbackUrl: '/dashboard' })
+                  }
+               >
                   Google
-               </Button>
+               </FormButton>
             </div>
             <p className="text-sm pt-6 pb-2 text-center">
                {`Don't have an account?`}{' '}
