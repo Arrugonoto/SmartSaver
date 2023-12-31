@@ -26,9 +26,9 @@ export default function Header() {
                         Logout
                      </Button>
                   ) : (
-                     <Button>
-                        <Link href="/login">Sign In</Link>
-                     </Button>
+                     <Link href="/login">
+                        <Button>Sign In</Button>
+                     </Link>
                   )}
                </NavbarItem>
             </NavbarContent>
