@@ -1,16 +1,17 @@
 'use client';
 import React, { useMemo, useState } from 'react';
 import { Input } from '@nextui-org/input';
-import { Button } from '@nextui-org/button';
 import Link from 'next/link';
 import FormButton from '../buttons/FormButton';
 import { useFormState } from 'react-dom';
 import { createUser } from '@/lib/actions';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 interface FormDataType {
    name: string;
    email: string;
    password: string;
+   confirmPassword: string;
 }
 
 const LoginForm = () => {
@@ -18,9 +19,13 @@ const LoginForm = () => {
       name: '',
       email: '',
       password: '',
+      confirmPassword: '',
    });
+   const [showPassword, setShowPassword] = useState<boolean>(false);
    const initialState = { message: null, error: {} };
    // const [state, dispatch] = useFormState(createUser, initialState);
+
+   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
    const validateEmail = (formData: FormDataType) =>
       formData.email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
@@ -29,7 +34,7 @@ const LoginForm = () => {
       setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
    };
 
-   const isInvalid = React.useMemo(() => {
+   const isInvalid = useMemo(() => {
       if (!formData.email) return false;
 
       return validateEmail(formData) ? false : true;
@@ -62,22 +67,54 @@ const LoginForm = () => {
                   radius="sm"
                   type="email"
                   name="email"
-                  onChange={e => handleChange(e)}
                   errorMessage={
                      isInvalid && 'Please enter a valid email address'
                   }
+                  onChange={e => handleChange(e)}
                />
                <Input
                   label="Password"
                   isRequired={!formData.password}
                   size="sm"
                   radius="sm"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   name="password"
+                  endContent={
+                     <button
+                        className="focus:outline-none"
+                        type="button"
+                        onClick={() => togglePasswordVisibility()}
+                     >
+                        {showPassword ? (
+                           <FaEye className="text-2xl text-default-400 pointer-events-none" />
+                        ) : (
+                           <FaEyeSlash className="text-2xl text-default-400 pointer-events-none" />
+                        )}
+                     </button>
+                  }
+                  onChange={e => handleChange(e)}
+               />
+               <Input
+                  label="Confirm Password"
+                  isRequired={!formData.confirmPassword}
+                  isInvalid={formData.password !== formData.confirmPassword}
+                  size="sm"
+                  radius="sm"
+                  type={showPassword ? 'text' : 'password'}
+                  name="confirmPassword"
+                  errorMessage={
+                     formData.password !== formData.confirmPassword &&
+                     `Passwords doesn't match`
+                  }
                   onChange={e => handleChange(e)}
                />
 
-               <FormButton type="submit">Sign up</FormButton>
+               <FormButton
+                  type="submit"
+                  isDisabled={formData.password !== formData.confirmPassword}
+               >
+                  Sign up
+               </FormButton>
             </div>
 
             <p className="text-sm pt-6 pb-2 text-center">

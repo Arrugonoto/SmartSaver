@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useState } from 'react';
 import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
@@ -7,45 +7,62 @@ import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import FormButton from '@/components/buttons/FormButton';
 
-type formDataTypes = {
+type FormDataType = {
    email: string;
    password: string;
 };
 
 const LoginForm = () => {
-   const [formData, setFormData] = useState<formDataTypes>({
+   const [formData, setFormData] = useState<FormDataType>({
       email: '',
       password: '',
    });
 
-   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+   const validateEmail = (formData: FormDataType) =>
+      formData.email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+
+   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
    };
 
+   const isInvalid = useMemo(() => {
+      if (!formData.email) return false;
+
+      return validateEmail(formData) ? false : true;
+      // eslint-disable-next-line
+   }, [formData.email]);
+
    return (
       <div className="w-1/4 min-w-[20rem]">
-         <form className="flex flex-col w-full bg-gray-900 px-4 md:px-8 py-6 rounded-lg transition-all">
+         <form
+            action={``}
+            className="flex flex-col w-full bg-gray-900 px-4 md:px-8 py-6 rounded-lg transition-all"
+         >
             <h1 className="text-2xl text-center mb-6">Sign In</h1>
             <div className="flex flex-col w-full items-center gap-3">
                <Input
                   label="Email"
-                  required
+                  isInvalid={isInvalid}
+                  isRequired={!formData.email}
                   size="sm"
                   radius="sm"
                   type="email"
                   name="email"
                   value={formData.email}
-                  onChange={e => handleFormChange(e)}
+                  onChange={e => handleChange(e)}
+                  errorMessage={
+                     isInvalid && 'Please enter a valid email address'
+                  }
                />
                <Input
                   label="Password"
-                  required
+                  isRequired={!formData.password}
                   size="sm"
                   radius="sm"
                   type="password"
                   name="password"
                   value={formData.password}
-                  onChange={e => handleFormChange(e)}
+                  onChange={e => handleChange(e)}
                />
                <FormButton type="submit">Login</FormButton>
             </div>
