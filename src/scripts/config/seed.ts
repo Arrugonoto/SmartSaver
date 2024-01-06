@@ -1,6 +1,6 @@
 const { db } = require('@vercel/postgres');
 
-async function createUsersTable(client) {
+async function createUsersTable(client: any) {
    try {
       await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
       // Create the "users" table if doesn't exist
@@ -20,7 +20,7 @@ async function createUsersTable(client) {
    }
 }
 
-async function createExpensesSummaryTable(client) {
+async function createExpensesSummaryTable(client: any) {
    try {
       await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
       // Create the "expenses_summary" table if doesn't exist
@@ -39,7 +39,7 @@ async function createExpensesSummaryTable(client) {
    }
 }
 
-async function createExpensesTable(client) {
+async function createExpensesTable(client: any) {
    try {
       await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
       // Create the "expenses" table if doesn't exist
