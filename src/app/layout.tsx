@@ -5,7 +5,7 @@ import { Providers } from './providers';
 import Header from '@/components/header/Header';
 import { getServerSession } from 'next-auth';
 import SessionProvider from './SessionProvider';
-import { authOptions } from './api/auth/[...nextauth]/route';
+import { authOptions } from './api/auth/[...nextauth]/options';
 
 const inter = Inter({ subsets: ['latin'] });
 
