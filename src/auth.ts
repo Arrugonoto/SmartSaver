@@ -11,13 +11,17 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { sql } from '@vercel/postgres';
 import type { User } from '@/lib/definitions';
 import { compare } from 'bcrypt';
+import { z } from 'zod';
 
 async function getUser(email: string): Promise<User | undefined> {
    try {
       const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
       return user.rows[0];
    } catch (error) {
-      console.error('Failed to fetch user:', error);
+      console.error(
+         `Failed to fetch user, user with taht email address doesn't exist`,
+         error
+      );
       throw new Error(`User with that email address doesn't exists.`);
    }
 }
@@ -27,24 +31,29 @@ export const authConfig = {
       signIn: '/login',
       signOut: '/',
    },
+   //Next-auth Log-in functionality - not register
    providers: [
       CredentialsProvider({
          credentials: {
-            username: {},
             email: {},
             password: {},
          },
          async authorize(credentials, req) {
-            let user;
+            const parsedCredentials = z
+               .object({
+                  email: z.string().email({ message: 'Invalid email address' }),
+                  password: z.string().min(10, {
+                     message: 'Password must be at least 10 characters long',
+                  }),
+               })
+               .safeParse(credentials);
 
-            if (credentials) {
-               user = await getUser(credentials.email);
+            if (parsedCredentials.success) {
+               const { email, password } = parsedCredentials.data;
+               const user = await getUser(email);
 
                if (!user) return null;
-               const passwordsMatch = await compare(
-                  credentials?.password,
-                  user.password
-               );
+               const passwordsMatch = await compare(password, user.password);
                if (passwordsMatch) return user;
             }
 
