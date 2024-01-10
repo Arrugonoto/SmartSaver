@@ -17,11 +17,21 @@ export async function authenticate(
    formData: FormData
 ) {
    try {
-      await signIn('credentials', Object.fromEntries(formData));
-   } catch (error) {
-      if ((error as Error).message.includes('CredentialsSignin')) {
-         return 'CredentialsSignin';
+      const res = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/login`, {
+         method: 'POST',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(formData),
+      });
+
+      console.log(formData);
+
+      if (res.ok) {
+         return 'Success';
       }
+   } catch (error) {
+      console.error('Error during sign-in:', error);
       throw error;
    }
 }
