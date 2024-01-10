@@ -19,7 +19,7 @@ async function getUser(email: string): Promise<User | undefined> {
       return user.rows[0];
    } catch (error) {
       console.error(
-         `Failed to fetch user, user with taht email address doesn't exist`,
+         `Failed to fetch user, user with that email address doesn't exist`,
          error
       );
       throw new Error(`User with that email address doesn't exists.`);
