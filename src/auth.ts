@@ -8,23 +8,9 @@ import { getServerSession } from 'next-auth';
 import GitHubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { sql } from '@vercel/postgres';
-import type { User } from '@/lib/definitions';
 import { compare } from 'bcrypt';
 import { z } from 'zod';
-
-async function getUser(email: string): Promise<User | undefined> {
-   try {
-      const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
-      return user.rows[0];
-   } catch (error) {
-      console.error(
-         `Failed to fetch user, user with that email address doesn't exist`,
-         error
-      );
-      throw new Error(`User with that email address doesn't exists.`);
-   }
-}
+import { getUser } from './lib/actions';
 
 export const authConfig = {
    pages: {
@@ -54,7 +40,13 @@ export const authConfig = {
 
                if (!user) return null;
                const passwordsMatch = await compare(password, user.password);
-               if (passwordsMatch) return user;
+               console.log(passwordsMatch);
+               if (passwordsMatch) {
+                  return user;
+               } else {
+                  console.error(`Invalid password`);
+                  throw new Error(`Invalid password`);
+               }
             }
 
             return null;
