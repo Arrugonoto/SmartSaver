@@ -1,6 +1,7 @@
 'use server';
+import { sql } from '@vercel/postgres';
+import type { User } from '@/lib/definitions';
 import { z } from 'zod';
-import { signIn } from 'next-auth/react';
 
 export async function createUser(formData: FormData) {
    const rawFormData = {
@@ -12,26 +13,15 @@ export async function createUser(formData: FormData) {
    console.log(rawFormData);
 }
 
-export async function authenticate(
-   prevState: string | undefined,
-   formData: FormData
-) {
+export async function getUser(email: string): Promise<User | undefined> {
    try {
-      const res = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/login`, {
-         method: 'POST',
-         headers: {
-            'Content-Type': 'application/json',
-         },
-         body: JSON.stringify(formData),
-      });
-
-      console.log(formData);
-
-      if (res.ok) {
-         return 'Success';
-      }
+      const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
+      return user.rows[0];
    } catch (error) {
-      console.error('Error during sign-in:', error);
-      throw error;
+      console.log(
+         `Failed to fetch user, user with that email address doesn't exist`,
+         error
+      );
+      throw new Error(`${error}`);
    }
 }
