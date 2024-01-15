@@ -27,10 +27,8 @@ export const authConfig = {
          async authorize(credentials, req) {
             const parsedCredentials = z
                .object({
-                  email: z.string().email({ message: 'Invalid email address' }),
-                  password: z.string().min(10, {
-                     message: 'Password must be at least 10 characters long',
-                  }),
+                  email: z.string().email(),
+                  password: z.string(),
                })
                .safeParse(credentials);
 
@@ -40,11 +38,9 @@ export const authConfig = {
 
                if (!user) return null;
                const passwordsMatch = await compare(password, user.password);
-               console.log(passwordsMatch);
                if (passwordsMatch) {
                   return user;
                } else {
-                  console.error(`Invalid password`);
                   throw new Error(`Invalid password`);
                }
             }
