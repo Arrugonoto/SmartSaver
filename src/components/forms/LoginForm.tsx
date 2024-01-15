@@ -5,6 +5,7 @@ import { Input } from '@nextui-org/input';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import FormButton from '@/components/buttons/FormButton';
+import { useRouter } from 'next/navigation';
 
 type FormDataType = {
    email: string;
@@ -18,12 +19,14 @@ const LoginForm = () => {
    });
    const [error, setError] = useState<any>(null);
    const [pending, setPending] = useState<boolean>(false);
+   const router = useRouter();
 
    const validateEmail = (formData: FormDataType) =>
       formData.email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
 
    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+      setError(null);
    };
 
    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -36,10 +39,15 @@ const LoginForm = () => {
       });
 
       if (!res?.ok) {
-         setError(res?.error);
+         if (res?.error?.includes('CredentialsSignin')) {
+            setError('Invalid password');
+         } else {
+            setError(res?.error);
+         }
          console.error(res);
       }
       setPending(false);
+      router.push('/dashboard');
    };
 
    const isInvalid = useMemo(() => {
@@ -50,7 +58,7 @@ const LoginForm = () => {
    }, [formData.email]);
 
    return (
-      <div className="w-1/4 min-w-[20rem]">
+      <div className="w-1/4 min-w-[22rem] xl:min-w-[26rem] transition-all">
          <form
             onSubmit={handleSubmit}
             className="flex flex-col w-full bg-gray-900 px-4 md:px-8 py-6 rounded-lg transition-all"
@@ -99,18 +107,18 @@ const LoginForm = () => {
             <div className="flex flex-col w-full items-center gap-3">
                <h2 className="w-full text-center text-md">Continue with</h2>
                <FormButton
-                  isDisabled={pending}
                   onPress={() =>
                      signIn('github', { callbackUrl: '/dashboard' })
                   }
+                  isDisabled={pending}
                >
                   GitHub
                </FormButton>
                <FormButton
-                  isDisabled={pending}
                   onPress={() =>
                      signIn('google', { callbackUrl: '/dashboard' })
                   }
+                  isDisabled={pending}
                >
                   Google
                </FormButton>
