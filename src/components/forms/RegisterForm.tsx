@@ -3,8 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { Input } from '@nextui-org/input';
 import Link from 'next/link';
 import FormButton from '../buttons/FormButton';
-import { useFormState } from 'react-dom';
-import { createUser } from '@/lib/actions';
+import { createUser } from '@/lib/actions/create-user';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 interface FormDataType {
@@ -22,8 +21,6 @@ const LoginForm = () => {
       confirmPassword: '',
    });
    const [showPassword, setShowPassword] = useState<boolean>(false);
-   const initialState = { message: null, error: {} };
-   // const [state, dispatch] = useFormState(createUser, initialState);
 
    const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
@@ -42,7 +39,7 @@ const LoginForm = () => {
    }, [formData.email]);
 
    return (
-      <div className="w-1/4 min-w-[20rem]">
+      <div className="w-1/4 min-w-[22rem] xl:min-w-[26rem] transition-all">
          <form
             action={createUser}
             className="flex flex-col w-full bg-gray-900 px-4 md:px-8 py-6 rounded-lg transition-all"
@@ -118,7 +115,7 @@ const LoginForm = () => {
             </div>
 
             <p className="text-sm pt-6 pb-2 text-center">
-               {`Have an account?`}
+               {`Have an account? `}
                <span className="relative text-green-400 after:content-[''] after:absolute after:w-full after:h-px after:bg-transparent after:left-0 after:-bottom-0.5 hover:after:bg-green-400 after:transition-all">
                   <Link href="/login">Log In</Link>
                </span>
