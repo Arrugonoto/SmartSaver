@@ -10,11 +10,15 @@ const UserFormSchema = z.object({
    password: z.string(),
 });
 
-export async function createUser(formData: FormData) {
+export async function createUser(formData: {
+   name: string;
+   email: string;
+   password: string;
+}) {
    const validatedFields = UserFormSchema.safeParse({
-      name: formData.get('name'),
-      email: formData.get('email'),
-      password: formData.get('password'),
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
    });
 
    if (!validatedFields.success) {
@@ -22,23 +26,21 @@ export async function createUser(formData: FormData) {
    }
 
    const { name, email, password } = validatedFields.data;
-   const hashedPassword = await hash(password, 11);
 
    try {
       const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
 
-      if (user.rows[0].email) {
-         return new Error(`User with that email already exists`);
+      if (user.rows[0] && user.rows[0].email === email) {
+         throw new Error(`User with that email address already exists`);
       }
-      if (user.rows[0].name) {
-         throw new Error(`User with that name already exists`);
-      }
-      const newUser = await sql`
+      const hashedPassword = await hash(password, 11);
+      const createNewUser = await sql`
             INSERT INTO users (name, email, password)
             VALUES (${name}, ${email}, ${hashedPassword}) 
          `;
    } catch (error) {
+      const errorMessage = error instanceof Error && error.message;
       console.log(error);
-      return;
+      return { error: error, message: errorMessage };
    }
 }
