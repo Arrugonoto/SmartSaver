@@ -47,7 +47,10 @@ const LoginForm = () => {
          console.error(res);
       }
       setPending(false);
-      router.push('/dashboard');
+      if (!res?.error) {
+         router.push('/dashboard');
+         router.refresh();
+      }
    };
 
    const isInvalid = useMemo(() => {
