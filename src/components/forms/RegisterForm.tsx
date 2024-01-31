@@ -1,9 +1,8 @@
 'use client';
-import React, { useMemo, useState } from 'react';
+import React, { FormEvent, useMemo, useState } from 'react';
 import { Input } from '@nextui-org/input';
 import Link from 'next/link';
 import FormButton from '../buttons/FormButton';
-import { createUser } from '@/lib/actions/create-user';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 interface FormDataType {
@@ -21,6 +20,8 @@ const LoginForm = () => {
       confirmPassword: '',
    });
    const [showPassword, setShowPassword] = useState<boolean>(false);
+   const [error, setError] = useState<any>(null);
+   const [pending, setPending] = useState<boolean>(false);
 
    const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
@@ -29,6 +30,24 @@ const LoginForm = () => {
 
    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+      setError(null);
+   };
+
+   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setPending(true);
+      const formData = new FormData(e.currentTarget);
+
+      const res = await fetch('api/auth/register', {
+         method: 'POST',
+         body: JSON.stringify(Object.fromEntries(formData)),
+      });
+      const result = await res.json();
+      if (!res?.ok) {
+         console.error(result);
+         setError(result?.message);
+      }
+      setPending(false);
    };
 
    const isInvalid = useMemo(() => {
@@ -41,7 +60,7 @@ const LoginForm = () => {
    return (
       <div className="w-1/4 min-w-[22rem] xl:min-w-[26rem] transition-all">
          <form
-            action={createUser}
+            onSubmit={handleSubmit}
             className="flex flex-col w-full bg-gray-900 px-4 md:px-8 py-6 rounded-lg transition-all"
          >
             <h1 className="text-2xl text-center mb-6">Sign Up</h1>
@@ -105,7 +124,7 @@ const LoginForm = () => {
                   }
                   onChange={e => handleChange(e)}
                />
-
+               {error && <p className="text-red-600">{error}</p>}
                <FormButton
                   type="submit"
                   isDisabled={formData.password !== formData.confirmPassword}
