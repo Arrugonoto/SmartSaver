@@ -2,10 +2,11 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
-import Header from '@/components/header/Header';
+import { Header } from '@/components/header/Header';
 import { getServerSession } from 'next-auth';
 import SessionProvider from './SessionProvider';
 import { authOptions } from './api/auth/[...nextauth]/options';
+import { SideMenu } from '@/components/menus/side-menu/SideMenu';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,7 +31,12 @@ export default async function RootLayout({
          <body className={inter.className}>
             <SessionProvider>
                <Header />
-               <Providers>{children}</Providers>
+               <Providers>
+                  <div className="flex w-full">
+                     {session && <SideMenu />}
+                     {children}
+                  </div>
+               </Providers>
             </SessionProvider>
          </body>
       </html>
