@@ -2,7 +2,7 @@
 import React, { FormEvent, useMemo, useState } from 'react';
 import { Input } from '@nextui-org/input';
 import Link from 'next/link';
-import FormButton from '../buttons/FormButton';
+import FormButton from '../../buttons/FormButton';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 interface FormDataType {
