@@ -30,7 +30,7 @@ export async function createExpense(formData: {
    const { user_id, name, amount, type } = validatedFields.data;
 
    try {
-      const createNewExpense = await sql`
+      const createNewExpense = await sql<Expense>`
       INSERT INTO expenses (user_id, name, amount, type)
       VALUES (${user_id}, ${name}, ${amount}, ${type},)
       `;
