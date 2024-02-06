@@ -11,8 +11,8 @@ export default async function Login() {
    }
 
    return (
-      <main className="h-screen">
-         <section className="flex flex-col w-full justify-center items-center h-full">
+      <main className="flex w-full flex-1">
+         <section className="flex w-full justify-center items-center ">
             <LoginForm />
          </section>
       </main>

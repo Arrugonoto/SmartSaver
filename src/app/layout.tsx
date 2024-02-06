@@ -29,15 +29,17 @@ export default async function RootLayout({
    return (
       <html lang="en" className="dark">
          <body className={inter.className}>
-            <SessionProvider>
-               <Header />
-               <Providers>
-                  <div className="flex w-full">
-                     {session && <SideMenu />}
-                     {children}
-                  </div>
-               </Providers>
-            </SessionProvider>
+            <div className="flex flex-col w-full h-screen">
+               <SessionProvider>
+                  <Header />
+                  <Providers>
+                     <div className="flex flex-1 h-full">
+                        {session && <SideMenu />}
+                        {children}
+                     </div>
+                  </Providers>
+               </SessionProvider>
+            </div>
          </body>
       </html>
    );

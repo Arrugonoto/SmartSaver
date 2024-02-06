@@ -11,10 +11,10 @@ export default async function Signup() {
    }
 
    return (
-      <main className="h-screen">
-         <section className="flex flex-col w-full justify-center items-center h-full">
+      <main className="flex w-full flex-1">
+         <div className="flex w-full justify-center items-center">
             <RegisterForm />
-         </section>
+         </div>
       </main>
    );
 }

@@ -9,12 +9,12 @@ import { Button } from '@nextui-org/button';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 
-export default function Header() {
+export const Header = () => {
    const { data: session } = useSession();
 
    return (
-      <header className="fixed top-0 left-0 w-full ">
-         <Navbar className="flex " isBordered shouldHideOnScroll maxWidth="2xl">
+      <header className="sticky top-0 left-0 w-full ">
+         <Navbar className="flex" isBordered shouldHideOnScroll maxWidth="full">
             <NavbarBrand>im a header</NavbarBrand>
             <NavbarContent justify="end">
                <NavbarItem>
@@ -35,4 +35,4 @@ export default function Header() {
          </Navbar>
       </header>
    );
-}
+};
