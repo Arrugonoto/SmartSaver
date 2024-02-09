@@ -22,7 +22,8 @@
       "paths": {
          "@/*": ["src/*"],
          "@/components/*": ["src/components/*"],
-         "@/actions/*": ["src/lib/actions/*"]
+         "@/actions/*": ["src/lib/actions/*"],
+         "@/lib/*": ["src/lib/*"]
       }
    },
    "include": [
