@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { NextApiResponse } from 'next';
-import { createUser } from '@/lib/actions/user/create-user';
+import { createUser } from '@lib/actions/user/create-user';
 
 export async function POST(req: Request, res: NextApiResponse) {
    try {

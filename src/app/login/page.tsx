@@ -1,7 +1,7 @@
-import LoginForm from '@/components/forms/login-form/LoginForm';
+import LoginForm from '@components/forms/login-form/LoginForm';
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/options';
+import { authOptions } from '@app/api/auth/[...nextauth]/options';
 
 export default async function Login() {
    const session = await getServerSession(authOptions);
@@ -12,9 +12,9 @@ export default async function Login() {
 
    return (
       <main className="flex w-full flex-1">
-         <section className="flex w-full justify-center items-center ">
+         <div className="flex w-full justify-center items-center">
             <LoginForm />
-         </section>
+         </div>
       </main>
    );
 }

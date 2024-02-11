@@ -1,6 +1,6 @@
 'use server';
 import { sql } from '@vercel/postgres';
-import type { Expense } from '@/lib/definitions';
+import type { Expense } from '@lib/definitions';
 
 export async function getExpensesSummary(user_id: string) {
    try {

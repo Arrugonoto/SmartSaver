@@ -1,11 +1,12 @@
 'use client';
-import type { Expense } from '@/lib/definitions';
+import type { Expense } from '@lib/definitions';
 import { useState } from 'react';
-import { Select, SelectSection, SelectItem } from '@nextui-org/select';
+import { Select, SelectItem } from '@nextui-org/select';
 import { Input } from '@nextui-org/input';
+import { expenseTypesList } from '@data/dummy/expenses-types';
 
 export const ExpensesForm = () => {
-   const [expenseType, setExpenseType] = useState<'single' | 'subscription'>(
+   const [paymentType, setPaymentType] = useState<'single' | 'subscription'>(
       'single'
    );
    const [formData, setFormData] = useState<Expense>({
@@ -13,7 +14,7 @@ export const ExpensesForm = () => {
       user_id: '',
       name: '',
       amount: 0,
-      type: expenseType,
+      type: paymentType,
    });
 
    return (
@@ -22,10 +23,11 @@ export const ExpensesForm = () => {
             <Input type="text" label="Expense name" />
             <Input type="number" label="Expense amount" />
             <Select label="Expense type">
-               <SelectItem key="basic-expenses">Basic expenses</SelectItem>
-               <SelectItem key="healthcare">Healthcare</SelectItem>
-               <SelectItem key="entertainment">Entertainment</SelectItem>
-               <SelectItem key="bills">Bills</SelectItem>
+               {expenseTypesList.map(expense => (
+                  <SelectItem key={expense.value} value={expense.value}>
+                     {expense.label}
+                  </SelectItem>
+               ))}
             </Select>
             <Select label="Payment type">
                <SelectItem key="single">Single</SelectItem>

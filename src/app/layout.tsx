@@ -2,11 +2,11 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
-import { Header } from '@/components/header/Header';
+import { Header } from '@components/header/Header';
 import { getServerSession } from 'next-auth';
 import SessionProvider from './SessionProvider';
 import { authOptions } from './api/auth/[...nextauth]/options';
-import { SideMenu } from '@/components/menus/side-menu/SideMenu';
+import { SideMenu } from '@components/menus/side-menu';
 
 const inter = Inter({ subsets: ['latin'] });
 

@@ -1,6 +1,6 @@
 'use server';
 import { sql } from '@vercel/postgres';
-import type { User } from '@/lib/definitions';
+import type { User } from '@lib/definitions';
 import { z } from 'zod';
 import { hash } from 'bcrypt';
 

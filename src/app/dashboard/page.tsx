@@ -1,5 +1,9 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+   title: 'Overview',
+};
+
 export default function Dashboard() {
-   return (
-      <main className="flex h-full flex-col items-center">Dashboard Page</main>
-   );
+   return <main className="flex flex-1 flex-col">Dashboard Page</main>;
 }

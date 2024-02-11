@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Input } from '@nextui-org/input';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
-import FormButton from '@/components/buttons/FormButton';
+import FormButton from '@components/buttons/FormButton';
 import { useRouter } from 'next/navigation';
 
 type FormDataType = {

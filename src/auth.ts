@@ -10,7 +10,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcrypt';
 import { z } from 'zod';
-import { getUser } from '@/lib/actions/user/get-user';
+import { getUser } from '@lib/actions/user/get-user';
 
 export const authConfig = {
    pages: {

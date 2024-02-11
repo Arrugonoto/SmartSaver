@@ -1,7 +1,7 @@
 'use server';
 import { sql } from '@vercel/postgres';
 import { z } from 'zod';
-import type { Expense } from '@/lib/definitions';
+import type { Expense } from '@lib/definitions';
 
 const ExpenseSchema = z.object({
    user_id: z.string(),

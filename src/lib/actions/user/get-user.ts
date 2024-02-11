@@ -1,6 +1,6 @@
 'use server';
 import { sql } from '@vercel/postgres';
-import type { User } from '@/lib/definitions';
+import type { User } from '@lib/definitions';
 
 export async function getUser(email: string): Promise<User | undefined> {
    try {

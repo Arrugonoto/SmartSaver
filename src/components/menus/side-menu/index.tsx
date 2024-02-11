@@ -15,7 +15,7 @@ export const SideMenu = () => {
                </li>
                <li>
                   <Link
-                     href="/expenses"
+                     href="/dashboard/expenses"
                      className="flex p-2 rounded-md hover:bg-gray-600/50"
                   >
                      Expenses
