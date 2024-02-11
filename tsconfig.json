@@ -20,10 +20,11 @@
       ],
       "baseUrl": "./",
       "paths": {
-         "@/*": ["src/*"],
-         "@/components/*": ["src/components/*"],
-         "@/actions/*": ["src/lib/actions/*"],
-         "@/lib/*": ["src/lib/*"]
+         "@*": ["src/*"],
+         "@components/*": ["src/components/*"],
+         "@actions/*": ["src/lib/actions/*"],
+         "@lib/*": ["src/lib/*"],
+         "@data/*": ["src/lib/constants/data/*"]
       }
    },
    "include": [
