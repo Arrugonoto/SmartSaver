@@ -24,7 +24,8 @@
          "@components/*": ["src/components/*"],
          "@actions/*": ["src/lib/actions/*"],
          "@lib/*": ["src/lib/*"],
-         "@data/*": ["src/lib/constants/data/*"]
+         "@data/*": ["src/lib/constants/data/*"],
+         "@constants/*": ["src/lib/constants/*"]
       }
    },
    "include": [
