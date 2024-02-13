@@ -1,3 +1,5 @@
+import type { ExpenseTypes } from '@constants/types/expenses/expenses';
+
 export const expenseTypesList: ExpenseTypes[] = [
    {
       label: 'Basic',
