@@ -7,7 +7,7 @@ export async function getUser(email: string): Promise<User | undefined> {
       const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
 
       if (!user.rows[0]) {
-         throw Error(`User with that email address doesn't exist!`);
+         throw Error(`Account with that email address doesn't exist!`);
       }
       return user.rows[0];
    } catch (error) {
