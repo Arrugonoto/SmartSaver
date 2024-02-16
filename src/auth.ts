@@ -41,7 +41,7 @@ export const authConfig = {
                if (passwordsMatch) {
                   return user;
                } else {
-                  throw new Error(`Invalid password`);
+                  throw new Error(`Incorrect password`);
                }
             }
 
@@ -56,7 +56,29 @@ export const authConfig = {
          clientId: process.env.GOOGLE_ID as string,
          clientSecret: process.env.GOOGLE_SECRET as string,
       }),
-   ], // rest of config
+   ],
+   callbacks: {
+      async jwt({ token, user, session }) {
+         if (user) {
+            // pass user id to token
+            return {
+               ...token,
+               id: user.id,
+            };
+         }
+         return token;
+      },
+      async session({ session, token, user }) {
+         // pass id to session
+         return {
+            ...session,
+            user: {
+               ...session.user,
+               id: token.id,
+            },
+         };
+      },
+   }, // rest of config
 } satisfies NextAuthOptions;
 
 export function auth(
