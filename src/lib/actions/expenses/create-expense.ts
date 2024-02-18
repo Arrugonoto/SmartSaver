@@ -18,8 +18,6 @@ export async function createExpense(formData: {
    expense_type: string;
    payment_type: string;
 }) {
-   console.log(formData);
-
    const validatedFields = ExpenseSchema.safeParse({
       user_id: formData.user_id,
       name: formData.name,
@@ -37,7 +35,7 @@ export async function createExpense(formData: {
 
    try {
       const createNewExpense = await sql<Expense>`
-      INSERT INTO expenses (user_id, name, amount, type)
+      INSERT INTO expenses (user_id, name, amount, expense_type, payment_type)
       VALUES (${user_id}, ${name}, ${amount}, ${expense_type}, ${payment_type})
       `;
    } catch (error) {
