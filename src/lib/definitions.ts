@@ -19,5 +19,6 @@ export type Expense = {
    user_id: string;
    name: string;
    amount: number;
-   type: 'single' | 'subscription';
+   expense_type: string;
+   payment_type: 'single' | 'monthly' | 'subscription';
 };
