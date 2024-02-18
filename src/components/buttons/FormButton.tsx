@@ -6,6 +6,14 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
    children: React.ReactNode;
    onPress?: () => void;
    isDisabled?: boolean;
+   color?:
+      | 'default'
+      | 'primary'
+      | 'secondary'
+      | 'success'
+      | 'warning'
+      | 'danger'
+      | undefined;
 }
 
 const FormButton = ({
@@ -14,6 +22,7 @@ const FormButton = ({
    type,
    onPress,
    isDisabled,
+   color,
 }: ButtonProps) => {
    const { pending } = useFormStatus();
 
@@ -24,6 +33,7 @@ const FormButton = ({
          className={`w-full ${className}`}
          onPress={() => onPress && onPress()}
          isDisabled={isDisabled || pending}
+         color={color}
       >
          {children}
       </Button>
