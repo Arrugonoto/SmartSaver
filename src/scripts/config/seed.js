@@ -49,7 +49,8 @@ async function createExpensesTable(client) {
         user_id UUID NOT NULL,
         name VARCHAR(255) NOT NULL,
         amount INT NOT NULL,
-        type VARCHAR(255) NOT NULL
+        expense_type VARCHAR(255) NOT NULL,
+        payment_type VARCHAR(255) NOT NULL
       );
     `;
 
