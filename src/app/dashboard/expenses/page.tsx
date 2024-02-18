@@ -1,16 +1,19 @@
 import { Metadata } from 'next';
-import { ExpensesForm } from '@/components/forms/expenses-form';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@app/api/auth/[...nextauth]/options';
+import { CreateExpenseModal } from '@components/modals/create-expense-modal';
 
 export const metadata: Metadata = {
    title: 'Expenses',
 };
 
-export default function Expenses() {
+export default async function Expenses() {
+   const session = await getServerSession(authOptions);
+   const user_id = session?.user.id;
+
    return (
       <main className="flex flex-1 flex-col">
-         <div className="flex p-4">
-            <ExpensesForm />
-         </div>
+         <CreateExpenseModal user_id={user_id} />
       </main>
    );
 }
