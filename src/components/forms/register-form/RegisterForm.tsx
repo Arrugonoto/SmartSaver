@@ -4,6 +4,7 @@ import { Input } from '@nextui-org/input';
 import Link from 'next/link';
 import FormButton from '../../buttons/FormButton';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 
 interface FormDataType {
    name: string;
@@ -22,6 +23,7 @@ const LoginForm = () => {
    const [showPassword, setShowPassword] = useState<boolean>(false);
    const [error, setError] = useState<any>(null);
    const [pending, setPending] = useState<boolean>(false);
+   const router = useRouter();
 
    const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
@@ -48,6 +50,10 @@ const LoginForm = () => {
          setError(result?.message);
       }
       setPending(false);
+      if (res.ok) {
+         router.push('/login');
+         router.refresh();
+      }
    };
 
    const isInvalid = useMemo(() => {
