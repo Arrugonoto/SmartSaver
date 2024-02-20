@@ -33,10 +33,12 @@ export async function createExpense(formData: {
    const { user_id, name, amount, expense_type, payment_type } =
       validatedFields.data;
 
+   const timeOfCreation = new Date().toISOString();
+
    try {
       const createNewExpense = await sql<Expense>`
-      INSERT INTO expenses (user_id, name, amount, expense_type, payment_type)
-      VALUES (${user_id}, ${name}, ${amount}, ${expense_type}, ${payment_type})
+      INSERT INTO expenses (user_id, name, amount, expense_type, payment_type, created_At)
+      VALUES (${user_id}, ${name}, ${amount}, ${expense_type}, ${payment_type}, ${timeOfCreation})
       `;
    } catch (error) {
       const errorMessage = error instanceof Error && error.message;

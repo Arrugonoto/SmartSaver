@@ -26,6 +26,7 @@ export async function createUser(formData: {
    }
 
    const { name, email, password } = validatedFields.data;
+   const timeOfCreation = new Date().toISOString();
 
    try {
       const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
@@ -35,8 +36,8 @@ export async function createUser(formData: {
       }
       const hashedPassword = await hash(password, 11);
       const createNewUser = await sql`
-            INSERT INTO users (name, email, password)
-            VALUES (${name}, ${email}, ${hashedPassword}) 
+            INSERT INTO users (name, email, password, created_At)
+            VALUES (${name}, ${email}, ${hashedPassword}, ${timeOfCreation} ) 
          `;
    } catch (error) {
       const errorMessage = error instanceof Error && error.message;
