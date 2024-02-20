@@ -9,7 +9,8 @@ async function createUsersTable(client) {
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL
+        password TEXT NOT NULL,
+        created_At TIMESTAMP NOT NULL
       );
     `;
 
@@ -28,7 +29,7 @@ async function createExpensesSummaryTable(client) {
       CREATE TABLE IF NOT EXISTS expenses_summary (
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         user_id UUID NOT NULL,
-        amount INT NOT NULL
+        total_amount INT NOT NULL
       );
     `;
 
@@ -50,7 +51,9 @@ async function createExpensesTable(client) {
         name VARCHAR(255) NOT NULL,
         amount INT NOT NULL,
         expense_type VARCHAR(255) NOT NULL,
-        payment_type VARCHAR(255) NOT NULL
+        payment_type VARCHAR(255) NOT NULL,
+        created_At TIMESTAMP NOT NULL,
+        updated_At TIMESTAMP NOT NULL
       );
     `;
 
