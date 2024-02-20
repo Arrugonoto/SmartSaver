@@ -53,7 +53,7 @@ async function createExpensesTable(client) {
         expense_type VARCHAR(255) NOT NULL,
         payment_type VARCHAR(255) NOT NULL,
         created_At TIMESTAMP NOT NULL,
-        updated_At TIMESTAMP NOT NULL
+        updated_At TIMESTAMP
       );
     `;
 
