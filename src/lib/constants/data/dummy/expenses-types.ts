@@ -37,4 +37,8 @@ export const expenseTypesList: ExpenseTypes[] = [
       label: 'Travel',
       value: 'travel',
    },
+   {
+      label: 'Other',
+      value: 'other',
+   },
 ];
