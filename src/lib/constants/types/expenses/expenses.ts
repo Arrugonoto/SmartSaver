@@ -4,6 +4,8 @@ export type Expense = {
    amount: number;
    expense_type: string;
    payment_type: 'single' | 'monthly' | 'subscription';
+   created_At: Date;
+   updated_At: Date;
 };
 
 export type ExpenseTypes = {
