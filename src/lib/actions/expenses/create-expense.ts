@@ -26,16 +26,16 @@ export async function createExpense(formData: {
       payment_type: formData.payment_type,
    });
 
-   if (!validatedFields.success) {
-      throw new Error(' Fill all necessary fields.');
-   }
-
-   const { user_id, name, amount, expense_type, payment_type } =
-      validatedFields.data;
-
-   const timeOfCreation = new Date().toISOString();
-
    try {
+      if (!validatedFields.success) {
+         throw new Error('Fill all necessary fields.');
+      }
+
+      const { user_id, name, amount, expense_type, payment_type } =
+         validatedFields.data;
+
+      const timeOfCreation = new Date().toISOString();
+
       const createNewExpense = await sql<Expense>`
       INSERT INTO expenses (user_id, name, amount, expense_type, payment_type, created_At)
       VALUES (${user_id}, ${name}, ${amount}, ${expense_type}, ${payment_type}, ${timeOfCreation})

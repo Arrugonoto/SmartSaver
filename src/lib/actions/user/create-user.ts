@@ -21,14 +21,14 @@ export async function createUser(formData: {
       password: formData.password,
    });
 
-   if (!validatedFields.success) {
-      throw new Error(' Fill all necessary fields.');
-   }
-
-   const { name, email, password } = validatedFields.data;
-   const timeOfCreation = new Date().toISOString();
-
    try {
+      if (!validatedFields.success) {
+         throw new Error('Fill all necessary fields.');
+      }
+
+      const { name, email, password } = validatedFields.data;
+      const timeOfCreation = new Date().toISOString();
+
       const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
 
       if (user.rows[0] && user.rows[0].email === email) {
