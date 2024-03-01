@@ -25,11 +25,13 @@ async function createExpensesSummaryTable(client) {
    try {
       await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
       // Create the "expenses_summary" table if doesn't exist
+      // Changed amount data type from INT to NUMERIC
+      // to be able to store floating number values
       const createTable = await client.sql`
       CREATE TABLE IF NOT EXISTS expenses_summary (
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         user_id UUID NOT NULL,
-        total_amount INT NOT NULL
+        total_amount NUMERIC(40, 2) NOT NULL
       );
     `;
 
@@ -44,12 +46,14 @@ async function createExpensesTable(client) {
    try {
       await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
       // Create the "expenses" table if doesn't exist
+      // Changed amount data type from INT to NUMERIC
+      // to be able to store floating number values
       const createTable = await client.sql`
       CREATE TABLE IF NOT EXISTS expenses (
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         user_id UUID NOT NULL,
         name VARCHAR(255) NOT NULL,
-        amount INT NOT NULL,
+        amount NUMERIC(21, 2) NOT NULL,
         expense_type VARCHAR(255) NOT NULL,
         payment_type VARCHAR(255) NOT NULL,
         created_At TIMESTAMP NOT NULL,
