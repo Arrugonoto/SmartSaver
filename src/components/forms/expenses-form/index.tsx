@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Select, SelectItem } from '@nextui-org/select';
 import { Input } from '@nextui-org/input';
-import { expenseTypesList } from '@data/dummy/expenses-types';
+import { expenseTypesList } from '@lib/constants/data/dummy/expense-values';
 import { Expense } from '@constants/types/expenses/expenses';
 import FormButton from '@components/buttons/FormButton';
 import { createExpense } from '@lib/actions/expenses/create-expense';
@@ -13,7 +13,7 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
       name: '',
       amount: 0,
       expense_type: '',
-      payment_type: 'single',
+      payment_type: '',
    });
 
    const resetForm = () => {
@@ -22,7 +22,7 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
          name: '',
          amount: 0,
          expense_type: '',
-         payment_type: 'single',
+         payment_type: '',
       });
    };
 
@@ -39,11 +39,19 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
 
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+      // sometime TS is a conversion hell, knows that 'amount' should be number but,
+      // select makes it a string... I'm setting 'string as string' to convert it to parseFloat...
+      const { amount } = formData;
+      const stringAmount = amount.toString();
+      const expenseAmount = parseFloat(stringAmount);
+      const expenseData = {
+         ...formData,
+         amount: expenseAmount,
+      };
+      console.log(expenseData);
 
-      console.log(formData);
-
-      // await createExpense(newExpense);
-      // resetForm();
+      await createExpense(expenseData);
+      resetForm();
    };
 
    return (
@@ -62,6 +70,7 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
                name="amount"
                label="Expense amount"
                value={formData.amount.toString()}
+               step="0.01"
                min={1}
                isRequired
                onChange={e => handleChange(e)}
@@ -86,11 +95,11 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
                name="payment_type"
                placeholder="Select payment type"
                selectedKeys={[`${formData.payment_type}`]}
-               disabledKeys={['none']}
+               disabledKeys={['']}
                isRequired
                onChange={e => handleChange(e)}
             >
-               <SelectItem key="none" value={''}>
+               <SelectItem key="" value={''}>
                   Select value
                </SelectItem>
                <SelectItem key="single" value={'single'}>
