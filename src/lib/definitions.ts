@@ -6,12 +6,13 @@ export type User = {
    email: string;
    password: string;
    profile_image_url: string;
+   created_At: Date;
 };
 
 export type UsersExpenses = {
    id: string;
    user_id: string;
-   amount: number;
+   total_amount: number;
 };
 
 export type Expense = {
@@ -21,4 +22,6 @@ export type Expense = {
    amount: number;
    expense_type: string;
    payment_type: 'single' | 'monthly' | 'subscription';
+   created_At: Date;
+   updated_At?: Date;
 };
