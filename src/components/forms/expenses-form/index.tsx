@@ -17,13 +17,13 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
    });
 
    const resetForm = () => {
-      setFormData({
-         user_id: user_id,
+      setFormData(prev => ({
+         ...prev,
          name: '',
          amount: 0,
          expense_type: '',
          payment_type: '',
-      });
+      }));
    };
 
    const handleChange = (
@@ -40,7 +40,7 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       // sometime TS is a conversion hell, knows that 'amount' should be number but,
-      // select makes it a string... I'm setting 'string as string' to convert it to parseFloat...
+      // select makes it a string... I'm converting 'string to string' to be able to convert it to float...
       const { amount } = formData;
       const stringAmount = amount.toString();
       const expenseAmount = parseFloat(stringAmount);
@@ -55,7 +55,7 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
    };
 
    return (
-      <div className="flex p-2 rounded-md">
+      <div className="flex p-2 rounded-md w-full">
          <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full">
             <Input
                type="text"
@@ -100,7 +100,7 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
                onChange={e => handleChange(e)}
             >
                <SelectItem key="" value={''}>
-                  Select value
+                  Select type
                </SelectItem>
                <SelectItem key="single" value={'single'}>
                   Single
