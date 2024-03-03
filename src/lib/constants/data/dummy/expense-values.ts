@@ -1,7 +1,7 @@
 import type { ExpenseTypes } from '@constants/types/expenses/expenses';
 
 export const expenseTypesList: ExpenseTypes[] = [
-   { label: 'Select value', value: '' },
+   { label: 'Select type', value: '' },
    {
       label: 'Basic',
       value: 'basic-expenses',
@@ -21,6 +21,10 @@ export const expenseTypesList: ExpenseTypes[] = [
    {
       label: 'Clothing & Footwear',
       value: 'clothing-and-footwear',
+   },
+   {
+      label: 'Education',
+      value: 'education',
    },
    {
       label: 'Entertainment',
