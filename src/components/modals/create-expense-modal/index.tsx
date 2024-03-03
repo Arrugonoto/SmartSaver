@@ -4,12 +4,12 @@ import {
    ModalContent,
    ModalHeader,
    ModalBody,
-   ModalFooter,
    useDisclosure,
 } from '@nextui-org/modal';
 import { Button } from '@nextui-org/button';
 import { Tabs, Tab } from '@nextui-org/tabs';
 import { ExpensesForm } from '@/components/forms/expenses-form';
+import { SubscriptionForm } from '@components/forms/subscription-form';
 
 export const CreateExpenseModal = ({ user_id }: { user_id: string }) => {
    const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -19,7 +19,12 @@ export const CreateExpenseModal = ({ user_id }: { user_id: string }) => {
          <Button onPress={onOpen} color="primary">
             Add new expense
          </Button>
-         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+         <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            className="min-h-[30rem]"
+            size="xl"
+         >
             <ModalContent>
                {onClose => (
                   <>
@@ -27,12 +32,12 @@ export const CreateExpenseModal = ({ user_id }: { user_id: string }) => {
                         Add New Expense
                      </ModalHeader>
                      <ModalBody>
-                        <Tabs aria-label="Options">
+                        <Tabs aria-label="Options" className="justify-center">
                            <Tab key="standard" title="Standard">
                               <ExpensesForm user_id={user_id} />
                            </Tab>
                            <Tab key="subscription" title="Subscription">
-                              <p>Subscription</p>
+                              <SubscriptionForm user_id={user_id} />
                            </Tab>
                         </Tabs>
                      </ModalBody>
