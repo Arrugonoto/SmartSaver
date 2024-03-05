@@ -56,6 +56,7 @@ async function createExpensesTable(client) {
         amount NUMERIC(21, 2) NOT NULL,
         expense_type VARCHAR(255) NOT NULL,
         payment_type VARCHAR(255) NOT NULL,
+        description VARCHAR(255),
         created_At TIMESTAMP NOT NULL,
         updated_At TIMESTAMP
       );
