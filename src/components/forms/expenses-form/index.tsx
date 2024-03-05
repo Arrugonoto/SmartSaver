@@ -6,6 +6,7 @@ import { expenseTypesList } from '@lib/constants/data/dummy/expense-values';
 import { Expense } from '@constants/types/expenses/expenses';
 import FormButton from '@components/buttons/FormButton';
 import { createExpense } from '@lib/actions/expenses/create-expense';
+import { Textarea } from '@nextui-org/input';
 
 export const ExpensesForm = ({ user_id }: { user_id: string }) => {
    const [formData, setFormData] = useState<Expense>({
@@ -14,6 +15,7 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
       amount: 0,
       expense_type: '',
       payment_type: '',
+      description: '',
    });
 
    const resetForm = () => {
@@ -23,6 +25,7 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
          amount: 0,
          expense_type: '',
          payment_type: '',
+         description: '',
       }));
    };
 
@@ -109,6 +112,13 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
                   Monthly
                </SelectItem>
             </Select>
+            <Textarea
+               label="Description"
+               placeholder="(optional)"
+               name="description"
+               value={formData.description}
+               onChange={e => handleChange(e)}
+            />
             <FormButton type="submit" color="primary">
                Create Expense
             </FormButton>
