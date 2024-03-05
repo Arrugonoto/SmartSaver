@@ -1,4 +1,4 @@
-// Type definitions for data inside of Database
+// Type definitions for Tables inside of Database
 
 export type User = {
    id: string;
@@ -22,6 +22,7 @@ export type Expense = {
    amount: number;
    expense_type: string;
    payment_type: 'single' | 'monthly' | 'subscription';
+   description?: string;
    created_At: Date;
    updated_At?: Date;
 };
