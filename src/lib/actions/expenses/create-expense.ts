@@ -40,7 +40,7 @@ export async function createExpense(formData: {
       const timeOfCreation = new Date().toISOString();
 
       const createNewExpense = await sql<Expense>`
-      INSERT INTO expenses (user_id, name, amount, expense_type, payment_type, description, created_At)
+      INSERT INTO expenses (user_id, name, amount, expense_type, payment_type, description, created_at)
       VALUES (${user_id}, ${name}, ${amount}, ${expense_type}, ${payment_type}, ${description} , ${timeOfCreation})
       `;
    } catch (error) {

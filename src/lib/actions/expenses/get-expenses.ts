@@ -5,10 +5,10 @@ import type { Expense } from '@lib/definitions';
 export async function getExpenses(user_id: string) {
    try {
       const userExpenses = await sql<Expense>`
-      SELECT id, name, amount, expense_type, payment_type, created_At, updated_At FROM expenses WHERE user_id=${user_id}`;
+      SELECT id, name, amount, expense_type, payment_type, description, created_at, updated_at FROM expenses WHERE user_id=${user_id}`;
 
       if (userExpenses.rows.length === 0) {
-         throw new Error(`You have no expenses to keep track of`);
+         return { message: `You have no expenses to keep track of` };
       }
 
       return { data: userExpenses.rows, status: 'success' };

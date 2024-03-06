@@ -6,7 +6,7 @@ export type User = {
    email: string;
    password: string;
    profile_image_url: string;
-   created_At: Date;
+   created_at: Date;
 };
 
 export type UsersExpenses = {
@@ -23,6 +23,6 @@ export type Expense = {
    expense_type: string;
    payment_type: 'single' | 'monthly' | 'subscription';
    description?: string;
-   created_At: Date;
-   updated_At?: Date;
+   created_at: Date;
+   updated_at?: Date;
 };
