@@ -34,14 +34,17 @@ const columns = [
 export const ExpensesSection = ({ user_id }: { user_id: string }) => {
    const [isLoading, setIsLoading] = useState<boolean>(true);
    const [data, setData] = useState<Expense[]>([]);
+   const [page, setPage] = useState<number>(1);
+   const [totalPages, setTotalPages] = useState<number>(1);
 
    const fetchExpenses = async () => {
       setIsLoading(true);
-      const results = await getExpenses(user_id);
+      const results = await getExpenses(user_id, page);
 
       if (results.data) {
          console.log(results.data);
          setData(results.data);
+         setTotalPages(results.totalPages);
       }
 
       setIsLoading(false);
@@ -50,7 +53,7 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
    useEffect(() => {
       fetchExpenses();
       // eslint-disable-next-line
-   }, []);
+   }, [page]);
 
    return (
       <section className="w-full flex-1">
@@ -59,6 +62,20 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
                aria-label="User related expenses table"
                selectionMode="single"
                color="primary"
+               bottomContent={
+                  totalPages > 0 && (
+                     <div className="flex w-full justify-center">
+                        <Pagination
+                           total={totalPages}
+                           initialPage={1}
+                           variant="faded"
+                           showControls={true}
+                           className="self-center"
+                           onChange={page => setPage(page)}
+                        />
+                     </div>
+                  )
+               }
             >
                <TableHeader columns={columns}>
                   {column => (
@@ -70,6 +87,8 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
                   emptyContent={
                      "Currently You don't have any expenses to keep track on."
                   }
+                  loadingContent={<Spinner />}
+                  loadingState={isLoading ? 'loading' : 'idle'}
                >
                   {item => {
                      const date = item.updated_at
@@ -90,13 +109,6 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
                   }}
                </TableBody>
             </Table>
-            <Pagination
-               total={10}
-               initialPage={1}
-               variant="faded"
-               showControls={true}
-               className="self-center"
-            />
          </div>
       </section>
    );
