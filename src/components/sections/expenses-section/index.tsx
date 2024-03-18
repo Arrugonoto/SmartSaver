@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Fragment } from 'react';
 import {
    Table,
    TableHeader,
@@ -16,11 +16,11 @@ import {
    PaginationItem,
    PaginationCursor,
 } from '@nextui-org/pagination';
-import { Skeleton } from '@nextui-org/skeleton';
-import { useAsyncList } from '@react-stately/data';
 import { getExpenses } from '@lib/actions/expenses/get-expenses';
 import type { Expense } from '@constants/types/expenses/expenses';
 import { format } from 'date-fns';
+import { DropdownTable } from '@components/dropdowns/dropdown-table';
+import { tableIcons } from '@constants/icons';
 
 const columns = [
    { key: 'name', label: 'NAME' },
@@ -131,7 +131,9 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
                            <TableCell>
                               {format(date, 'dd MMM yyy, H:mm')}
                            </TableCell>
-                           <TableCell>actions</TableCell>
+                           <TableCell>
+                              <DropdownTable />
+                           </TableCell>
                         </TableRow>
                      );
                   }}
