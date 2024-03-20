@@ -9,6 +9,7 @@ import {
 } from '@nextui-org/modal';
 import { Button } from '@nextui-org/button';
 import { deleteExpense } from '@lib/actions/expenses/delete-expense';
+import { tableIcons } from '@constants/icons';
 
 export const DeleteExpenseModal = ({ expense_id }: { expense_id: string }) => {
    const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -20,7 +21,13 @@ export const DeleteExpenseModal = ({ expense_id }: { expense_id: string }) => {
 
    return (
       <>
-         <Button onPress={onOpen} className="w-full text-danger">
+         <Button
+            onPress={onOpen}
+            className="flex w-full text-danger px-2 py-1.5 justify-start"
+            radius="sm"
+            variant="light"
+            startContent={<tableIcons.delete className="text-lg" />}
+         >
             Delete
          </Button>
          <Modal
@@ -32,7 +39,7 @@ export const DeleteExpenseModal = ({ expense_id }: { expense_id: string }) => {
             <ModalContent>
                {onClose => (
                   <>
-                     <ModalHeader className="flex flex-col gap-1">
+                     <ModalHeader className="flex flex-col gap-1 text-danger">
                         Delete expense
                      </ModalHeader>
                      <ModalBody>
@@ -43,15 +50,12 @@ export const DeleteExpenseModal = ({ expense_id }: { expense_id: string }) => {
                         <p className="text-danger">{`This action can't be undone.`}</p>
                      </ModalBody>
                      <ModalFooter>
-                        <Button
-                           color="danger"
-                           variant="light"
-                           onPress={onClose}
-                        >
+                        <Button variant="light" onPress={onClose}>
                            Cancel
                         </Button>
                         <Button
-                           color="primary"
+                           color="danger"
+                           variant="light"
                            onPress={() => {
                               handlePress();
                               onClose;

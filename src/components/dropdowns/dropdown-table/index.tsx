@@ -30,9 +30,8 @@ export const DropdownTable = ({ expense_id }: { expense_id: string }) => {
             <DropdownItem
                isReadOnly
                key="delete"
-               className="text-danger"
+               className="text-danger p-0"
                color="danger"
-               description="Remove selected expense"
                textValue="Delete selected expense from list"
             >
                <DeleteExpenseModal expense_id={expense_id} />
