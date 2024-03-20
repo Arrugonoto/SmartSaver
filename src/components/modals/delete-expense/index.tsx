@@ -8,54 +8,56 @@ import {
    useDisclosure,
 } from '@nextui-org/modal';
 import { Button } from '@nextui-org/button';
-export const DeleteExpenseModal = () => {
+import { deleteExpense } from '@lib/actions/expenses/delete-expense';
+
+export const DeleteExpenseModal = ({ expense_id }: { expense_id: string }) => {
    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+   const handlePress = async () => {
+      console.log(expense_id);
+      await deleteExpense(expense_id);
+   };
 
    return (
       <>
-         <Button onClick={onOpen} className="w-full text-danger">
+         <Button onPress={onOpen} className="w-full text-danger">
             Delete
          </Button>
-         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+         <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            size="md"
+            isDismissable={false}
+         >
             <ModalContent>
                {onClose => (
                   <>
                      <ModalHeader className="flex flex-col gap-1">
-                        Modal Title
+                        Delete expense
                      </ModalHeader>
                      <ModalBody>
                         <p>
-                           Lorem ipsum dolor sit amet, consectetur adipiscing
-                           elit. Nullam pulvinar risus non risus hendrerit
-                           venenatis. Pellentesque sit amet hendrerit risus, sed
-                           porttitor quam.
+                           Are you sure, that you want to remove selected
+                           expense from tracking list?
                         </p>
-                        <p>
-                           Lorem ipsum dolor sit amet, consectetur adipiscing
-                           elit. Nullam pulvinar risus non risus hendrerit
-                           venenatis. Pellentesque sit amet hendrerit risus, sed
-                           porttitor quam.
-                        </p>
-                        <p>
-                           Magna exercitation reprehenderit magna aute tempor
-                           cupidatat consequat elit dolor adipisicing. Mollit
-                           dolor eiusmod sunt ex incididunt cillum quis. Velit
-                           duis sit officia eiusmod Lorem aliqua enim laboris do
-                           dolor eiusmod. Et mollit incididunt nisi consectetur
-                           esse laborum eiusmod pariatur proident Lorem eiusmod
-                           et. Culpa deserunt nostrud ad veniam.
-                        </p>
+                        <p className="text-danger">{`This action can't be undone.`}</p>
                      </ModalBody>
                      <ModalFooter>
                         <Button
                            color="danger"
                            variant="light"
-                           onClick={onClose}
+                           onPress={onClose}
                         >
-                           Close
+                           Cancel
                         </Button>
-                        <Button color="primary" onClick={onClose}>
-                           Action
+                        <Button
+                           color="primary"
+                           onPress={() => {
+                              handlePress();
+                              onClose;
+                           }}
+                        >
+                           Delete
                         </Button>
                      </ModalFooter>
                   </>
