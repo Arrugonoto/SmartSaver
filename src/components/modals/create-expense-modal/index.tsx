@@ -24,8 +24,10 @@ export const CreateExpenseModal = ({ user_id }: { user_id: string }) => {
             onOpenChange={onOpenChange}
             className="min-h-[30rem]"
             size="xl"
+            isDismissable={false}
+            isKeyboardDismissDisabled={false}
          >
-            <ModalContent>
+            <ModalContent className="">
                {onClose => (
                   <>
                      <ModalHeader className="flex flex-col gap-1">
