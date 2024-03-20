@@ -3,13 +3,13 @@ import {
    Dropdown,
    DropdownTrigger,
    DropdownMenu,
-   DropdownSection,
    DropdownItem,
 } from '@nextui-org/dropdown';
 import { Button } from '@nextui-org/button';
 import { tableIcons } from '@constants/icons';
+import { DeleteExpenseModal } from '@components/modals/delete-expense';
 
-export const DropdownTable = () => {
+export const DropdownTable = ({ expense_id }: { expense_id: string }) => {
    return (
       <Dropdown>
          <DropdownTrigger>
@@ -28,13 +28,14 @@ export const DropdownTable = () => {
                Edit
             </DropdownItem>
             <DropdownItem
+               isReadOnly
                key="delete"
                className="text-danger"
                color="danger"
-               startContent={<tableIcons.delete className="text-lg" />}
                description="Remove selected expense"
+               textValue="Delete selected expense from list"
             >
-               Delete
+               <DeleteExpenseModal expense_id={expense_id} />
             </DropdownItem>
          </DropdownMenu>
       </Dropdown>
