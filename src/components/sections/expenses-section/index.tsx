@@ -21,6 +21,7 @@ import type { Expense } from '@constants/types/expenses/expenses';
 import { format } from 'date-fns';
 import { DropdownTable } from '@components/dropdowns/dropdown-table';
 import { tableIcons } from '@constants/icons';
+import { expenseTypesList } from '@lib/constants/data/dummy/expense-values';
 
 const columns = [
    { key: 'name', label: 'NAME' },
@@ -126,13 +127,18 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
                         <TableRow key={item.id}>
                            <TableCell>{item.name}</TableCell>
                            <TableCell>{item.amount}</TableCell>
-                           <TableCell>{item.expense_type}</TableCell>
+                           <TableCell>
+                              {expenseTypesList.map(el => {
+                                 if (el.value === item.expense_type)
+                                    return el.label;
+                              })}
+                           </TableCell>
                            <TableCell>{item.payment_type}</TableCell>
                            <TableCell>
                               {format(date, 'dd MMM yyy, H:mm')}
                            </TableCell>
                            <TableCell>
-                              <DropdownTable />
+                              <DropdownTable expense_id={item.id as string} />
                            </TableCell>
                         </TableRow>
                      );
