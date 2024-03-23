@@ -26,9 +26,12 @@ export const DeleteExpenseModal = ({ expense_id }: { expense_id: string }) => {
             className="flex w-full text-danger px-2 py-1.5 justify-start"
             radius="sm"
             variant="light"
-            startContent={<tableIcons.delete className="text-lg" />}
+            startContent={<tableIcons.delete className="text-xl" />}
          >
-            Delete
+            <span className="flex flex-col items-start justify-between">
+               <p>Delete</p>
+               <p className="text-xs text-slate-500">Remove selected expense</p>
+            </span>
          </Button>
          <Modal
             isOpen={isOpen}
@@ -58,7 +61,7 @@ export const DeleteExpenseModal = ({ expense_id }: { expense_id: string }) => {
                            variant="light"
                            onPress={() => {
                               handlePress();
-                              onClose;
+                              onClose();
                            }}
                         >
                            Delete
