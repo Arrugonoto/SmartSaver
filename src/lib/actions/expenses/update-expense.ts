@@ -1,6 +1,7 @@
 'use server';
 import { sql } from '@vercel/postgres';
 import { z } from 'zod';
+import type { ExpenseIdRequired } from '@lib/constants/types/expenses/expenses';
 
 const UpdateExpenseSchema = z.object({
    id: z.string(),
@@ -11,14 +12,7 @@ const UpdateExpenseSchema = z.object({
    description: z.string().optional(),
 });
 
-export async function createExpense(formData: {
-   id: string;
-   name: string;
-   amount: number;
-   expense_type: string;
-   payment_type: string;
-   description?: string;
-}) {
+export async function updateExpense(formData: Partial<ExpenseIdRequired>) {
    const validatedFields = UpdateExpenseSchema.safeParse({
       id: formData.id,
       name: formData.name,
@@ -33,19 +27,21 @@ export async function createExpense(formData: {
          throw new Error('Fill all necessary fields.');
       }
 
+      console.log(validatedFields.data);
+
       const { name, amount, expense_type, payment_type, description, id } =
          validatedFields.data;
 
       const timeOfUpdate = new Date().toISOString();
 
-      const updateExpense = await sql`
+      const updateExpense = await sql<ExpenseIdRequired>`
       UPDATE expenses
       SET
-       name = COALESCE(${name}, name)
-       amount = COALESCE(${amount}, amount)
-       expense_type = COALESCE(${expense_type}, expense_type)
-       payment_type = COALESCE(${payment_type}, payment_type)
-       description = COALESCE(${description}, description)
+       name = COALESCE(${name}, name),
+       amount = COALESCE(${amount}, amount),
+       expense_type = COALESCE(${expense_type}, expense_type),
+       payment_type = COALESCE(${payment_type}, payment_type),
+       description = COALESCE(${description}, description),
        updated_at = ${timeOfUpdate}
       WHERE id = ${id};
       `;

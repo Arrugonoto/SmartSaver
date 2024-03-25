@@ -3,33 +3,26 @@ import React, { useState } from 'react';
 import { Select, SelectItem } from '@nextui-org/select';
 import { Input } from '@nextui-org/input';
 import { expenseTypesList } from '@lib/constants/data/dummy/expense-values';
-import { Expense } from '@constants/types/expenses/expenses';
+import { Expense, ExpenseIdRequired } from '@constants/types/expenses/expenses';
 import FormButton from '@components/buttons/FormButton';
 import { updateExpense } from '@lib/actions/expenses/update-expense';
 import { Textarea } from '@nextui-org/input';
 
-export const UpdateExpenseForm = ({ expense }: { expense: Expense }) => {
+export const UpdateExpenseForm = ({
+   expense,
+}: {
+   expense: ExpenseIdRequired;
+}) => {
    const [formData, setFormData] = useState<
-      Omit<Expense, 'user_id'> & { user_id?: string }
+      Omit<ExpenseIdRequired, 'user_id'> & { user_id?: string }
    >({
       id: expense.id,
       name: '',
-      amount: 0,
-      expense_type: '',
-      payment_type: '',
+      amount: expense.amount,
+      expense_type: expense.expense_type,
+      payment_type: expense.payment_type,
       description: '',
    });
-
-   const resetForm = () => {
-      setFormData(prev => ({
-         ...prev,
-         name: '',
-         amount: 0,
-         expense_type: '',
-         payment_type: '',
-         description: '',
-      }));
-   };
 
    const handleChange = (
       e:
@@ -55,28 +48,30 @@ export const UpdateExpenseForm = ({ expense }: { expense: Expense }) => {
       };
 
       await updateExpense(expenseData);
-      resetForm();
    };
 
    return (
       <div className="flex p-2 rounded-md w-full">
-         <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full">
+         <form
+            onSubmit={e => handleSubmit(e)}
+            className="flex flex-col gap-3 w-full"
+         >
             <Input
                type="text"
                name="name"
                label="Expense name"
+               placeholder={expense.name}
                value={formData.name}
-               isRequired
                onChange={e => handleChange(e)}
             />
             <Input
                type="number"
                name="amount"
                label="Expense amount"
+               placeholder={`${expense.amount || '0'}`}
                value={formData.amount.toString()}
                step="0.01"
                min={1}
-               isRequired
                onChange={e => handleChange(e)}
             />
             <Select
@@ -85,7 +80,6 @@ export const UpdateExpenseForm = ({ expense }: { expense: Expense }) => {
                placeholder="Select expense type"
                selectedKeys={[`${formData.expense_type}`]}
                disabledKeys={['']}
-               isRequired
                onChange={e => handleChange(e)}
             >
                {expenseTypesList.map(expense => (
@@ -100,7 +94,6 @@ export const UpdateExpenseForm = ({ expense }: { expense: Expense }) => {
                placeholder="Select payment type"
                selectedKeys={[`${formData.payment_type}`]}
                disabledKeys={['']}
-               isRequired
                onChange={e => handleChange(e)}
             >
                <SelectItem key="" value={''}>
@@ -115,13 +108,13 @@ export const UpdateExpenseForm = ({ expense }: { expense: Expense }) => {
             </Select>
             <Textarea
                label="Description"
-               placeholder="(optional)"
+               placeholder={expense.description || 'description of expense'}
                name="description"
                value={formData.description}
                onChange={e => handleChange(e)}
             />
             <FormButton type="submit" color="primary">
-               Create Expense
+               Update
             </FormButton>
          </form>
       </div>
