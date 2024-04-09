@@ -8,8 +8,10 @@ import {
 import { Button } from '@nextui-org/button';
 import { tableIcons } from '@constants/icons';
 import { DeleteExpenseModal } from '@components/modals/delete-expense';
+import { UpdateExpenseModal } from '@components/modals/update-expense';
+import type { ExpenseIdRequired } from '@lib/constants/types/expenses/expenses';
 
-export const DropdownTable = ({ expense_id }: { expense_id: string }) => {
+export const DropdownTable = ({ expense }: { expense: ExpenseIdRequired }) => {
    return (
       <Dropdown>
          <DropdownTrigger>
@@ -21,11 +23,12 @@ export const DropdownTable = ({ expense_id }: { expense_id: string }) => {
          </DropdownTrigger>
          <DropdownMenu aria-label="Table actions" variant="faded">
             <DropdownItem
+               isReadOnly
                key="edit"
-               description="Update selected expense"
-               startContent={<tableIcons.edit className="text-lg" />}
+               className="p-0"
+               textValue="Update selected expense"
             >
-               Edit
+               <UpdateExpenseModal expense={expense} />
             </DropdownItem>
             <DropdownItem
                isReadOnly
@@ -34,7 +37,7 @@ export const DropdownTable = ({ expense_id }: { expense_id: string }) => {
                color="danger"
                textValue="Delete selected expense from list"
             >
-               <DeleteExpenseModal expense_id={expense_id} />
+               <DeleteExpenseModal expense_id={expense.id} />
             </DropdownItem>
          </DropdownMenu>
       </Dropdown>

@@ -15,7 +15,6 @@ export const DeleteExpenseModal = ({ expense_id }: { expense_id: string }) => {
    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
    const handlePress = async () => {
-      console.log(expense_id);
       await deleteExpense(expense_id);
    };
 

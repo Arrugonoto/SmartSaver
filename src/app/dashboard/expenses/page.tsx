@@ -13,7 +13,7 @@ export default async function Expenses() {
    const user_id = session?.user.id;
 
    return (
-      <main className="flex flex-1 flex-col px-4 py-2">
+      <main className="flex w-full flex-1 flex-col px-4 py-2">
          <div className="flex flex-col gap-4 flex-1">
             <div className="flex justify-between">
                <h1>Expenses</h1>

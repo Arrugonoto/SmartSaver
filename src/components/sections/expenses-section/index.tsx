@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useMemo, Fragment } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
    Table,
    TableHeader,
@@ -48,7 +48,6 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
       const results = await getExpenses(user_id, page);
 
       if (results.data) {
-         console.log(results.data);
          setData(results.data);
          setTotalPages(results.totalPages);
       }
@@ -57,9 +56,19 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
    };
 
    const sortedData = useMemo(() => {
-      const sortData = data.sort((a, b) => {
-         const first = a[sortDescriptor.column as keyof Expense] as number;
-         const next = b[sortDescriptor.column as keyof Expense] as number;
+      const sorted = data.sort((a, b) => {
+         let first = a[sortDescriptor.column as keyof Expense] as
+            | number
+            | string;
+         let next = b[sortDescriptor.column as keyof Expense] as
+            | number
+            | string;
+         if (sortDescriptor === ('amount' as string)) {
+            first = parseFloat(first as any);
+            next = parseFloat(next as any);
+         }
+         console.log(typeof first);
+
          const sortResult = first < next ? -1 : first > next ? 1 : 0;
 
          return sortDescriptor.direction === 'descending'
@@ -67,7 +76,7 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
             : sortResult;
       });
 
-      return sortData;
+      return sorted;
    }, [sortDescriptor, data]);
 
    useEffect(() => {
@@ -123,22 +132,21 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
                      const date = item.updated_at
                         ? item.updated_at
                         : item.created_at!;
+                     const expenseType = expenseTypesList.map(el => {
+                        if (el.value === item.expense_type) return el.label;
+                     });
+
                      return (
                         <TableRow key={item.id}>
                            <TableCell>{item.name}</TableCell>
                            <TableCell>{item.amount}</TableCell>
-                           <TableCell>
-                              {expenseTypesList.map(el => {
-                                 if (el.value === item.expense_type)
-                                    return el.label;
-                              })}
-                           </TableCell>
+                           <TableCell>{expenseType}</TableCell>
                            <TableCell>{item.payment_type}</TableCell>
                            <TableCell>
                               {format(date, 'dd MMM yyy, H:mm')}
                            </TableCell>
                            <TableCell>
-                              <DropdownTable expense_id={item.id as string} />
+                              <DropdownTable expense={item} />
                            </TableCell>
                         </TableRow>
                      );

@@ -9,14 +9,16 @@ import { createExpense } from '@lib/actions/expenses/create-expense';
 import { Textarea } from '@nextui-org/input';
 
 export const ExpensesForm = ({ user_id }: { user_id: string }) => {
-   const [formData, setFormData] = useState<Expense>({
-      user_id: user_id,
-      name: '',
-      amount: 0,
-      expense_type: '',
-      payment_type: '',
-      description: '',
-   });
+   const [formData, setFormData] = useState<Omit<Expense, 'id' | 'created_at'>>(
+      {
+         user_id: user_id,
+         name: '',
+         amount: 0,
+         expense_type: '',
+         payment_type: '',
+         description: '',
+      }
+   );
 
    const resetForm = () => {
       setFormData(prev => ({
@@ -51,7 +53,6 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
          ...formData,
          amount: expenseAmount,
       };
-      console.log(expenseData);
 
       await createExpense(expenseData);
       resetForm();
@@ -105,7 +106,7 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
                <SelectItem key="" value={''}>
                   Select type
                </SelectItem>
-               <SelectItem key="single" value={'single'}>
+               <SelectItem key="one-time" value={'one-time'}>
                   Single
                </SelectItem>
                <SelectItem key="monthly" value={'monthly'}>

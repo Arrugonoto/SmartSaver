@@ -21,7 +21,7 @@ export type Expense = {
    name: string;
    amount: number;
    expense_type: string;
-   payment_type: 'single' | 'monthly' | 'subscription';
+   payment_type: 'one-time' | 'monthly' | 'subscription';
    description?: string;
    created_at: Date;
    updated_at?: Date;

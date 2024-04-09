@@ -10,13 +10,15 @@ import { Select, SelectItem } from '@nextui-org/select';
 import { Divider } from '@nextui-org/divider';
 
 export const SubscriptionForm = ({ user_id }: { user_id: string }) => {
-   const [formData, setFormData] = useState<Expense>({
-      user_id: user_id,
-      name: '',
-      amount: 0,
-      expense_type: '',
-      payment_type: 'subscription',
-   });
+   const [formData, setFormData] = useState<Omit<Expense, 'id' | 'created_at'>>(
+      {
+         user_id: user_id,
+         name: '',
+         amount: 0,
+         expense_type: '',
+         payment_type: 'subscription',
+      }
+   );
 
    const resetForm = () => {
       setFormData(prev => ({
