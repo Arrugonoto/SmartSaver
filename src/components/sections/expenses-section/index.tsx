@@ -22,6 +22,7 @@ import { format } from 'date-fns';
 import { DropdownTable } from '@components/dropdowns/dropdown-table';
 import { tableIcons } from '@constants/icons';
 import { expenseTypesList } from '@lib/constants/data/dummy/expense-values';
+import { createExpense } from '@lib/actions/expenses/create-expense';
 
 const columns = [
   { key: 'name', label: 'NAME' },
@@ -38,6 +39,7 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
   const [data, setData] = useState<Expense[]>([]);
   const [page, setPage] = useState<number>(1);
   const [totalResults, setTotalResults] = useState<number>(0);
+  const [resultsPerPage, setResultsPerPage] = useState<number>(20);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'name',
     direction: 'ascending',
@@ -76,6 +78,11 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
     return sorted;
   }, [sortDescriptor, data]);
 
+  const paginatedData = sortedData.slice(
+    (page - 1) * resultsPerPage,
+    page * resultsPerPage
+  );
+
   useEffect(() => {
     fetchExpenses();
     // eslint-disable-next-line
@@ -93,7 +100,7 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
             totalResults > 0 && (
               <div className="flex w-full justify-center">
                 <Pagination
-                  total={2}
+                  total={Math.ceil(totalResults / 20)}
                   initialPage={1}
                   variant="faded"
                   showControls={true}
@@ -118,7 +125,7 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
             )}
           </TableHeader>
           <TableBody
-            items={sortedData}
+            items={paginatedData}
             emptyContent={
               isLoading
                 ? ''
