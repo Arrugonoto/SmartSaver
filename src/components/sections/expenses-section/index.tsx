@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import {
   Table,
   TableHeader,
@@ -16,13 +16,13 @@ import {
   PaginationItem,
   PaginationCursor,
 } from '@nextui-org/pagination';
+import { Skeleton } from '@nextui-org/skeleton';
 import { getExpenses } from '@lib/actions/expenses/get-expenses';
 import type { Expense } from '@constants/types/expenses/expenses';
 import { format } from 'date-fns';
 import { DropdownTable } from '@components/dropdowns/dropdown-table';
 import { tableIcons } from '@constants/icons';
 import { expenseTypesList } from '@lib/constants/data/dummy/expense-values';
-import { createExpense } from '@lib/actions/expenses/create-expense';
 
 const columns = [
   { key: 'name', label: 'NAME' },
@@ -91,70 +91,75 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
   return (
     <section className="w-full flex-1">
       <div className="flex w-full flex-col h-full flex-1 gap-4 overflow-hidden">
-        <Table
-          aria-label="User related expenses table"
-          sortDescriptor={sortDescriptor}
-          selectionMode="single"
-          color="primary"
-          bottomContent={
-            totalResults > 0 && (
-              <div className="flex w-full justify-center">
-                <Pagination
-                  total={Math.ceil(totalResults / 20)}
-                  initialPage={1}
-                  variant="faded"
-                  showControls={true}
-                  className="self-center"
-                  onChange={(page) => setPage(page)}
-                />
-              </div>
-            )
-          }
-          onSortChange={(descriptor) => {
-            setSortDescriptor(descriptor);
-          }}
-        >
-          <TableHeader columns={columns}>
-            {(column) => (
-              <TableColumn
-                key={column.key}
-                allowsSorting={column.key != 'actions'}
-              >
-                {column.label}
-              </TableColumn>
-            )}
-          </TableHeader>
-          <TableBody
-            items={paginatedData}
-            emptyContent={
-              isLoading
-                ? ''
-                : "Currently You don't have any expenses to keep track on."
+        <Suspense fallback={<Skeleton className="w-full h-16 rounded-lg" />}>
+          <Table
+            aria-label="User related expenses table"
+            sortDescriptor={sortDescriptor}
+            selectionMode="single"
+            color="primary"
+            bottomContent={
+              totalResults > 0 && (
+                <div className="flex w-full justify-center">
+                  <Pagination
+                    total={Math.ceil(totalResults / 20)}
+                    initialPage={1}
+                    variant="faded"
+                    showControls={true}
+                    className="self-center"
+                    onChange={(page) => setPage(page)}
+                  />
+                </div>
+              )
             }
-            loadingContent={<Spinner />}
-            loadingState={isLoading ? 'loading' : 'idle'}
-          >
-            {(item) => {
-              const date = item.updated_at ? item.updated_at : item.created_at!;
-              const expenseType = expenseTypesList.map((el) => {
-                if (el.value === item.expense_type) return el.label;
-              });
-
-              return (
-                <TableRow key={item.id}>
-                  <TableCell>{item.name}</TableCell>
-                  <TableCell>{item.amount}</TableCell>
-                  <TableCell>{expenseType}</TableCell>
-                  <TableCell>{item.payment_type}</TableCell>
-                  <TableCell>{format(date, 'dd MMM yyy, H:mm')}</TableCell>
-                  <TableCell>
-                    <DropdownTable expense={item} />
-                  </TableCell>
-                </TableRow>
-              );
+            onSortChange={(descriptor) => {
+              setSortDescriptor(descriptor);
             }}
-          </TableBody>
-        </Table>
+          >
+            <TableHeader columns={columns}>
+              {(column) => (
+                <TableColumn
+                  key={column.key}
+                  allowsSorting={column.key != 'actions'}
+                >
+                  {column.label}
+                </TableColumn>
+              )}
+            </TableHeader>
+
+            <TableBody
+              items={paginatedData}
+              emptyContent={
+                isLoading
+                  ? ''
+                  : "Currently You don't have any expenses to keep track on."
+              }
+              loadingContent={<Spinner />}
+              loadingState={isLoading ? 'loading' : 'idle'}
+            >
+              {(item) => {
+                const date = item.updated_at
+                  ? item.updated_at
+                  : item.created_at!;
+                const expenseType = expenseTypesList.map((el) => {
+                  if (el.value === item.expense_type) return el.label;
+                });
+
+                return (
+                  <TableRow key={item.id}>
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell>{item.amount}</TableCell>
+                    <TableCell>{expenseType}</TableCell>
+                    <TableCell>{item.payment_type}</TableCell>
+                    <TableCell>{format(date, 'dd MMM yyy, H:mm')}</TableCell>
+                    <TableCell>
+                      <DropdownTable expense={item} />
+                    </TableCell>
+                  </TableRow>
+                );
+              }}
+            </TableBody>
+          </Table>
+        </Suspense>
       </div>
     </section>
   );
