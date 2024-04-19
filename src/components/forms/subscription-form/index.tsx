@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Input } from '@nextui-org/input';
 import { Expense } from '@constants/types/expenses/expenses';
-import { expenseTypesList } from '@lib/constants/data/dummy/expense-values';
+import { expenseTypesList } from '@lib/constants/data/dummy/expense-categories';
 import FormButton from '@components/buttons/FormButton';
 import { createExpense } from '@lib/actions/expenses/create-expense';
 import { Accordion, AccordionItem } from '@nextui-org/accordion';

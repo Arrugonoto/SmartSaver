@@ -22,7 +22,7 @@ import type { Expense } from '@constants/types/expenses/expenses';
 import { format } from 'date-fns';
 import { DropdownTable } from '@components/dropdowns/dropdown-table';
 import { tableIcons } from '@constants/icons';
-import { expenseTypesList } from '@lib/constants/data/dummy/expense-values';
+import { expenseTypesList } from '@lib/constants/data/dummy/expense-categories';
 
 const columns = [
   { key: 'name', label: 'NAME' },
