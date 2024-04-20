@@ -22,7 +22,7 @@ import type { Expense } from '@constants/types/expenses/expenses';
 import { format } from 'date-fns';
 import { DropdownTable } from '@components/dropdowns/dropdown-table';
 import { tableIcons } from '@constants/icons';
-import { expenseTypesList } from '@lib/constants/data/dummy/expense-categories';
+import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
 
 const columns = [
   { key: 'name', label: 'NAME' },
@@ -140,7 +140,7 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
                 const date = item.updated_at
                   ? item.updated_at
                   : item.created_at!;
-                const expenseType = expenseTypesList.map((el) => {
+                const expenseType = expenseCategoriesList.map((el) => {
                   if (el.value === item.expense_type) return el.label;
                 });
 

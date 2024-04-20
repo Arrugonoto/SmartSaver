@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Select, SelectItem } from '@nextui-org/select';
 import { Input } from '@nextui-org/input';
-import { expenseTypesList } from '@lib/constants/data/dummy/expense-categories';
+import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
 import { Expense, ExpenseIdRequired } from '@constants/types/expenses/expenses';
 import FormButton from '@components/buttons/FormButton';
 import { updateExpense } from '@lib/actions/expenses/update-expense';
@@ -14,7 +14,7 @@ export const UpdateExpenseForm = ({
   expense: ExpenseIdRequired;
 }) => {
   const [formData, setFormData] = useState<
-    Omit<ExpenseIdRequired, 'user_id'> & { user_id?: string }
+    Omit<ExpenseIdRequired, 'user_id' | 'created_at'>
   >({
     id: expense.id,
     name: '',
@@ -82,7 +82,7 @@ export const UpdateExpenseForm = ({
           disabledKeys={['']}
           onChange={(e) => handleChange(e)}
         >
-          {expenseTypesList.map((expense) => (
+          {expenseCategoriesList.map((expense) => (
             <SelectItem key={expense.value} value={expense.value}>
               {expense.label}
             </SelectItem>

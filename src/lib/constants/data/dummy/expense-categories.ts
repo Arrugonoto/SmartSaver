@@ -1,6 +1,6 @@
 import type { ExpenseCategories } from '@constants/types/expenses/expenses';
 
-export const expenseTypesList: ExpenseCategories[] = [
+export const expenseCategoriesList: ExpenseCategories[] = [
   { label: 'Select type', value: '' },
   {
     label: 'Basic',
