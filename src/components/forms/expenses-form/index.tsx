@@ -19,14 +19,14 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
   });
 
   const resetForm = () => {
-    setFormData((prev) => ({
-      ...prev,
+    setFormData({
+      user_id: user_id,
       name: '',
       amount: 0,
       expense_type: '',
       payment_type: '',
       description: '',
-    }));
+    });
   };
 
   const handleChange = (
