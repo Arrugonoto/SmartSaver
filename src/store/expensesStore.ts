@@ -20,9 +20,9 @@ export const useExpensesStore = create<State & Action>((set) => ({
   page: 1,
   resultsPerPage: 20,
   totalResults: 0,
-  setExpenses: (newExpenses) => set(() => ({ expenses: [...newExpenses] })),
+  setExpenses: (newExpenses) => set({ expenses: newExpenses }),
   setPage: (pageNum) => set(() => ({ page: pageNum })),
   setResultsPerPage: (resPerPage) =>
     set(() => ({ resultsPerPage: resPerPage })),
-  setTotalResults: (numOfTotal) => ({ totalResults: numOfTotal }),
+  setTotalResults: (numOfTotal) => set({ totalResults: numOfTotal }),
 }));
