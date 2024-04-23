@@ -16,13 +16,14 @@ import {
   PaginationItem,
   PaginationCursor,
 } from '@nextui-org/pagination';
-import { Skeleton } from '@nextui-org/skeleton';
-import { getExpenses } from '@lib/actions/expenses/get-expenses';
 import type { Expense } from '@constants/types/expenses/expenses';
 import { format } from 'date-fns';
 import { DropdownTable } from '@components/dropdowns/dropdown-table';
 import { tableIcons } from '@constants/icons';
 import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
+import { useExpensesStore } from '@store/expensesStore';
+import { getExpenses } from '@lib/actions/expenses/get-expenses';
+import { useFetch } from '@lib/hooks/useFetch';
 
 const columns = [
   { key: 'name', label: 'NAME' },
@@ -35,33 +36,29 @@ const columns = [
 
 //FIXME: ADD DESCRIPTION AS ACCORDION
 export const ExpensesSection = ({ user_id }: { user_id: string }) => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [data, setData] = useState<Expense[]>([]);
+  const expenses = useExpensesStore((state) => state.expenses);
+  const resultsPerPage = useExpensesStore((state) => state.resultsPerPage);
+  const totalResults = useExpensesStore((state) => state.totalResults);
+  const setExpenses = useExpensesStore((state) => state.setExpenses);
+  const setTotalResults = useExpensesStore((state) => state.setTotalResults);
   const [page, setPage] = useState<number>(1);
-  const [totalResults, setTotalResults] = useState<number>(0);
-  const [resultsPerPage, setResultsPerPage] = useState<number>(20);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'name',
     direction: 'ascending',
   });
 
-  const fetchExpenses = async () => {
-    setIsLoading(true);
-    const queryProps = {
-      user_id,
-    };
-    const result = await getExpenses(queryProps);
-
-    if (result.data) {
-      setData(result.data);
-      setTotalResults(result.totalResults);
-    }
-
-    setIsLoading(false);
-  };
+  const {
+    isLoading,
+    data,
+    error,
+    totalResults: allResults,
+  } = useFetch<Expense>({
+    action: getExpenses,
+    user_id,
+  });
 
   const sortedData = useMemo(() => {
-    const sorted = data.sort((a, b) => {
+    const sorted = expenses.sort((a, b) => {
       let first = a[sortDescriptor.column as keyof Expense] as number | string;
       let next = b[sortDescriptor.column as keyof Expense] as number | string;
       if (sortDescriptor.column === 'amount') {
@@ -76,7 +73,7 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
     });
 
     return sorted;
-  }, [sortDescriptor, data]);
+  }, [sortDescriptor, expenses]);
 
   const paginatedData = sortedData.slice(
     (page - 1) * resultsPerPage,
@@ -84,82 +81,85 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
   );
 
   useEffect(() => {
-    fetchExpenses();
-    // eslint-disable-next-line
-  }, [page]);
+    if (!isLoading && data) {
+      setExpenses(data);
+    }
+  }, [isLoading, data, setExpenses]);
+
+  useEffect(() => {
+    if (!isLoading && allResults) {
+      setTotalResults(allResults);
+    }
+  }, [isLoading, allResults, setTotalResults, data]);
 
   return (
     <section className="w-full flex-1">
       <div className="flex w-full flex-col h-full flex-1 gap-4 overflow-hidden">
-        <Suspense fallback={<Skeleton className="w-full h-16 rounded-lg" />}>
-          <Table
-            aria-label="User related expenses table"
-            sortDescriptor={sortDescriptor}
-            selectionMode="single"
-            color="primary"
-            bottomContent={
-              totalResults > 0 && (
-                <div className="flex w-full justify-center">
-                  <Pagination
-                    total={Math.ceil(totalResults / 20)}
-                    initialPage={1}
-                    variant="faded"
-                    showControls={true}
-                    className="self-center"
-                    onChange={(page) => setPage(page)}
-                  />
-                </div>
-              )
+        <Table
+          aria-label="User related expenses table"
+          sortDescriptor={sortDescriptor}
+          selectionMode="single"
+          color="primary"
+          bottomContent={
+            totalResults > 0 && (
+              <div className="flex w-full justify-center">
+                <Pagination
+                  total={Math.ceil(totalResults / 20)}
+                  initialPage={1}
+                  variant="faded"
+                  showControls={true}
+                  className="self-center"
+                  onChange={(page) => setPage(page)}
+                />
+              </div>
+            )
+          }
+          onSortChange={(descriptor) => {
+            setSortDescriptor(descriptor);
+          }}
+        >
+          <TableHeader columns={columns}>
+            {(column) => (
+              <TableColumn
+                key={column.key}
+                allowsSorting={column.key != 'actions'}
+              >
+                {column.label}
+              </TableColumn>
+            )}
+          </TableHeader>
+
+          <TableBody
+            items={paginatedData}
+            emptyContent={
+              isLoading
+                ? ''
+                : "Currently You don't have any expenses to keep track on."
             }
-            onSortChange={(descriptor) => {
-              setSortDescriptor(descriptor);
-            }}
+            loadingContent={<Spinner />}
+            loadingState={isLoading ? 'loading' : 'idle'}
           >
-            <TableHeader columns={columns}>
-              {(column) => (
-                <TableColumn
-                  key={column.key}
-                  allowsSorting={column.key != 'actions'}
-                >
-                  {column.label}
-                </TableColumn>
-              )}
-            </TableHeader>
+            {(item) => {
+              const date = item.updated_at ? item.updated_at : item.created_at!;
+              const expenseType = expenseCategoriesList.map((el) => {
+                if (el.value === item.expense_type) return el.label;
+              });
 
-            <TableBody
-              items={paginatedData}
-              emptyContent={
-                isLoading
-                  ? ''
-                  : "Currently You don't have any expenses to keep track on."
-              }
-              loadingContent={<Spinner />}
-              loadingState={isLoading ? 'loading' : 'idle'}
-            >
-              {(item) => {
-                const date = item.updated_at
-                  ? item.updated_at
-                  : item.created_at!;
-                const expenseType = expenseCategoriesList.map((el) => {
-                  if (el.value === item.expense_type) return el.label;
-                });
-
-                return (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell>{item.amount}</TableCell>
-                    <TableCell>{expenseType}</TableCell>
-                    <TableCell>{item.payment_type}</TableCell>
-                    <TableCell>{format(date, 'dd MMM yyy, H:mm')}</TableCell>
-                    <TableCell>
-                      <DropdownTable expense={item} />
-                    </TableCell>
-                  </TableRow>
-                );
-              }}
-            </TableBody>
-          </Table>
-        </Suspense>
+              return (
+                <TableRow key={item.id}>
+                  <TableCell>{item.name}</TableCell>
+                  <TableCell>{item.amount}</TableCell>
+                  <TableCell>{expenseType}</TableCell>
+                  <TableCell>{item.payment_type}</TableCell>
+                  <TableCell>{format(date, 'dd MMM yyy, H:mm')}</TableCell>
+                  <TableCell>
+                    <DropdownTable expense={item} />
+                  </TableCell>
+                </TableRow>
+              );
+            }}
+          </TableBody>
+        </Table>
       </div>
     </section>
   );
