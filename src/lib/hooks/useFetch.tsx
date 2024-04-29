@@ -30,10 +30,14 @@ export const useFetch = <T,>({ action, user_id }: FetchProps) => {
     setIsLoading(false);
   };
 
+  const refetchData = () => {
+    fetchData();
+  };
+
   useEffect(() => {
     fetchData();
     //eslint-disable-next-line
   }, []);
 
-  return { isLoading, data, error, totalResults };
+  return { refetchData, isLoading, data, error, totalResults };
 };
