@@ -1,4 +1,5 @@
 'use client';
+import { useEffect } from 'react';
 import type { Expense } from '@constants/types/expenses/expenses';
 import { getExpenses } from '@lib/actions/expenses/get-expenses';
 import { useFetch } from '@lib/hooks/useFetch';
@@ -7,22 +8,23 @@ import { Card, CardBody } from '@nextui-org/card';
 
 export const OverviewSection = ({ user_id }: { user_id: string }) => {
   const setExpenses = useExpensesStore((state) => state.setExpenses);
-  const expenses = useExpensesStore((state) => state.expenses);
-  const { isLoading, data, error, totalResults } = useFetch<Expense>({
+  const setTotalResults = useExpensesStore((state) => state.setTotalResults);
+  const expenses = useExpensesStore.getState().expenses;
+
+  const { data, totalResults } = useFetch<Expense>({
     action: getExpenses,
     user_id,
   });
-  setExpenses(data);
 
   const totalExpenses = expenses.reduce(
     (sum, expense) => sum + parseFloat(expense.amount as any),
     0
   );
+
   const monthlyCommitments = () => {
     const monthlyPayments = expenses.filter(
       (expense) => expense.payment_type !== 'one-time'
     );
-    console.log(monthlyPayments);
 
     const commitmentsSummary = monthlyPayments.reduce(
       (sum, expense) => sum + parseFloat(expense.amount as any),
@@ -31,6 +33,14 @@ export const OverviewSection = ({ user_id }: { user_id: string }) => {
 
     return commitmentsSummary;
   };
+
+  useEffect(() => {
+    setExpenses(data);
+  }, [setExpenses, data]);
+
+  useEffect(() => {
+    setTotalResults(totalResults);
+  }, [totalResults, setTotalResults]);
 
   return (
     <div className="p-2">

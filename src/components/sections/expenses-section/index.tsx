@@ -39,20 +39,13 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
   const expenses = useExpensesStore((state) => state.expenses);
   const resultsPerPage = useExpensesStore((state) => state.resultsPerPage);
   const totalResults = useExpensesStore((state) => state.totalResults);
-  const setExpenses = useExpensesStore((state) => state.setExpenses);
-  const setTotalResults = useExpensesStore((state) => state.setTotalResults);
   const [page, setPage] = useState<number>(1);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'name',
     direction: 'ascending',
   });
 
-  const {
-    isLoading,
-    data,
-    error,
-    totalResults: allResults,
-  } = useFetch<Expense>({
+  const { isLoading } = useFetch<Expense>({
     action: getExpenses,
     user_id,
   });
@@ -80,17 +73,17 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
     page * resultsPerPage
   );
 
-  useEffect(() => {
-    if (!isLoading && data) {
-      setExpenses(data);
-    }
-  }, [isLoading, data, setExpenses]);
+  // useEffect(() => {
+  //   if (!isLoading && data) {
+  //     setExpenses(data);
+  //   }
+  // }, [isLoading, data, setExpenses]);
 
-  useEffect(() => {
-    if (!isLoading && allResults) {
-      setTotalResults(allResults);
-    }
-  }, [isLoading, allResults, setTotalResults, data]);
+  // useEffect(() => {
+  //   if (!isLoading && allResults) {
+  //     setTotalResults(allResults);
+  //   }
+  // }, [isLoading, allResults, setTotalResults, data]);
 
   return (
     <section className="w-full flex-1">
