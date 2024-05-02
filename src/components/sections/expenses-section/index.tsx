@@ -73,18 +73,6 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
     page * resultsPerPage
   );
 
-  // useEffect(() => {
-  //   if (!isLoading && data) {
-  //     setExpenses(data);
-  //   }
-  // }, [isLoading, data, setExpenses]);
-
-  // useEffect(() => {
-  //   if (!isLoading && allResults) {
-  //     setTotalResults(allResults);
-  //   }
-  // }, [isLoading, allResults, setTotalResults, data]);
-
   return (
     <section className="w-full flex-1">
       <div className="flex w-full flex-col h-full flex-1 gap-4 overflow-hidden">
