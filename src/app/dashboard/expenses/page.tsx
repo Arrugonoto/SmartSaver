@@ -15,8 +15,8 @@ export default async function Expenses() {
   const user_id = session?.user.id;
 
   return (
-    <main className="flex w-full flex-1 flex-col px-4 py-2">
-      <div className="flex flex-col gap-4 flex-1 py-2">
+    <main className="flex flex-col w-full h-full px-4 py-2">
+      <div className="flex flex-col h-full gap-4 py-2 px-4">
         <div className="flex justify-between">
           <h1>My expenses</h1>
           <CreateExpenseModal user_id={user_id} />

@@ -11,36 +11,36 @@ import { SideMenu } from '@components/menus/side-menu';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-   title: {
-      template: '%s | SmartSaver - spend less, save more',
-      default: 'SmartSaver - spend less, save more',
-   },
-   description:
-      'Finance tracking web app - by controlling spendings, increase Your savings',
+  title: {
+    template: '%s | SmartSaver - spend less, save more',
+    default: 'SmartSaver - spend less, save more',
+  },
+  description:
+    'Finance tracking web app - by controlling spendings, increase Your savings',
 };
 
 export default async function RootLayout({
-   children,
+  children,
 }: {
-   children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-   const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
-   return (
-      <html lang="en" className="dark">
-         <body className={inter.className}>
-            <div className="flex flex-col w-full h-screen">
-               <SessionProvider>
-                  <Header />
-                  <Providers>
-                     <div className="flex flex-1 h-full">
-                        {session && <SideMenu />}
-                        {children}
-                     </div>
-                  </Providers>
-               </SessionProvider>
-            </div>
-         </body>
-      </html>
-   );
+  return (
+    <html lang="en" className="dark">
+      <body className={inter.className}>
+        <div className="flex flex-col w-full h-[100vh]">
+          <SessionProvider>
+            <Header />
+            <Providers>
+              <div className="flex w-full h-full">
+                {session && <SideMenu />}
+                {children}
+              </div>
+            </Providers>
+          </SessionProvider>
+        </div>
+      </body>
+    </html>
+  );
 }

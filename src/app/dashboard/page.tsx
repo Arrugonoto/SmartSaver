@@ -12,7 +12,7 @@ export default async function Dashboard() {
   const user_id = session?.user.id;
 
   return (
-    <main className="flex flex-1 flex-col">
+    <main className="flex flex-col w-full h-full overflow-auto">
       <OverviewSection user_id={user_id} />
     </main>
   );
