@@ -16,6 +16,7 @@ import {
   TableCell,
   getKeyValue,
 } from '@nextui-org/table';
+import { AnnualSpendingsBarChart } from '@components/charts/annual-spendings-bar-chart';
 
 export const OverviewSection = ({ user_id }: { user_id: string }) => {
   const setExpenses = useExpensesStore((state) => state.setExpenses);
@@ -84,9 +85,9 @@ export const OverviewSection = ({ user_id }: { user_id: string }) => {
   }, [totalResults, setTotalResults]);
 
   return (
-    <div className="flex flex-col w-full h-full p-2">
+    <div className="flex flex-col w-full h-full p-2 gap-4">
       <h1 className="text-2xl mb-4">Spendings overview</h1>
-      <section className="flex flex-col w-full h-full">
+      <section className="flex flex-col w-full">
         <div className="flex gap-4">
           <Card className="max-w-[300px] w-full align-center justify-center">
             <CardBody className="gap-4">
@@ -103,9 +104,9 @@ export const OverviewSection = ({ user_id }: { user_id: string }) => {
         </div>
       </section>
       <section className="">
-        <p>Top 10 highest expenses</p>
-        <Card className="flex items-center max-w-[620px] min-h-[320px] p-4">
-          <Tabs aria-label="Options" className="w-auto">
+        <Card className="flex items-center max-w-[620px] min-h-[320px] p-4 gap-2">
+          <h2 className="text-xl">10 most expensive fees</h2>
+          <Tabs aria-label="Options" className="w-auto" size="sm" radius="lg">
             <Tab key="overall" title="Overall" className="w-full">
               <Table aria-label="10 highest expenses">
                 <TableHeader columns={columns}>
@@ -164,7 +165,9 @@ export const OverviewSection = ({ user_id }: { user_id: string }) => {
         </Card>
       </section>
       <section>
-        <div>spendings bar chart by months in year</div>
+        <Card className="h-full w-full p-4">
+          <AnnualSpendingsBarChart />
+        </Card>
         <div>spendings bar chart by current and previous month</div>
         <div>spendings by category pie chart for current month</div>
       </section>
