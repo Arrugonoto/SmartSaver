@@ -15,4 +15,5 @@ export type ExpenseIdRequired = Expense & { id: string };
 export type ExpenseCategories = {
   label: string;
   value: string;
+  color: string;
 };
