@@ -17,6 +17,7 @@ import {
   getKeyValue,
 } from '@nextui-org/table';
 import { AnnualSpendingsBarChart } from '@components/charts/annual-spendings-bar-chart';
+import { ExpenseCategoryPieChart } from '@components/charts/category-pie-chart';
 
 export const OverviewSection = ({ user_id }: { user_id: string }) => {
   const setExpenses = useExpensesStore((state) => state.setExpenses);
@@ -165,11 +166,13 @@ export const OverviewSection = ({ user_id }: { user_id: string }) => {
         </Card>
       </section>
       <section>
-        <Card className="h-full w-full p-4">
+        <Card className="w-full p-4">
           <AnnualSpendingsBarChart />
         </Card>
         <div>spendings bar chart by current and previous month</div>
-        <div>spendings by category pie chart for current month</div>
+        <Card className="w-full p-4">
+          <ExpenseCategoryPieChart />
+        </Card>
       </section>
     </div>
   );
