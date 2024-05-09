@@ -5,15 +5,6 @@ import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categor
 import { PieChart, Pie, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 import { useState, useEffect } from 'react';
 
-const data01 = [
-  { name: 'Group A', value: 400 },
-  { name: 'Group B', value: 300 },
-  { name: 'Group C', value: 300 },
-  { name: 'Group D', value: 200 },
-  { name: 'Group E', value: 278 },
-  { name: 'Group F', value: 189 },
-];
-
 const categoriesWithoutInitial = expenseCategoriesList.slice(1);
 
 type ChartElement = {
@@ -21,9 +12,32 @@ type ChartElement = {
   quantity: number;
 };
 
+const formatChartData = (expenses: any[]) => {
+  const filteredByMonth = expenses?.filter((expense) =>
+    expense.created_at.toString().includes('Apr')
+  );
+
+  const qtyByCategory = categoriesWithoutInitial.map((category) => {
+    const numOfFeesByCategory = filteredByMonth?.filter(
+      (expense) => expense.expense_type === category.value
+    );
+
+    if (numOfFeesByCategory && numOfFeesByCategory.length > 0) {
+      return {
+        name: category.label,
+        quantity: numOfFeesByCategory.length,
+      };
+    }
+  });
+
+  return qtyByCategory?.filter(
+    (category) => category !== undefined
+  ) as ChartElement[];
+};
+
 export const ExpenseCategoryPieChart = () => {
   const expenses = useStore(useExpensesStore, (state) => state.expenses);
-  const [chartData, setChartdata] = useState<ChartElement[]>([]);
+  const [chartData, setChartData] = useState<ChartElement[]>([]);
 
   const filteredByMonth = expenses?.filter((expense) =>
     expense.created_at.toString().includes('Apr')
@@ -46,6 +60,13 @@ export const ExpenseCategoryPieChart = () => {
     (category) => category !== undefined
   ) as ChartElement[];
 
+  useEffect(() => {
+    if (expenses) {
+      const processedData = formatChartData(expenses);
+      setChartData(processedData);
+    }
+  }, [expenses]);
+
   return (
     <div className="h-[400px] w-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -53,7 +74,7 @@ export const ExpenseCategoryPieChart = () => {
           <Pie
             dataKey="quantity"
             // isAnimationActive={false}
-            data={filteredQuantity}
+            data={chartData}
             cx="50%"
             cy="50%"
             outerRadius={80}
