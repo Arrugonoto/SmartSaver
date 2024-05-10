@@ -70,11 +70,11 @@ export const AnnualSpendingsBarChart = () => {
   }, [expenses]);
 
   return (
-    <div className="h-[500px] w-full">
+    <div className="h-[400px] w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           width={500}
-          height={300}
+          height={400}
           data={chartData}
           margin={{
             top: 5,
@@ -89,9 +89,11 @@ export const AnnualSpendingsBarChart = () => {
           <Tooltip />
           <Legend />
           <Bar
+            name="Total in month"
             dataKey="spendings"
             fill="#8884d8"
             activeBar={<Rectangle fill="pink" stroke="blue" />}
+            radius={[4, 4, 0, 0]}
           />
         </BarChart>
       </ResponsiveContainer>
