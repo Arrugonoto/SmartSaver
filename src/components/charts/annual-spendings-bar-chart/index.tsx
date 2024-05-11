@@ -92,8 +92,9 @@ export const AnnualSpendingsBarChart = () => {
             name="Total in month"
             dataKey="spendings"
             fill="#8884d8"
-            activeBar={<Rectangle fill="pink" stroke="blue" />}
+            activeBar={<Rectangle stroke="#000" />}
             radius={[4, 4, 0, 0]}
+            barSize={60}
           />
         </BarChart>
       </ResponsiveContainer>

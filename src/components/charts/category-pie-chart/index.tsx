@@ -2,7 +2,14 @@
 import { useExpensesStore } from '@store/expensesStore';
 import { useStore } from '@lib/hooks/useStore';
 import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
-import { PieChart, Pie, Legend, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  Legend,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from 'recharts';
 import { useState, useEffect } from 'react';
 
 const categoriesWithoutInitial = expenseCategoriesList.slice(1);
@@ -10,6 +17,7 @@ const categoriesWithoutInitial = expenseCategoriesList.slice(1);
 type ChartElement = {
   name: string;
   quantity: number;
+  color: string;
 };
 
 const formatChartData = (expenses: any[]) => {
@@ -26,6 +34,7 @@ const formatChartData = (expenses: any[]) => {
       return {
         name: category.label,
         quantity: numOfFeesByCategory.length,
+        color: category.color,
       };
     }
   });
@@ -39,48 +48,41 @@ export const ExpenseCategoryPieChart = () => {
   const expenses = useStore(useExpensesStore, (state) => state.expenses);
   const [chartData, setChartData] = useState<ChartElement[]>([]);
 
-  const filteredByMonth = expenses?.filter((expense) =>
-    expense.created_at.toString().includes('Apr')
-  );
-
-  const qtyByCategory = categoriesWithoutInitial.map((category) => {
-    const numOfFeesByCategory = filteredByMonth?.filter(
-      (expense) => expense.expense_type === category.value
-    );
-
-    if (numOfFeesByCategory && numOfFeesByCategory.length > 0) {
-      return {
-        name: category.label,
-        quantity: numOfFeesByCategory.length,
-      };
-    }
-  });
-
-  const filteredQuantity = qtyByCategory?.filter(
-    (category) => category !== undefined
-  ) as ChartElement[];
-
   useEffect(() => {
     if (expenses) {
       const processedData = formatChartData(expenses);
       setChartData(processedData);
     }
   }, [expenses]);
-
+  console.log(categoriesWithoutInitial[0].color);
   return (
-    <div className="h-[400px] w-full">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart width={400} height={400}>
+    <div className="flex h-[400px] w-full lg:w-2/5 justify-center">
+      <ResponsiveContainer width="40%" height="100%">
+        <PieChart width={300} height={400}>
           <Pie
             dataKey="quantity"
-            // isAnimationActive={false}
             data={chartData}
             cx="50%"
             cy="50%"
             outerRadius={80}
-            fill="#8884d8"
             label
-          />
+          >
+            {chartData?.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={`#${entry.color}`} />
+            ))}
+          </Pie>
+          {/* <Pie
+            dataKey="quantity"
+            data={chartData}
+            cx="50%"
+            cy="50%"
+            outerRadius={80}
+            label
+          >
+            {chartData?.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={`#${entry.color}`} />
+            ))}
+          </Pie> */}
           <Tooltip />
         </PieChart>
       </ResponsiveContainer>
