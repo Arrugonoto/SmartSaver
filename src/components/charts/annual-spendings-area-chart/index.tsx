@@ -1,12 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
 import {
-  BarChart,
-  Bar,
-  Rectangle,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
@@ -36,7 +34,8 @@ const months = [
 
 const formatChartData = (data: any[]) => {
   const chartData = months.map((month) => {
-    //filter spendings for each month separately
+    // filter spendings for each month separately
+    // and filter empty values(undefined)
     const eachMonthSpendings = data
       ?.map((expense) => {
         if (expense.created_at.toString().includes(month.abbreviation))
@@ -44,6 +43,7 @@ const formatChartData = (data: any[]) => {
       })
       .filter((amount) => amount !== undefined);
 
+    // sum values for each month to return total spendings in month
     const totalMonthlySpendings = eachMonthSpendings?.reduce(
       (sum, amount) => parseFloat(sum as any) + parseFloat(amount as any),
       0
@@ -51,28 +51,39 @@ const formatChartData = (data: any[]) => {
 
     return {
       name: month.name,
-      spendings: totalMonthlySpendings,
+      spendings: totalMonthlySpendings === 0 ? null : totalMonthlySpendings,
     };
   });
 
   return chartData as AnnualChartElement[];
 };
 
-export const AnnualSpendingsBarChart = () => {
+const getYears = (data: any[]) => {
+  const years = data.map((expense) => expense.created_at.getFullYear());
+
+  const uniqYears = [...new Set(years)];
+  return uniqYears as string[];
+};
+
+export const AnnualSpendingsAreaChart = () => {
   const expenses = useStore(useExpensesStore, (state) => state.expenses);
   const [chartData, setChartData] = useState<AnnualChartElement[]>([]);
+  const [dataYears, setDataYears] = useState<string[]>([]);
 
   useEffect(() => {
     if (expenses) {
       const data = formatChartData(expenses);
+      const years = getYears(expenses);
       setChartData(data);
+      setDataYears(years);
     }
   }, [expenses]);
+  console.log(dataYears);
 
   return (
     <div className="h-[400px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart
+        <AreaChart
           width={500}
           height={400}
           data={chartData}
@@ -83,20 +94,23 @@ export const AnnualSpendingsBarChart = () => {
             bottom: 5,
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
+          <Tooltip
+            labelStyle={{ color: '#000' }}
+            contentStyle={{
+              borderRadius: '0.3rem',
+            }}
+          />
           <Legend />
-          <Bar
+          <Area
+            type="bumpX"
             name="Total in month"
             dataKey="spendings"
-            fill="#8884d8"
-            activeBar={<Rectangle stroke="#000" />}
-            radius={[4, 4, 0, 0]}
-            barSize={60}
+            fill="#3182bd"
+            fillOpacity={0.2}
           />
-        </BarChart>
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   );
