@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AreaChart,
   Area,
@@ -12,6 +12,7 @@ import {
 import { useExpensesStore } from '@store/expensesStore';
 import { useStore } from '@lib/hooks/useStore';
 import { Select, SelectItem } from '@nextui-org/select';
+import { selectIcons } from '@constants/icons';
 
 type AnnualChartElement = {
   name: string;
@@ -68,16 +69,26 @@ const getYears = (data: any[]) => {
     const createdAt = new Date(expense.created_at);
     return createdAt.getFullYear().toString();
   });
-  const uniqYears = [...new Set(years)];
-  console.log(uniqYears);
-  return uniqYears as string[];
+  const uniqYears = [...new Set(years)].map((year) => {
+    return {
+      label: year,
+      value: year,
+    };
+  });
+  return uniqYears as { label: string; value: string }[];
 };
 
 export const AnnualSpendingsAreaChart = () => {
   const expenses = useStore(useExpensesStore, (state) => state.expenses);
   const [chartData, setChartData] = useState<AnnualChartElement[]>([]);
-  const [yearsOfData, setYearsOfData] = useState<string[]>([]);
-  const [filteredYear, setFilteredYear] = useState<string>('2024');
+  const [yearsOfData, setYearsOfData] = useState<
+    { label: string; value: string }[]
+  >([]);
+  const [selectedYear, setSelectedYear] = useState<string>('2024');
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedYear(e.target.value);
+  };
 
   useEffect(() => {
     if (expenses) {
@@ -88,21 +99,37 @@ export const AnnualSpendingsAreaChart = () => {
 
   useEffect(() => {
     if (expenses) {
-      const data = formatChartData(expenses, filteredYear);
+      const data = formatChartData(expenses, selectedYear);
 
       setChartData(data);
     }
-  }, [expenses, filteredYear]);
+  }, [expenses, selectedYear]);
 
   return (
-    <div className="w-full">
-      <Select label="Select an animal" className="max-w-xs">
-        {yearsOfData.map((year, index) => (
-          <SelectItem key={index} value={year}>
-            {year}
-          </SelectItem>
-        ))}
-      </Select>
+    <div className="flex flex-col w-full gap-12">
+      <div className="flex w-full justify-end">
+        {yearsOfData.length > 0 && (
+          <Select
+            label="Select year"
+            className="max-w-[200px]"
+            disallowEmptySelection={true}
+            startContent={<selectIcons.calendar />}
+            selectedKeys={[`${selectedYear}`]}
+            onChange={(e) => handleChange(e)}
+            variant="bordered"
+            size="sm"
+            radius="md"
+            classNames={{ label: 'pb-1' }}
+          >
+            {yearsOfData.map((year) => (
+              <SelectItem key={year.value} value={year.value}>
+                {year.label}
+              </SelectItem>
+            ))}
+          </Select>
+        )}
+      </div>
+
       <div className="h-[400px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
