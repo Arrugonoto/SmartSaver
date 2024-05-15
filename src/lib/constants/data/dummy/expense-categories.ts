@@ -45,7 +45,7 @@ export const expenseCategoriesList: ExpenseCategories[] = [
   {
     label: 'Self Improvement',
     value: 'self-improvement',
-    color: 'fffd18',
+    color: 'b0d800',
   },
   {
     label: 'Travel',
