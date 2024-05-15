@@ -11,12 +11,14 @@ import {
   Cell,
 } from 'recharts';
 import { useState, useEffect } from 'react';
+import { chartIcons } from '@constants/icons';
 
 const categoriesWithoutInitial = expenseCategoriesList.slice(1);
 
-type ChartElement = {
+type ChartData = {
   name: string;
   quantity: number;
+  percentageValue: number;
   color: string;
 };
 
@@ -24,15 +26,21 @@ const formatChartData = (expenses: any[]) => {
   const filteredByMonth = expenses?.filter((expense) =>
     expense.created_at.toString().includes('Apr')
   );
+  const totalExpensesInRange = filteredByMonth.length;
 
   const qtyByCategory = categoriesWithoutInitial.map((category) => {
     const numOfFeesByCategory = filteredByMonth?.filter(
       (expense) => expense.expense_type === category.value
     );
 
+    const calculatedPercent = parseFloat(
+      ((numOfFeesByCategory.length / totalExpensesInRange) * 100).toFixed(2)
+    );
+
     if (numOfFeesByCategory && numOfFeesByCategory.length > 0) {
       return {
         name: category.label,
+        percentageValue: calculatedPercent,
         quantity: numOfFeesByCategory.length,
         color: category.color,
       };
@@ -41,12 +49,12 @@ const formatChartData = (expenses: any[]) => {
 
   return qtyByCategory?.filter(
     (category) => category !== undefined
-  ) as ChartElement[];
+  ) as ChartData[];
 };
 
 export const ExpenseCategoryPieChart = () => {
   const expenses = useStore(useExpensesStore, (state) => state.expenses);
-  const [chartData, setChartData] = useState<ChartElement[]>([]);
+  const [chartData, setChartData] = useState<ChartData[]>([]);
 
   useEffect(() => {
     if (expenses) {
@@ -54,36 +62,71 @@ export const ExpenseCategoryPieChart = () => {
       setChartData(processedData);
     }
   }, [expenses]);
-  console.log(categoriesWithoutInitial[0].color);
+
   return (
-    <div className="flex h-[400px] w-full lg:w-2/5 justify-center">
-      <ResponsiveContainer width="40%" height="100%">
-        <PieChart width={300} height={400}>
+    <div className="flex flex-col min-h-[400px] w-full lg:w-2/5 justify-center">
+      <h3>Number of spendings</h3>
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart width={400} height={400}>
           <Pie
-            dataKey="quantity"
+            name="Spendings"
             data={chartData}
+            dataKey="quantity"
             cx="50%"
             cy="50%"
-            outerRadius={80}
+            innerRadius={60}
+            outerRadius={90}
             label
+            paddingAngle={4}
           >
             {chartData?.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={`#${entry.color}`} />
+              <Cell
+                key={`cell-${index}`}
+                fill={`#${entry.color}`}
+                stroke="transparent"
+              />
             ))}
           </Pie>
-          {/* <Pie
-            dataKey="quantity"
-            data={chartData}
-            cx="50%"
-            cy="50%"
-            outerRadius={80}
-            label
-          >
-            {chartData?.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={`#${entry.color}`} />
-            ))}
-          </Pie> */}
-          <Tooltip />
+
+          <Legend
+            iconType="rect"
+            content={
+              <ul className="flex gap-2 flex-wrap">
+                {chartData.map((entry, index) => (
+                  <li
+                    key={index}
+                    style={{
+                      display: 'flex',
+                      gap: '0.2rem',
+                      alignItems: 'center',
+                      color: `#${entry.color}`,
+                      whiteSpace: 'nowrap',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    <chartIcons.square />
+                    {`${entry.name} - ${entry.percentageValue}%`}
+                  </li>
+                ))}
+              </ul>
+            }
+          />
+          <Tooltip
+            contentStyle={{
+              borderRadius: '0.3rem',
+            }}
+            content={({ active, payload, label }) => {
+              if (active && payload && payload.length) {
+                return (
+                  <div className="bg-neutral-100 p-4 rounded-md text-black">
+                    <p className="label">{`Spendings : ${payload[0].value}`}</p>
+                  </div>
+                );
+              }
+
+              return null;
+            }}
+          />
         </PieChart>
       </ResponsiveContainer>
     </div>
