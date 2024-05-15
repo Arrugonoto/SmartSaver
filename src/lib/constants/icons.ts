@@ -1,7 +1,21 @@
-import { FaRegTrashCan, FaEllipsisVertical, FaPencil } from 'react-icons/fa6';
+import {
+  FaRegTrashCan,
+  FaEllipsisVertical,
+  FaPencil,
+  FaCalendarDays,
+  FaSquare,
+} from 'react-icons/fa6';
 
 export const tableIcons = {
-   delete: FaRegTrashCan,
-   menu: FaEllipsisVertical,
-   edit: FaPencil,
+  delete: FaRegTrashCan,
+  menu: FaEllipsisVertical,
+  edit: FaPencil,
+};
+
+export const selectIcons = {
+  calendar: FaCalendarDays,
+};
+
+export const chartIcons = {
+  square: FaSquare,
 };
