@@ -4,6 +4,7 @@ import {
   FaPencil,
   FaCalendarDays,
   FaSquare,
+  FaCalendar,
 } from 'react-icons/fa6';
 
 export const tableIcons = {
@@ -14,6 +15,7 @@ export const tableIcons = {
 
 export const selectIcons = {
   calendar: FaCalendarDays,
+  calendarEmpty: FaCalendar,
 };
 
 export const chartIcons = {
