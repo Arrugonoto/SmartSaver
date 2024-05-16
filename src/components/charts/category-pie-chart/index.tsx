@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 import { useState, useEffect } from 'react';
 import { chartIcons } from '@constants/icons';
+import type { Expense } from '@constants/types/expenses/expenses';
 
 const categoriesWithoutInitial = expenseCategoriesList.slice(1);
 
@@ -22,9 +23,12 @@ type ChartData = {
   color: string;
 };
 
-const formatChartData = (expenses: any[]) => {
-  const filteredByMonth = expenses?.filter((expense) =>
-    expense.created_at.toString().includes('Apr')
+const formatChartData = (expenses: Expense[]) => {
+  const filteredByMonth = expenses?.filter(
+    (expense) =>
+      expense.created_at.toString().includes('Apr') ||
+      expense.payment_type.toLocaleLowerCase().includes('monthly') ||
+      expense.payment_type.toLowerCase().includes('subscription')
   );
   const totalExpensesInRange = filteredByMonth.length;
 
@@ -74,7 +78,7 @@ export const ExpenseCategoryPieChart = () => {
             dataKey="quantity"
             cx="50%"
             cy="50%"
-            innerRadius={60}
+            innerRadius={64}
             outerRadius={90}
             label
             paddingAngle={4}
@@ -91,7 +95,7 @@ export const ExpenseCategoryPieChart = () => {
           <Legend
             iconType="rect"
             content={
-              <ul className="flex gap-2 flex-wrap">
+              <ul className="flex gap-4 flex-wrap">
                 {chartData.map((entry, index) => (
                   <li
                     key={index}
@@ -104,7 +108,7 @@ export const ExpenseCategoryPieChart = () => {
                       fontSize: '0.9rem',
                     }}
                   >
-                    <chartIcons.square />
+                    <chartIcons.square className="text-xs" />
                     {`${entry.name} - ${entry.percentageValue}%`}
                   </li>
                 ))}
