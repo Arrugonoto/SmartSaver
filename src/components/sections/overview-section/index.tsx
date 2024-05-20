@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import type { Expense } from '@constants/types/expenses/expenses';
 import { getExpenses } from '@lib/actions/expenses/get-expenses';
 import { useFetch } from '@lib/hooks/useFetch';
@@ -12,8 +12,28 @@ import { ExpenseCategoryBarChart } from '@components/charts/category-bar-chart';
 import { Select, SelectItem } from '@nextui-org/select';
 import { selectIcons } from '@constants/icons';
 import { TopSpendingsTabs } from '@components/tabs/top-spendings';
+import { months } from '@lib/constants/data/dummy/months';
+
+const getTotalInMonth = (expenses: Expense[], monthNumber: number) => {
+  const currentMonth = months[monthNumber].abbreviation;
+
+  const filteredByMonth = expenses?.filter(
+    (expense) =>
+      expense.created_at.toString().includes(currentMonth) ||
+      expense.payment_type.toLocaleLowerCase().includes('monthly') ||
+      expense.payment_type.toLowerCase().includes('subscription')
+  );
+
+  const totalInMonth = filteredByMonth.reduce(
+    (sum, expense) => sum + parseFloat(expense.amount as any),
+    0
+  );
+
+  return totalInMonth as number;
+};
 
 export const OverviewSection = ({ user_id }: { user_id: string }) => {
+  const [totalInMonth, setTotalInMonth] = useState<number>(0);
   const setExpenses = useExpensesStore((state) => state.setExpenses);
   const setTotalResults = useExpensesStore((state) => state.setTotalResults);
   const { data, totalResults } = useFetch<Expense>({
@@ -21,6 +41,7 @@ export const OverviewSection = ({ user_id }: { user_id: string }) => {
     user_id,
   });
   const expenses = useStore(useExpensesStore, (state) => state.expenses);
+  const currentMonth = new Date().getMonth();
 
   const totalExpenses = expenses?.reduce(
     (sum, expense) => sum + parseFloat(expense.amount as any),
@@ -33,11 +54,6 @@ export const OverviewSection = ({ user_id }: { user_id: string }) => {
       expense.payment_type.toLocaleLowerCase().includes('monthly') ||
       expense.payment_type.toLowerCase().includes('subscription')
   ).length;
-
-  const highestSubscriptions = expenses
-    ?.filter((expense) => expense.payment_type === 'subscription')
-    .sort((a, b) => parseFloat(b.amount as any) - parseFloat(a.amount as any))
-    .slice(0, 10);
 
   const monthlyCommitments = () => {
     const monthlyPayments = expenses?.filter(
@@ -60,11 +76,36 @@ export const OverviewSection = ({ user_id }: { user_id: string }) => {
     setTotalResults(totalResults);
   }, [totalResults, setTotalResults]);
 
+  useEffect(() => {
+    if (expenses) {
+      const total = getTotalInMonth(expenses, currentMonth);
+      setTotalInMonth(total);
+    }
+  }, [expenses, currentMonth]);
+
   return (
     <div className="flex flex-col w-full h-full p-2 gap-4 xl:pr-6">
-      <h1 className="text-2xl mb-4">Spendings overview</h1>
+      <h1 className="text-2xl mb-4">Expenses overview</h1>
       <section className="flex flex-col w-full gap-4">
         <div className="flex gap-2 w-full">
+          <Card className="w-full align-center justify-center">
+            <CardHeader className="justify-center">
+              <h2 className="text-center text-xl">
+                Spendings in {months[currentMonth].name}
+              </h2>
+            </CardHeader>
+            <CardBody>
+              <p className="text-center text-2xl">{totalInMonth}</p>
+            </CardBody>
+          </Card>
+          <Card className="w-full align-center justify-center">
+            <CardHeader className="justify-center">
+              <h2 className="text-center text-xl">Budget</h2>
+            </CardHeader>
+            <CardBody>
+              <p className="text-center text-xl">Set limit now</p>
+            </CardBody>
+          </Card>
           <Card className="w-full align-center justify-center">
             <CardHeader className="justify-center">
               <h2 className="text-center text-xl">Total spendings</h2>
@@ -79,22 +120,6 @@ export const OverviewSection = ({ user_id }: { user_id: string }) => {
             </CardHeader>
             <CardBody>
               <p className="text-center text-2xl">{monthlyCommitments()}</p>
-            </CardBody>
-          </Card>
-          <Card className="w-full align-center justify-center">
-            <CardHeader className="justify-center">
-              <h2 className="text-center text-xl">Expenses in May</h2>
-            </CardHeader>
-            <CardBody>
-              <p className="text-center text-2xl">{totalExpenses}</p>
-            </CardBody>
-          </Card>
-          <Card className="w-full align-center justify-center">
-            <CardHeader className="justify-center">
-              <h2 className="text-center text-xl">Budget</h2>
-            </CardHeader>
-            <CardBody>
-              <p className="text-center text-2xl">Set limit now</p>
             </CardBody>
           </Card>
         </div>
@@ -115,12 +140,6 @@ export const OverviewSection = ({ user_id }: { user_id: string }) => {
         </div>
       </section>
       <section className="flex flex-col pb-8 gap-4">
-        <Card className="w-full p-4">
-          <CardBody>
-            <AnnualSpendingsAreaChart />
-          </CardBody>
-        </Card>
-
         <Card className="flex flex-col w-full px-4 pt-4 gap-4">
           <CardBody className="w-full">
             <div className="flex w-full justify-between">
@@ -158,6 +177,12 @@ export const OverviewSection = ({ user_id }: { user_id: string }) => {
               <ExpenseCategoryPieChart />
               <ExpenseCategoryBarChart />
             </div>
+          </CardBody>
+        </Card>
+
+        <Card className="w-full p-4">
+          <CardBody>
+            <AnnualSpendingsAreaChart />
           </CardBody>
         </Card>
       </section>
