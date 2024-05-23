@@ -107,7 +107,7 @@ export const AnnualSpendingsAreaChart = () => {
 
   return (
     <div className="flex flex-col w-full gap-12">
-      <div className="flex w-full justify-end">
+      <div className="flex w-full justify-center">
         {yearsOfData.length > 0 && (
           <Select
             label="Select year"
