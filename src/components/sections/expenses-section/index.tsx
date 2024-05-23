@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useMemo, Suspense } from 'react';
+import { useState, useMemo, Suspense } from 'react';
 import {
   Table,
   TableHeader,
@@ -116,8 +116,6 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
         }}
         classNames={{
           base: 'overflow-hidden',
-          wrapper: 'bg-red-400',
-          table: '',
         }}
       >
         <TableHeader columns={columns}>
@@ -147,12 +145,19 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
               if (el.value === item.expense_type) return el.label;
             });
 
+            const paymentType =
+              item.payment_type === 'one-time'
+                ? 'One time'
+                : item.payment_type === 'subscription'
+                ? 'Subscription'
+                : 'Monthly';
+
             return (
               <TableRow key={item.id}>
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.amount}</TableCell>
                 <TableCell>{expenseType}</TableCell>
-                <TableCell>{item.payment_type}</TableCell>
+                <TableCell>{paymentType}</TableCell>
                 <TableCell>{format(date, 'dd MMM yyy, H:mm')}</TableCell>
                 <TableCell>
                   <DropdownTable expense={item} />

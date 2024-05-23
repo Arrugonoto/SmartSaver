@@ -20,6 +20,7 @@ const columns = [
     key: 'amount',
     label: 'AMOUNT',
   },
+  { key: 'payment_type', label: 'PAYMENT TYPE' },
 ];
 
 const sortExpensesByHighest = (expenses: Expense[]) => {
@@ -53,13 +54,22 @@ export const TopOverallSpendingsTable = ({
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>
       <TableBody items={tableData}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
+        {(item) => {
+          const paymentType =
+            item.payment_type === 'one-time'
+              ? 'One time'
+              : item.payment_type === 'subscription'
+              ? 'Subscription'
+              : 'Monthly';
+
+          return (
+            <TableRow key={item.id}>
+              <TableCell>{item.name}</TableCell>
+              <TableCell>{item.amount}</TableCell>
+              <TableCell>{paymentType}</TableCell>
+            </TableRow>
+          );
+        }}
       </TableBody>
     </Table>
   );
