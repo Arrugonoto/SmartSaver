@@ -11,16 +11,16 @@ import { AnnualChartSection } from '@components/sections/overview/annual-chart';
 
 const filterByDateRange = (data: Expense[], monthsRange: number) => {
   // function for filtering data based on range of dates
-  const currendDate = new Date();
+  const currentDate = new Date();
   const lastDayOfMonth = new Date(
-    currendDate.getFullYear(),
-    currendDate.getMonth() + 1,
+    currentDate.getFullYear(),
+    currentDate.getMonth() + 1,
     0
   );
   // get first day of first month in range
   const startDate = new Date(
-    currendDate.getFullYear(),
-    currendDate.getMonth() - monthsRange + 1,
+    currentDate.getFullYear(),
+    currentDate.getMonth() - monthsRange + 1,
     1
   );
 
