@@ -24,16 +24,16 @@ type ChartData = {
 };
 
 const formatChartData = (expenses: Expense[]) => {
-  const filteredByMonth = expenses?.filter(
-    (expense) =>
-      expense.created_at.toString().includes('Apr') ||
-      expense.payment_type.toLocaleLowerCase().includes('monthly') ||
-      expense.payment_type.toLowerCase().includes('subscription')
-  );
-  const totalExpensesInRange = filteredByMonth.length;
+  // const filteredByMonth = expenses?.filter(
+  //   (expense) =>
+  //     expense.created_at.toString().includes('Apr') ||
+  //     expense.payment_type.toLocaleLowerCase().includes('monthly') ||
+  //     expense.payment_type.toLowerCase().includes('subscription')
+  // );
+  const totalExpensesInRange = expenses.length;
 
   const qtyByCategory = categoriesWithoutInitial.map((category) => {
-    const numOfFeesByCategory = filteredByMonth?.filter(
+    const numOfFeesByCategory = expenses?.filter(
       (expense) => expense.expense_type === category.value
     );
 
@@ -56,8 +56,11 @@ const formatChartData = (expenses: Expense[]) => {
   ) as ChartData[];
 };
 
-export const ExpenseCategoryPieChart = () => {
-  const expenses = useStore(useExpensesStore, (state) => state.expenses);
+export const ExpenseCategoryPieChart = ({
+  expenses,
+}: {
+  expenses: Expense[];
+}) => {
   const [chartData, setChartData] = useState<ChartData[]>([]);
 
   useEffect(() => {

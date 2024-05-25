@@ -1,4 +1,5 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { useExpensesStore } from '@store/expensesStore';
 import { useStore } from '@lib/hooks/useStore';
 import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
@@ -14,7 +15,7 @@ import {
   YAxis,
   CartesianGrid,
 } from 'recharts';
-import { useState, useEffect } from 'react';
+import type { Expense } from '@constants/types/expenses/expenses';
 
 const categoriesWithoutInitial = expenseCategoriesList.slice(1);
 
@@ -25,12 +26,12 @@ type ChartElement = {
 };
 
 const formatChartData = (expenses: any[]) => {
-  const filteredByMonth = expenses?.filter((expense) =>
-    expense.created_at.toString().includes('Apr')
-  );
+  // const filteredByMonth = expenses?.filter((expense) =>
+  //   expense.created_at.toString().includes('Apr')
+  // );
 
   const qtyByCategory = categoriesWithoutInitial.map((category) => {
-    const expensesByCategory = filteredByMonth
+    const expensesByCategory = expenses
       ?.map((expense) => {
         if (expense.expense_type === category.value) return expense.amount;
       })
@@ -55,8 +56,11 @@ const formatChartData = (expenses: any[]) => {
   ) as ChartElement[];
 };
 
-export const ExpenseCategoryBarChart = () => {
-  const expenses = useStore(useExpensesStore, (state) => state.expenses);
+export const ExpenseCategoryBarChart = ({
+  expenses,
+}: {
+  expenses: Expense[];
+}) => {
   const [chartData, setChartData] = useState<ChartElement[]>([]);
 
   useEffect(() => {
@@ -67,7 +71,8 @@ export const ExpenseCategoryBarChart = () => {
   }, [expenses]);
 
   return (
-    <div className="flex h-[400px] w-full lg:w-3/5">
+    <div className="flex flex-col min-h-[400px] w-full lg:w-3/5 gap-8">
+      <h3>Total of individual spendings</h3>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           width={500}
@@ -82,7 +87,12 @@ export const ExpenseCategoryBarChart = () => {
         >
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
+          <Tooltip
+            labelStyle={{ color: '#000' }}
+            contentStyle={{
+              borderRadius: '0.3rem',
+            }}
+          />
           <Bar
             name="Total"
             dataKey="totalSpending"
@@ -90,7 +100,7 @@ export const ExpenseCategoryBarChart = () => {
             fill="#8884d8"
             activeBar={<Rectangle stroke="#000" />}
             radius={[4, 4, 0, 0]}
-            barSize={60}
+            barSize={40}
           >
             {chartData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={`#${entry.color}`} />
