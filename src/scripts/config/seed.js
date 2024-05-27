@@ -10,7 +10,7 @@ async function createUsersTable(client) {
         name VARCHAR(255) NOT NULL,
         email TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
-        created_At TIMESTAMP NOT NULL
+        created_at TIMESTAMP NOT NULL
       );
     `;
 
@@ -57,8 +57,8 @@ async function createExpensesTable(client) {
         expense_type VARCHAR(255) NOT NULL,
         payment_type VARCHAR(255) NOT NULL,
         description VARCHAR(255),
-        created_At TIMESTAMP NOT NULL,
-        updated_At TIMESTAMP
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP
       );
     `;
 
@@ -78,8 +78,8 @@ async function createBudgetLimitTable(client) {
          id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
          user_id UUID NOT NULL,
          budget_limit NUMERIC(1000, 2) NOT NULL,
-         created_At TIMESTAMP NOT NULL,
-         updated_At TIMESTAMP
+         created_at TIMESTAMP NOT NULL,
+         updated_at TIMESTAMP
        );
      `;
 
