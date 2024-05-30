@@ -11,7 +11,7 @@ export async function getBudgetLimit(user_id: string) {
       `;
 
     return {
-      data: userBudget.rows,
+      data: userBudget.rows[0],
       status: 'success',
     };
   } catch (error) {

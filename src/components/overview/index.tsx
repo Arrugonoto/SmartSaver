@@ -11,13 +11,13 @@ import { AnnualChartSection } from '@components/sections/overview/annual-chart';
 export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
   const setExpenses = useExpensesStore((state) => state.setExpenses);
   const setTotalResults = useExpensesStore((state) => state.setTotalResults);
-  const { data, totalResults } = useFetch<Expense>({
+  const { data, totalResults } = useFetch<Expense[]>({
     action: getExpenses,
     user_id,
   });
 
   useEffect(() => {
-    setExpenses(data);
+    if (data) setExpenses(data);
   }, [setExpenses, data]);
 
   useEffect(() => {
