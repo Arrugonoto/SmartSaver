@@ -46,18 +46,32 @@ export const TopSubscriptionsTable = ({
   }, [expenses]);
 
   return (
-    <Table aria-label="10 highest subscriptions">
+    <Table
+      aria-label="10 highest subscriptions"
+      className="h-[300px]"
+      isHeaderSticky
+    >
       <TableHeader columns={columns}>
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>
-      <TableBody items={tableData}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
+      <TableBody items={tableData} className="flex-1">
+        {(item) => {
+          const capitalizedName = item.name
+            ? item.name[0].toUpperCase() + item.name.slice(1)
+            : '';
+
+          return (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>
+                  {columnKey === 'name'
+                    ? capitalizedName
+                    : getKeyValue(item, columnKey)}
+                </TableCell>
+              )}
+            </TableRow>
+          );
+        }}
       </TableBody>
     </Table>
   );

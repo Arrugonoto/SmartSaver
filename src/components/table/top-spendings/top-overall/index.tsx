@@ -49,7 +49,11 @@ export const TopOverallSpendingsTable = ({
   }, [expenses]);
 
   return (
-    <Table aria-label="10 highest expenses">
+    <Table
+      aria-label="10 highest expenses"
+      className="h-[300px]"
+      isHeaderSticky
+    >
       <TableHeader columns={columns}>
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>
@@ -61,10 +65,12 @@ export const TopOverallSpendingsTable = ({
               : item.payment_type === 'subscription'
               ? 'Subscription'
               : 'Monthly';
+          const capitalizedName =
+            item.name[0].toUpperCase() + item.name.slice(1);
 
           return (
             <TableRow key={item.id}>
-              <TableCell>{item.name}</TableCell>
+              <TableCell>{capitalizedName}</TableCell>
               <TableCell>{item.amount}</TableCell>
               <TableCell>{paymentType}</TableCell>
             </TableRow>
