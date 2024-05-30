@@ -78,6 +78,7 @@ async function createBudgetLimitTable(client) {
          id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
          user_id UUID NOT NULL,
          budget_limit NUMERIC(1000, 2) NOT NULL,
+         first_limit NUMERIC(1000, 2) NOT NULL,
          created_at TIMESTAMP NOT NULL,
          updated_at TIMESTAMP
        );

@@ -27,8 +27,8 @@ export async function createBudgetLimit(formData: {
     const timeOfCreation = new Date().toISOString();
 
     const createNewBudgetLimit = await sql<BudgetLimit>`
-      INSERT INTO budget (user_id, budget_limit, created_at)
-      VALUES (${user_id}, ${budget_limit}, ${timeOfCreation})
+      INSERT INTO budget (user_id, budget_limit, first_limit, created_at)
+      VALUES (${user_id}, ${budget_limit}, ${budget_limit}, ${timeOfCreation})
       `;
   } catch (error) {
     const errorMessage = error instanceof Error && error.message;
