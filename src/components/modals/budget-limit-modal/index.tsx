@@ -9,15 +9,35 @@ import {
 } from '@nextui-org/modal';
 import { Button } from '@nextui-org/button';
 import { BudgetForm } from '@components/forms/budget-form';
+import { menuIcons } from '@lib/constants/icons';
+import { Tooltip } from '@nextui-org/tooltip';
 
-export const BudgetLimitModal = () => {
+export const BudgetLimitModal = ({ update }: { update?: boolean }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
-    <div>
-      <Button onPress={onOpen} color="primary" variant="flat" size="sm">
-        Set a budget limit
-      </Button>
+    <div className="z-[100]">
+      {!update && (
+        <Button onPress={onOpen} color="primary" variant="flat" size="sm">
+          Set a budget limit
+        </Button>
+      )}
+      {update && (
+        <Tooltip content="Change limit">
+          <Button
+            onPress={onOpen}
+            color="primary"
+            variant="flat"
+            size="md"
+            className="min-w-6 w-6 h-6 p-0 bg-transparent hover:bg-gray-400/20 rounded-full"
+          >
+            <div className="p-0">
+              <menuIcons.gear className="text-md" />
+            </div>
+          </Button>
+        </Tooltip>
+      )}
+
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -30,10 +50,10 @@ export const BudgetLimitModal = () => {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Set a budget limit
+                {update ? 'Update limit' : 'Set a budget limit'}
               </ModalHeader>
               <ModalBody>
-                <BudgetForm />
+                <BudgetForm update={update} />
               </ModalBody>
               <ModalFooter></ModalFooter>
             </>
