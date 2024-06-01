@@ -6,6 +6,12 @@ import { Card, CardHeader, CardBody } from '@nextui-org/card';
 import { TopSpendingsTabs } from '@components/tabs/top-spendings';
 import { months } from '@lib/constants/data/dummy/months';
 import type { Expense } from '@constants/types/expenses/expenses';
+import { BudgetLimitModal } from '@components/modals/budget-limit-modal';
+import { useFetch } from '@lib/hooks/useFetch';
+import { getBudgetLimit } from '@lib/actions/budget/get-budget-limit';
+import type { BudgetLimit } from '@lib/constants/types/budget/budget';
+import { useSession } from 'next-auth/react';
+import { Spinner } from '@nextui-org/spinner';
 
 const getTotalInMonth = (expenses: Expense[], monthNumber: number) => {
   const currentMonth = months[monthNumber].abbreviation;
@@ -25,28 +31,43 @@ const getTotalInMonth = (expenses: Expense[], monthNumber: number) => {
   return totalInMonth as number;
 };
 
+const sumMonthlyCommitments = (expenses: Expense[]) => {
+  const monthlyPayments = expenses?.filter(
+    (expense) => expense.payment_type !== 'one-time'
+  );
+
+  const commitmentsSummary = monthlyPayments?.reduce(
+    (sum, expense) => sum + parseFloat(expense.amount as any),
+    0
+  );
+
+  return commitmentsSummary;
+};
+
 export const ExpensesSummarySection = () => {
   const expenses = useStore(useExpensesStore, (state) => state.expenses);
   const [totalInMonth, setTotalInMonth] = useState<number>(0);
+  const [budgetLimit, setBudgetLimit] = useState<number | null>(null);
+  const [monthlyCommitments, setMonthlyCommitments] = useState<number | null>(
+    null
+  );
+  const [initialLoad, setInitialLoad] = useState<boolean>(true);
+  const { data: session } = useSession();
+  const user_id = session?.user.id;
+
   const currentMonth = new Date().getMonth();
+
+  const { data, isLoading } = useFetch<BudgetLimit>({
+    action: getBudgetLimit,
+    user_id,
+  });
+
+  console.log(data);
 
   const totalExpenses = expenses?.reduce(
     (sum, expense) => sum + parseFloat(expense.amount as any),
     0
   );
-
-  const monthlyCommitments = () => {
-    const monthlyPayments = expenses?.filter(
-      (expense) => expense.payment_type !== 'one-time'
-    );
-
-    const commitmentsSummary = monthlyPayments?.reduce(
-      (sum, expense) => sum + parseFloat(expense.amount as any),
-      0
-    );
-
-    return commitmentsSummary;
-  };
 
   useEffect(() => {
     if (expenses) {
@@ -54,6 +75,21 @@ export const ExpensesSummarySection = () => {
       setTotalInMonth(total);
     }
   }, [expenses, currentMonth]);
+
+  useEffect(() => {
+    if (expenses) {
+      const data = sumMonthlyCommitments(expenses);
+      setMonthlyCommitments(data);
+    }
+  }, [expenses]);
+
+  useEffect(() => {
+    if (data) {
+      const limit = data.budget_limit;
+      setBudgetLimit(limit);
+      setInitialLoad(false);
+    }
+  }, [data]);
 
   return (
     <section className="flex flex-col w-full gap-4">
@@ -68,14 +104,25 @@ export const ExpensesSummarySection = () => {
             <p className="text-center text-2xl">{totalInMonth}</p>
           </CardBody>
         </Card>
-        <Card className="w-full align-center justify-center">
+
+        <Card className="relative w-full align-center justify-center">
           <CardHeader className="justify-center">
             <h2 className="text-center text-xl">Budget</h2>
           </CardHeader>
-          <CardBody>
-            <p className="text-center text-xl">Set limit now</p>
+          <CardBody className="items-center">
+            {initialLoad || isLoading ? (
+              <Spinner />
+            ) : budgetLimit !== null ? (
+              <h2 className="text-center text-xl">{budgetLimit}</h2>
+            ) : (
+              <BudgetLimitModal />
+            )}
           </CardBody>
+          <div className="absolute top-1 right-1 z-[100]">
+            <BudgetLimitModal update />
+          </div>
         </Card>
+
         <Card className="w-full align-center justify-center">
           <CardHeader className="justify-center">
             <h2 className="text-center text-xl">Total spendings</h2>
@@ -89,10 +136,11 @@ export const ExpensesSummarySection = () => {
             <h2 className="text-center text-xl">Monthly commitments</h2>
           </CardHeader>
           <CardBody>
-            <p className="text-center text-2xl">{monthlyCommitments()}</p>
+            <p className="text-center text-2xl">{monthlyCommitments}</p>
           </CardBody>
         </Card>
       </div>
+
       <div className="flex w-full gap-2">
         <Card className="w-full">
           <CardBody>
