@@ -10,7 +10,7 @@ export const months: MonthType[] = [
   { name: 'March', abbreviation: 'Mar', numeric: '03' },
   { name: 'April', abbreviation: 'Apr', numeric: '04' },
   { name: 'May', abbreviation: 'May', numeric: '05' },
-  { name: 'June', abbreviation: 'June', numeric: '06' },
+  { name: 'June', abbreviation: 'Jun', numeric: '06' },
   { name: 'July', abbreviation: 'July', numeric: '07' },
   { name: 'August', abbreviation: 'Aug', numeric: '08' },
   { name: 'September', abbreviation: 'Sept', numeric: '09' },
