@@ -27,11 +27,13 @@ export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
   return (
     <div className="flex flex-col w-full h-full p-2 gap-4 xl:pr-6">
       <h1 className="text-2xl mb-4">Expenses overview</h1>
-      <ExpensesSummarySection />
+      <div className="flex flex-col gap-6">
+        <ExpensesSummarySection />
 
-      <MonthlyChartsSection />
+        <MonthlyChartsSection />
 
-      <AnnualChartSection />
+        <AnnualChartSection />
+      </div>
     </div>
   );
 };
