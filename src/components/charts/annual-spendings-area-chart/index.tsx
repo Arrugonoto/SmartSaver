@@ -13,26 +13,14 @@ import { useExpensesStore } from '@store/expensesStore';
 import { useStore } from '@lib/hooks/useStore';
 import { Select, SelectItem } from '@nextui-org/select';
 import { selectIcons } from '@constants/icons';
+import { months } from '@lib/constants/data/dummy/months';
 
 type AnnualChartElement = {
   name: string;
   spendings: number;
 };
 
-const months = [
-  { name: 'January', abbreviation: 'Jan', numeric: '01' },
-  { name: 'February', abbreviation: 'Feb', numeric: '02' },
-  { name: 'March', abbreviation: 'Mar', numeric: '03' },
-  { name: 'April', abbreviation: 'Apr', numeric: '04' },
-  { name: 'May', abbreviation: 'May', numeric: '05' },
-  { name: 'June', abbreviation: 'June', numeric: '06' },
-  { name: 'July', abbreviation: 'July', numeric: '07' },
-  { name: 'August', abbreviation: 'Aug', numeric: '08' },
-  { name: 'September', abbreviation: 'Sept', numeric: '09' },
-  { name: 'October', abbreviation: 'Oct', numeric: '10' },
-  { name: 'November', abbreviation: 'Nov', numeric: '11' },
-  { name: 'December', abbreviation: 'Dec', numeric: '12' },
-];
+const currentYear = new Date().getFullYear().toString();
 
 const formatChartData = (data: any[], year: string) => {
   const filteredByYear = data.filter((expense) =>
@@ -84,7 +72,7 @@ export const AnnualSpendingsAreaChart = () => {
   const [yearsOfData, setYearsOfData] = useState<
     { label: string; value: string }[]
   >([]);
-  const [selectedYear, setSelectedYear] = useState<string>('2024');
+  const [selectedYear, setSelectedYear] = useState<string>(currentYear);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedYear(e.target.value);
@@ -107,7 +95,10 @@ export const AnnualSpendingsAreaChart = () => {
 
   return (
     <div className="flex flex-col w-full gap-12">
-      <div className="flex w-full justify-center">
+      <div className="flex w-full justify-between items-center">
+        <div className="px-4">
+          <h3 className="font-medium text-lg">Annual summary of expenses</h3>
+        </div>
         {yearsOfData.length > 0 && (
           <Select
             label="Select year"

@@ -1,6 +1,4 @@
 'use client';
-import { useExpensesStore } from '@store/expensesStore';
-import { useStore } from '@lib/hooks/useStore';
 import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
 import {
   PieChart,
@@ -24,12 +22,6 @@ type ChartData = {
 };
 
 const formatChartData = (expenses: Expense[]) => {
-  // const filteredByMonth = expenses?.filter(
-  //   (expense) =>
-  //     expense.created_at.toString().includes('Apr') ||
-  //     expense.payment_type.toLocaleLowerCase().includes('monthly') ||
-  //     expense.payment_type.toLowerCase().includes('subscription')
-  // );
   const totalExpensesInRange = expenses.length;
 
   const qtyByCategory = categoriesWithoutInitial.map((category) => {
@@ -72,7 +64,7 @@ export const ExpenseCategoryPieChart = ({
 
   return (
     <div className="flex flex-col min-h-[400px] w-full lg:w-2/5 justify-center">
-      <h3>Number of spendings</h3>
+      <h3 className="font-medium">Summary by category</h3>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart width={400} height={400}>
           <Pie
@@ -84,7 +76,7 @@ export const ExpenseCategoryPieChart = ({
             innerRadius={64}
             outerRadius={90}
             label
-            paddingAngle={4}
+            paddingAngle={2}
           >
             {chartData?.map((entry, index) => (
               <Cell

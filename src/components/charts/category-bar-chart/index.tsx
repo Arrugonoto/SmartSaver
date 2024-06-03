@@ -26,10 +26,6 @@ type ChartElement = {
 };
 
 const formatChartData = (expenses: any[]) => {
-  // const filteredByMonth = expenses?.filter((expense) =>
-  //   expense.created_at.toString().includes('Apr')
-  // );
-
   const qtyByCategory = categoriesWithoutInitial.map((category) => {
     const expensesByCategory = expenses
       ?.map((expense) => {
@@ -72,11 +68,11 @@ export const ExpenseCategoryBarChart = ({
 
   return (
     <div className="flex flex-col min-h-[400px] w-full lg:w-3/5 gap-8">
-      <h3>Total of individual spendings</h3>
+      <h3 className="font-medium">Total by category</h3>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           width={500}
-          height={400}
+          height={380}
           data={chartData}
           margin={{
             top: 5,
@@ -96,7 +92,6 @@ export const ExpenseCategoryBarChart = ({
           <Bar
             name="Total"
             dataKey="totalSpending"
-            label={{ position: 'top' }}
             fill="#8884d8"
             activeBar={<Rectangle stroke="#000" />}
             radius={[4, 4, 0, 0]}
