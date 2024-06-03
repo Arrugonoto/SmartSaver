@@ -78,21 +78,33 @@ export const MonthlyChartsSection = () => {
   const [dataByDates, setDataByDates] = useState<Expense[]>([]);
 
   const totalNumOfExpensesInMonth = dataByDates.length;
+  const OneTimeSpendings = dataByDates.filter(
+    (expense) => expense.payment_type === 'one-time'
+  );
+  const numOfSubsAndMonthly = dataByDates?.filter(
+    (expense) =>
+      expense.payment_type === 'monthly' ||
+      expense.payment_type === 'subscription'
+  );
 
   useEffect(() => {
     if (expenses) {
       const data = switchDateRange(expenses, dateRange);
-      console.log(data);
       setDataByDates(data);
     }
   }, [expenses, dateRange]);
 
   return (
     <section>
-      <Card className="flex flex-col w-full px-4 pt-4 gap-4">
-        <CardBody className="w-full">
-          <div className="flex w-full justify-between">
-            <p>Total number of expenses: {totalNumOfExpensesInMonth}</p>
+      <Card className="flex flex-col w-full pt-2 px-4 gap-4">
+        <CardBody className="w-full gap-4">
+          <div className="flex w-full justify-between items-center bg-content2 px-4 py-1 rounded-lg">
+            <div>
+              <p>Total expenses: {totalNumOfExpensesInMonth}</p>
+              <p>One time: {OneTimeSpendings?.length ?? 0}</p>
+              <p>Commitments: {numOfSubsAndMonthly?.length ?? 0}</p>
+            </div>
+
             <MonthRangeSelect
               dateRange={dateRange}
               setDateRange={setDateRange}

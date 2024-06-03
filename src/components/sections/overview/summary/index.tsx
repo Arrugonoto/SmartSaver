@@ -11,7 +11,7 @@ import { useFetch } from '@lib/hooks/useFetch';
 import { getBudgetLimit } from '@lib/actions/budget/get-budget-limit';
 import type { BudgetLimit } from '@lib/constants/types/budget/budget';
 import { useSession } from 'next-auth/react';
-import { Spinner } from '@nextui-org/spinner';
+import { SpendingsWithBudgetChart } from '@components/charts/spendings-with-budget-chart';
 
 const getTotalInMonth = (expenses: Expense[], monthNumber: number) => {
   const currentMonth = months[monthNumber].abbreviation;
@@ -62,8 +62,6 @@ export const ExpensesSummarySection = () => {
     user_id,
   });
 
-  console.log(data);
-
   const totalExpenses = expenses?.reduce(
     (sum, expense) => sum + parseFloat(expense.amount as any),
     0
@@ -87,8 +85,8 @@ export const ExpensesSummarySection = () => {
     if (data) {
       const limit = data.budget_limit;
       setBudgetLimit(limit);
-      setInitialLoad(false);
     }
+    setInitialLoad(false);
   }, [data]);
 
   return (
@@ -110,17 +108,18 @@ export const ExpensesSummarySection = () => {
             <h2 className="text-center text-xl">Budget</h2>
           </CardHeader>
           <CardBody className="items-center">
-            {initialLoad || isLoading ? (
-              <Spinner />
-            ) : budgetLimit !== null ? (
+            {!initialLoad && !isLoading && budgetLimit !== null ? (
               <h2 className="text-center text-xl">{budgetLimit}</h2>
             ) : (
               <BudgetLimitModal />
             )}
           </CardBody>
-          <div className="absolute top-1 right-1 z-[100]">
-            <BudgetLimitModal update />
-          </div>
+
+          {budgetLimit && (
+            <div className="absolute top-1 right-1 z-[100]">
+              <BudgetLimitModal update />
+            </div>
+          )}
         </Card>
 
         <Card className="w-full align-center justify-center">
@@ -142,14 +141,12 @@ export const ExpensesSummarySection = () => {
       </div>
 
       <div className="flex w-full gap-2">
-        <Card className="w-full">
-          <CardBody>
-            <div className="w-full">
-              spendings bar chart by current and previous month
-            </div>
+        <Card className="w-1/2">
+          <CardBody className="">
+            <SpendingsWithBudgetChart />
           </CardBody>
         </Card>
-        <Card className="flex items-center min-h-[320px] max-w-[640px] w-full p-4 gap-2">
+        <Card className="flex items-center min-h-[320px] w-1/2 p-4 gap-2">
           <h2 className="text-xl">10 most expensive spendings</h2>
           <CardBody>
             <TopSpendingsTabs />
