@@ -10,14 +10,11 @@ import { months } from '@lib/constants/data/dummy/months';
 import {
   ComposedChart,
   Line,
-  Area,
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   Legend,
-  Scatter,
   ResponsiveContainer,
 } from 'recharts';
 
@@ -26,51 +23,6 @@ type ChartElement = {
   spendings: number;
   budget: number;
 };
-
-const data = [
-  {
-    name: 'Page A',
-    uv: 590,
-    pv: 800,
-    amt: 1400,
-    cnt: 490,
-  },
-  {
-    name: 'Page B',
-    uv: 868,
-    pv: 967,
-    amt: 1506,
-    cnt: 590,
-  },
-  {
-    name: 'Page C',
-    uv: 1397,
-    pv: 1098,
-    amt: 989,
-    cnt: 350,
-  },
-  {
-    name: 'Page D',
-    uv: 1480,
-    pv: 1200,
-    amt: 1228,
-    cnt: 480,
-  },
-  {
-    name: 'Page E',
-    uv: 1520,
-    pv: 1108,
-    amt: 1100,
-    cnt: 460,
-  },
-  {
-    name: 'Page F',
-    uv: 1400,
-    pv: 680,
-    amt: 1700,
-    cnt: 380,
-  },
-];
 
 const getCurrentMonthData = (data: Expense[]) => {
   // function for filtering data based on range of dates
@@ -134,12 +86,10 @@ const formatChartData = (data: any[], budgetLimit: number) => {
     };
   });
 
-  console.log(formattedData);
-
   return formattedData?.filter((month) => month.spendings) as ChartElement[];
 };
 
-export const MonthlySpendingsChart = () => {
+export const SpendingsWithBudgetChart = () => {
   const expenses = useStore(useExpensesStore, (state) => state.expenses);
   const { data: session } = useSession();
   const user_id = session?.user.id;
@@ -168,7 +118,10 @@ export const MonthlySpendingsChart = () => {
   }, [rawData, budgetData]);
 
   return (
-    <div className="min-h-[400px] w-full">
+    <div className="flex flex-col min-h-[400px] w-full gap-4">
+      <div className="px-4">
+        <h3 className="font-medium text-lg">Expenses with budged</h3>
+      </div>
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart
           width={500}
@@ -193,10 +146,11 @@ export const MonthlySpendingsChart = () => {
           <Bar
             dataKey="spendings"
             barSize={30}
-            fill="#8884d8"
+            fill="#3182bd"
+            fillOpacity={0.8}
             radius={[4, 4, 0, 0]}
           />
-          <Line type="monotone" dataKey="budget" stroke="#ff7300" />
+          <Line type="monotone" dataKey="budget" stroke="#3bb900" />
         </ComposedChart>
       </ResponsiveContainer>
     </div>
