@@ -1,5 +1,5 @@
 'use client';
-import { useState, useMemo, Suspense } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
   Table,
   TableHeader,
@@ -19,6 +19,15 @@ import {
 import type { Expense } from '@constants/types/expenses/expenses';
 import { format } from 'date-fns';
 import { DropdownTable } from '@components/dropdowns/dropdown-table';
+import {
+  DropdownTrigger,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem,
+} from '@nextui-org/dropdown';
+import { Input } from '@nextui-org/input';
+import { Button } from '@nextui-org/button';
+import { Select, SelectItem } from '@nextui-org/select';
 import { tableIcons } from '@constants/icons';
 import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
 import { useExpensesStore } from '@store/expensesStore';
@@ -34,7 +43,7 @@ const columns = [
 ];
 
 //FIXME: ADD DESCRIPTION AS ACCORDION
-export const ExpensesSection = ({ user_id }: { user_id: string }) => {
+export const ExpensesSection = () => {
   const expenses = useStore(useExpensesStore, (state) => state.expenses);
   const resultsPerPage =
     useStore(useExpensesStore, (state) => state.resultsPerPage) ?? 20;
@@ -48,6 +57,7 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
     direction: 'ascending',
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [searchValue, setSearchValue] = useState<string>('');
 
   const sortedData = useMemo(() => {
     setIsLoading(true);
@@ -69,15 +79,22 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
     return sorted;
   }, [sortDescriptor, expenses]);
 
-  if (!totalResults) {
-    return (
-      <div>
-        <Spinner />
-      </div>
-    );
-  }
+  const searchedData = useMemo(() => {
+    let data: Expense[] = [];
+    if (sortedData && sortedData.length > 0) {
+      data = [...sortedData];
+    }
 
-  const paginatedData = sortedData?.slice(
+    if (sortedData && searchValue) {
+      data = sortedData?.filter((expense) =>
+        expense.name.toLowerCase().includes(searchValue.toLowerCase())
+      );
+    }
+
+    return data;
+  }, [searchValue, sortedData]);
+
+  const paginatedData = searchedData?.slice(
     (page - 1) * resultsPerPage,
     page * resultsPerPage
   );
@@ -88,6 +105,87 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
     setIsLoading(false);
   };
 
+  const handleSearchChange = useCallback((value?: string) => {
+    if (value) {
+      setSearchValue(value);
+      setPage(1);
+    } else {
+      setSearchValue('');
+    }
+  }, []);
+
+  const onInputClear = React.useCallback(() => {
+    setSearchValue('');
+    setPage(1);
+  }, []);
+
+  const topContent = React.useMemo(() => {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between gap-3 items-end">
+          <Input
+            isClearable
+            type="search"
+            className="w-full max-w-[200px]"
+            placeholder="Search by name..."
+            value={searchValue}
+            onValueChange={handleSearchChange}
+            onClear={() => onInputClear}
+          />
+          <div className="flex gap-3">
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button variant="flat">Category</Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectionMode="multiple"
+              >
+                <DropdownItem className="capitalize"></DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button variant="flat">Payment</Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectionMode="multiple"
+              >
+                <DropdownItem className="capitalize"></DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+            <Button color="primary">Add New</Button>
+          </div>
+        </div>
+        <Select
+          label="Results per page"
+          name="expense_type"
+          disabledKeys={['']}
+        >
+          {expenseCategoriesList.map((expense) => (
+            <SelectItem key={expense.value} value={expense.value}>
+              {expense.label}
+            </SelectItem>
+          ))}
+        </Select>
+      </div>
+    );
+  }, [searchValue, handleSearchChange, onInputClear]);
+
+  if (!totalResults) {
+    return (
+      <div>
+        <Spinner />
+      </div>
+    );
+  }
+
   return (
     <section className="flex w-full h-full overflow-auto">
       <Table
@@ -96,7 +194,9 @@ export const ExpensesSection = ({ user_id }: { user_id: string }) => {
         sortDescriptor={sortDescriptor}
         selectionMode="single"
         color="primary"
+        topContent={topContent}
         bottomContent={
+          totalResults &&
           totalResults > 0 && (
             <div className="flex w-full justify-center">
               <Pagination
