@@ -28,8 +28,10 @@ import {
 import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import { Select, SelectItem } from '@nextui-org/select';
+import type { Selection } from '@nextui-org/react';
 import { tableIcons } from '@constants/icons';
 import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
+import { paymentCategory } from '@lib/constants/data/dummy/payment-category';
 import { useExpensesStore } from '@store/expensesStore';
 import { useStore } from '@lib/hooks/useStore';
 
@@ -41,6 +43,8 @@ const columns = [
   { key: 'created_at', label: 'LAST CHANGE' },
   { key: 'actions', label: 'ACTIONS' },
 ];
+
+const categoriesWithoutEmpty = expenseCategoriesList.slice(1);
 
 //FIXME: ADD DESCRIPTION AS ACCORDION
 export const ExpensesSection = () => {
@@ -58,6 +62,8 @@ export const ExpensesSection = () => {
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<Selection>('all');
+  const [selectedPayment, setSelectedPayment] = useState<Selection>('all');
 
   const sortedData = useMemo(() => {
     setIsLoading(true);
@@ -80,19 +86,34 @@ export const ExpensesSection = () => {
   }, [sortDescriptor, expenses]);
 
   const searchedData = useMemo(() => {
-    let data: Expense[] = [];
-    if (sortedData && sortedData.length > 0) {
-      data = [...sortedData];
-    }
+    let data: Expense[] = sortedData as Expense[];
 
     if (sortedData && searchValue) {
-      data = sortedData?.filter((expense) =>
+      data = data.filter((expense) =>
         expense.name.toLowerCase().includes(searchValue.toLowerCase())
       );
     }
 
+    if (
+      selectedCategory !== 'all' &&
+      Array.from(selectedCategory).length !== categoriesWithoutEmpty.length
+    ) {
+      data = data.filter((expense) =>
+        Array.from(selectedCategory).includes(expense.expense_type)
+      );
+    }
+
+    if (
+      selectedPayment !== 'all' &&
+      Array.from(selectedPayment).length !== paymentCategory.length
+    ) {
+      data = data.filter((expense) =>
+        Array.from(selectedPayment).includes(expense.payment_type)
+      );
+    }
+
     return data;
-  }, [searchValue, sortedData]);
+  }, [searchValue, sortedData, selectedCategory, selectedPayment]);
 
   const paginatedData = searchedData?.slice(
     (page - 1) * resultsPerPage,
@@ -139,11 +160,17 @@ export const ExpensesSection = () => {
               </DropdownTrigger>
               <DropdownMenu
                 disallowEmptySelection
-                aria-label="Table Columns"
+                aria-label="Expense Category"
                 closeOnSelect={false}
                 selectionMode="multiple"
+                selectedKeys={selectedCategory}
+                onSelectionChange={setSelectedCategory}
               >
-                <DropdownItem className="capitalize"></DropdownItem>
+                {categoriesWithoutEmpty.map((category) => (
+                  <DropdownItem key={category.value} className="capitalize">
+                    {category.label}
+                  </DropdownItem>
+                ))}
               </DropdownMenu>
             </Dropdown>
 
@@ -153,11 +180,17 @@ export const ExpensesSection = () => {
               </DropdownTrigger>
               <DropdownMenu
                 disallowEmptySelection
-                aria-label="Table Columns"
+                aria-label="Payment Category"
                 closeOnSelect={false}
                 selectionMode="multiple"
+                selectedKeys={selectedPayment}
+                onSelectionChange={setSelectedPayment}
               >
-                <DropdownItem className="capitalize"></DropdownItem>
+                {paymentCategory.map((payment) => (
+                  <DropdownItem key={payment.value} className="capitalize">
+                    {payment.label}
+                  </DropdownItem>
+                ))}
               </DropdownMenu>
             </Dropdown>
             <Button color="primary">Add New</Button>
@@ -176,7 +209,13 @@ export const ExpensesSection = () => {
         </Select>
       </div>
     );
-  }, [searchValue, handleSearchChange, onInputClear]);
+  }, [
+    searchValue,
+    handleSearchChange,
+    onInputClear,
+    selectedCategory,
+    selectedPayment,
+  ]);
 
   if (!totalResults) {
     return (
@@ -215,7 +254,7 @@ export const ExpensesSection = () => {
           setSortDescriptor(descriptor);
         }}
         classNames={{
-          base: 'overflow-hidden',
+          base: 'overflow-y-hidden',
         }}
       >
         <TableHeader columns={columns}>
