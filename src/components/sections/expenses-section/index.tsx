@@ -145,6 +145,8 @@ export const ExpensesSection = () => {
     [setResultsPerPage]
   );
 
+  console.log(totalResults);
+
   const onInputClear = useCallback(() => {
     setSearchValue('');
     setPage(1);
@@ -259,7 +261,7 @@ export const ExpensesSection = () => {
           totalResults > 0 && (
             <div className="flex w-full justify-center">
               <Pagination
-                total={Math.ceil(totalResults / 20)}
+                total={Math.ceil(totalResults / resultsPerPage)}
                 initialPage={1}
                 variant="faded"
                 showControls={true}
