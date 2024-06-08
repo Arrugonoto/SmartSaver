@@ -29,7 +29,6 @@ import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import { Select, SelectItem } from '@nextui-org/select';
 import type { Selection } from '@nextui-org/react';
-import { tableIcons } from '@constants/icons';
 import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
 import { paymentCategory } from '@lib/constants/data/dummy/payment-category';
 import { useExpensesStore } from '@store/expensesStore';
@@ -54,6 +53,9 @@ export const ExpensesSection = () => {
   const totalResults = useStore(
     useExpensesStore,
     (state) => state.totalResults
+  );
+  const setResultsPerPage = useExpensesStore(
+    (state) => state.setResultsPerPage
   );
   const [page, setPage] = useState<number>(1);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
@@ -135,12 +137,20 @@ export const ExpensesSection = () => {
     }
   }, []);
 
-  const onInputClear = React.useCallback(() => {
+  const handleSelectChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const results = parseInt(e.target.value);
+      setResultsPerPage(results);
+    },
+    [setResultsPerPage]
+  );
+
+  const onInputClear = useCallback(() => {
     setSearchValue('');
     setPage(1);
   }, []);
 
-  const topContent = React.useMemo(() => {
+  const topContent = useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end">
@@ -196,17 +206,24 @@ export const ExpensesSection = () => {
             <Button color="primary">Add New</Button>
           </div>
         </div>
-        <Select
-          label="Results per page"
-          name="expense_type"
-          disabledKeys={['']}
-        >
-          {expenseCategoriesList.map((expense) => (
-            <SelectItem key={expense.value} value={expense.value}>
-              {expense.label}
-            </SelectItem>
-          ))}
-        </Select>
+        <div className="flex justify-between">
+          <p>Total spendings: {totalResults}</p>
+          <Select
+            disallowEmptySelection
+            size="md"
+            label="Rows per page"
+            name="expense_type"
+            labelPlacement="outside-left"
+            selectedKeys={[`${resultsPerPage}`]}
+            onChange={(e) => handleSelectChange(e)}
+            className="max-w-[220px] whitespace-nowrap items-center"
+          >
+            <SelectItem key={'10'}>10</SelectItem>
+            <SelectItem key={'20'}>20</SelectItem>
+            <SelectItem key={'30'}>30</SelectItem>
+            <SelectItem key={'50'}>50</SelectItem>
+          </Select>
+        </div>
       </div>
     );
   }, [
@@ -215,6 +232,9 @@ export const ExpensesSection = () => {
     onInputClear,
     selectedCategory,
     selectedPayment,
+    totalResults,
+    resultsPerPage,
+    handleSelectChange,
   ]);
 
   if (!totalResults) {
