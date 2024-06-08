@@ -11,7 +11,7 @@ export async function getExpenses(user_id: string) {
       `;
 
     const totalResults = await sql`
-      SELECT COUNT(*) AS total_pages
+      SELECT COUNT(*) AS total_results
       FROM expenses
       WHERE user_id = ${user_id}
       `;
@@ -20,9 +20,11 @@ export async function getExpenses(user_id: string) {
       return { message: `You have no expenses to keep track of` };
     }
 
+    console.log(totalResults.rows[0].total_results);
+
     return {
       data: userExpenses.rows,
-      totalResults: totalResults.rowCount,
+      totalResults: totalResults.rows[0].total_results,
       status: 'success',
     };
   } catch (error) {
