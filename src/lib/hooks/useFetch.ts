@@ -16,12 +16,13 @@ export const useFetch = <T>({ action, user_id }: FetchProps) => {
 
     try {
       const result = await action(user_id);
+      const numOfResults = parseInt(result.totalResults);
 
       if (result.error) {
         setError(result.error.message);
       } else {
         setData(result.data);
-        setTotalResults(result.totalResults);
+        setTotalResults(numOfResults);
       }
     } catch (error) {
       setError(error as Error);
