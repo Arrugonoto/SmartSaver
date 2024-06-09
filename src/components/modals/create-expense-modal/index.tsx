@@ -11,13 +11,21 @@ import { Button } from '@nextui-org/button';
 import { Tabs, Tab } from '@nextui-org/tabs';
 import { ExpensesForm } from '@/components/forms/expenses-form';
 import { SubscriptionForm } from '@components/forms/subscription-form';
+import { useSession } from 'next-auth/react';
+import { btnIcons } from '@lib/constants/icons';
 
-export const CreateExpenseModal = ({ user_id }: { user_id: string }) => {
+export const CreateExpenseModal = () => {
+  const { data: session } = useSession();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const user_id = session?.user.id;
 
   return (
     <div>
-      <Button onPress={onOpen} color="primary">
+      <Button
+        onPress={onOpen}
+        color="primary"
+        endContent={<btnIcons.plus className="text-[1rem]" />}
+      >
         Add new expense
       </Button>
       <Modal

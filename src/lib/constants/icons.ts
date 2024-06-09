@@ -6,6 +6,7 @@ import {
   FaSquare,
   FaCalendar,
   FaGear,
+  FaPlus,
 } from 'react-icons/fa6';
 
 export const tableIcons = {
@@ -25,4 +26,8 @@ export const chartIcons = {
 
 export const menuIcons = {
   gear: FaGear,
+};
+
+export const btnIcons = {
+  plus: FaPlus,
 };
