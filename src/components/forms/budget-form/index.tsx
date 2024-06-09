@@ -50,7 +50,7 @@ export const BudgetForm = ({ update }: { update?: boolean }) => {
           type="number"
           name="budgetLimit"
           label="Budget limit"
-          placeholder={`${data?.budget_limit}$`}
+          placeholder={`${data?.budget_limit ?? ''}`}
           value={budgetLimit?.toString() || ''}
           isInvalid={
             update && budgetLimit !== null && data?.budget_limit == budgetLimit
