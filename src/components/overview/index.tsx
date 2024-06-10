@@ -7,6 +7,7 @@ import { useExpensesStore } from '@store/expensesStore';
 import { ExpensesSummarySection } from '@components/sections/overview/summary';
 import { MonthlyChartsSection } from '@components/sections/overview/monthly-charts';
 import { AnnualChartSection } from '@components/sections/overview/annual-chart';
+import { CreateExpenseModal } from '@components/modals/create-expense-modal';
 
 export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
   const setExpenses = useExpensesStore((state) => state.setExpenses);
@@ -26,7 +27,10 @@ export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
 
   return (
     <div className="flex flex-col w-full h-full p-2 gap-4 xl:pr-6">
-      <h1 className="text-2xl mb-4">Expenses overview</h1>
+      <div className="flex justify-between">
+        <h1 className="text-2xl mb-4">Expenses overview</h1>
+        <CreateExpenseModal />
+      </div>
       <div className="flex flex-col gap-6">
         <ExpensesSummarySection />
 
