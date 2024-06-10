@@ -20,8 +20,6 @@ export async function getExpenses(user_id: string) {
       return { message: `You have no expenses to keep track of` };
     }
 
-    console.log(totalResults.rows[0].total_results);
-
     return {
       data: userExpenses.rows,
       totalResults: totalResults.rows[0].total_results,
