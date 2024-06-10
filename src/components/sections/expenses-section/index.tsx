@@ -7,15 +7,10 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  getKeyValue,
   SortDescriptor,
 } from '@nextui-org/table';
 import { Spinner } from '@nextui-org/spinner';
-import {
-  Pagination,
-  PaginationItem,
-  PaginationCursor,
-} from '@nextui-org/pagination';
+import { Pagination } from '@nextui-org/pagination';
 import type { Expense } from '@constants/types/expenses/expenses';
 import { format } from 'date-fns';
 import { DropdownTable } from '@components/dropdowns/dropdown-table';
@@ -145,8 +140,6 @@ export const ExpensesSection = () => {
     [setResultsPerPage]
   );
 
-  console.log(totalResults);
-
   const onInputClear = useCallback(() => {
     setSearchValue('');
     setPage(1);
@@ -205,7 +198,6 @@ export const ExpensesSection = () => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary">Add New</Button>
           </div>
         </div>
         <div className="flex justify-between">
@@ -239,6 +231,38 @@ export const ExpensesSection = () => {
     handleSelectChange,
   ]);
 
+  const bottomContent = useMemo(() => {
+    const resultsInfo =
+      totalResults &&
+      `${1 + (page - 1) * resultsPerPage} - ${
+        page * resultsPerPage < totalResults
+          ? page * resultsPerPage
+          : totalResults
+      } of ${totalResults}`;
+
+    return (
+      <div className="flex w-1/2 justify-between">
+        {totalResults && (
+          <span className="text-default-400 text-sm">{resultsInfo}</span>
+        )}
+
+        {totalResults && (
+          <Pagination
+            isCompact
+            showControls
+            showShadow
+            disableAnimation={false}
+            disableCursorAnimation={false}
+            total={Math.ceil(totalResults / resultsPerPage)}
+            initialPage={1}
+            onChange={(page) => handlePageChange(page)}
+            className="self-center"
+          />
+        )}
+      </div>
+    );
+  }, [totalResults, resultsPerPage, page]);
+
   if (!totalResults) {
     return (
       <div>
@@ -256,27 +280,13 @@ export const ExpensesSection = () => {
         selectionMode="single"
         color="primary"
         topContent={topContent}
-        bottomContent={
-          totalResults &&
-          totalResults > 0 && (
-            <div className="flex w-full justify-center">
-              <Pagination
-                total={Math.ceil(totalResults / resultsPerPage)}
-                initialPage={1}
-                variant="faded"
-                showControls={true}
-                className="self-center"
-                onChange={(page) => handlePageChange(page)}
-              />
-            </div>
-          )
-        }
+        bottomContent={bottomContent}
         bottomContentPlacement="outside"
         onSortChange={(descriptor) => {
           setSortDescriptor(descriptor);
         }}
         classNames={{
-          base: 'overflow-y-hidden',
+          base: 'overflow-y-hidden justify-between',
         }}
       >
         <TableHeader columns={columns}>

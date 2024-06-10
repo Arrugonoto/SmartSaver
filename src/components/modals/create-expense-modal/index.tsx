@@ -26,7 +26,7 @@ export const CreateExpenseModal = () => {
         color="primary"
         endContent={<btnIcons.plus className="text-[1rem]" />}
       >
-        Add new expense
+        Add expense
       </Button>
       <Modal
         isOpen={isOpen}
