@@ -10,6 +10,7 @@ import {
   TableCell,
   getKeyValue,
 } from '@nextui-org/table';
+import { capitalizeString } from '@lib/helpers/capitalize';
 
 const columns = [
   {
@@ -56,9 +57,7 @@ export const TopSubscriptionsTable = ({
       </TableHeader>
       <TableBody items={tableData} className="flex-1">
         {(item) => {
-          const capitalizedName = item.name
-            ? item.name[0].toUpperCase() + item.name.slice(1)
-            : '';
+          const capitalizedName = capitalizeString(item.name);
 
           return (
             <TableRow key={item.id}>

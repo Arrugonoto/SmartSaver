@@ -8,8 +8,8 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  getKeyValue,
 } from '@nextui-org/table';
+import { capitalizeString } from '@lib/helpers/capitalize';
 
 const columns = [
   {
@@ -65,8 +65,8 @@ export const TopOverallSpendingsTable = ({
               : item.payment_type === 'subscription'
               ? 'Subscription'
               : 'Monthly';
-          const capitalizedName =
-            item.name[0].toUpperCase() + item.name.slice(1);
+
+          const capitalizedName = capitalizeString(item.name);
 
           return (
             <TableRow key={item.id}>
