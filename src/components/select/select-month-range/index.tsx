@@ -34,11 +34,11 @@ export const MonthRangeSelect = ({
   return (
     <Select
       label="Select date range"
-      variant="bordered"
+      variant="flat"
       selectedKeys={[dateRange]}
       disallowEmptySelection={true}
       size="md"
-      className="max-w-xs"
+      className="max-w-[200px]"
       startContent={<selectIcons.calendarEmpty />}
       onChange={(e) => handleChange(e)}
     >
