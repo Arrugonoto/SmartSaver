@@ -14,10 +14,16 @@ import { useStore } from '@lib/hooks/useStore';
 import { Select, SelectItem } from '@nextui-org/select';
 import { selectIcons } from '@constants/icons';
 import { months } from '@lib/constants/data/dummy/months';
+import { SelectYearRange } from '@components/select/select-year-range';
 
 type AnnualChartElement = {
   name: string;
   spendings: number;
+};
+
+type YearsOfData = {
+  label: string;
+  value: string;
 };
 
 const currentYear = new Date().getFullYear().toString();
@@ -69,14 +75,8 @@ const getYears = (data: any[]) => {
 export const AnnualSpendingsAreaChart = () => {
   const expenses = useStore(useExpensesStore, (state) => state.expenses);
   const [chartData, setChartData] = useState<AnnualChartElement[]>([]);
-  const [yearsOfData, setYearsOfData] = useState<
-    { label: string; value: string }[]
-  >([]);
+  const [yearsOfData, setYearsOfData] = useState<YearsOfData[]>([]);
   const [selectedYear, setSelectedYear] = useState<string>(currentYear);
-
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedYear(e.target.value);
-  };
 
   useEffect(() => {
     if (expenses) {
@@ -100,24 +100,25 @@ export const AnnualSpendingsAreaChart = () => {
           <h3 className="font-medium text-lg">Annual summary of expenses</h3>
         </div>
         {yearsOfData.length > 0 && (
-          <Select
-            label="Select year"
-            className="max-w-[200px]"
-            disallowEmptySelection={true}
-            startContent={<selectIcons.calendar />}
-            selectedKeys={[`${selectedYear}`]}
-            onChange={(e) => handleChange(e)}
-            variant="bordered"
-            size="sm"
-            radius="md"
-            classNames={{ label: 'pb-1' }}
-          >
-            {yearsOfData.map((year) => (
-              <SelectItem key={year.value} value={year.value}>
-                {year.label}
-              </SelectItem>
-            ))}
-          </Select>
+          <SelectYearRange yearsOfData={yearsOfData} />
+          // <Select
+          //   label="Select year"
+          //   className="max-w-[200px]"
+          //   disallowEmptySelection={true}
+          //   startContent={<selectIcons.calendar />}
+          //   selectedKeys={[`${selectedYear}`]}
+          //   onChange={(e) => handleChange(e)}
+          //   variant="bordered"
+          //   size="sm"
+          //   radius="md"
+          //   classNames={{ label: 'pb-1' }}
+          // >
+          //   {yearsOfData.map((year) => (
+          //     <SelectItem key={year.value} value={year.value}>
+          //       {year.label}
+          //     </SelectItem>
+          //   ))}
+          // </Select>
         )}
       </div>
 
