@@ -7,7 +7,10 @@ import {
   FaCalendar,
   FaGear,
   FaPlus,
+  FaMinus,
+  FaUserTie,
 } from 'react-icons/fa6';
+import { TbMessageQuestion } from 'react-icons/tb';
 
 export const tableIcons = {
   delete: FaRegTrashCan,
@@ -30,4 +33,10 @@ export const menuIcons = {
 
 export const btnIcons = {
   plus: FaPlus,
+};
+
+export const asistantIcons = {
+  message: TbMessageQuestion,
+  minimize: FaMinus,
+  assistant: FaUserTie,
 };
