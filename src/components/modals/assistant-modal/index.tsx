@@ -5,6 +5,7 @@ import { asistantIcons } from '@lib/constants/icons';
 import { Button } from '@nextui-org/button';
 import { Tooltip } from '@nextui-org/react';
 import { Divider } from '@nextui-org/divider';
+import { AssistantForm } from '@components/forms/assistant-form';
 
 export const AssistantModal = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -97,7 +98,7 @@ export const AssistantModal = () => {
             </div>
             <Divider />
             <div className="h-full">chat window</div>
-            <div>message form</div>
+            <AssistantForm />
           </motion.div>
         )}
       </AnimatePresence>
