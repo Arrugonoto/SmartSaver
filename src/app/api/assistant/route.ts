@@ -4,19 +4,18 @@ import OpenAI from 'openai';
 const openai = new OpenAI({ apiKey: process.env.OPEN_AI_KEY as string });
 
 export async function POST(req: Request) {
+  // Destructure prompt(message), and threadId from request
   const { prompt, threadId } = await req.json();
 
   if (!prompt) {
     return NextResponse.json({ error: 'Message is required' }, { status: 400 });
   }
 
-  console.log(prompt);
-
   try {
-    let thread_id = '';
-
     // Check if thread exists (thread_id),
     // create new thread if thread_id isn't provided
+    let thread_id = '';
+
     if (!threadId) {
       const thread = await openai.beta.threads.create();
       thread_id = thread.id;
@@ -39,6 +38,7 @@ export async function POST(req: Request) {
     // streaming. The SDK provides helpful event listeners to handle
     // the streamed response. - OpenAI Docs
     let responseText = '';
+
     run
       .on('textCreated', (text) => (responseText += '\nassistant > '))
       .on('textDelta', (textDelta) => (responseText += textDelta.value))
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
     // Get thread related messages
     const thread_messages = await openai.beta.threads.messages.list(thread_id);
 
-    // Extract list of messages from OpenAI API response
+    // Extract list of messages from thread of Assistant API response
     const messages = thread_messages.data.map((msg) => ({
       id: msg.id,
       role: msg.role,
