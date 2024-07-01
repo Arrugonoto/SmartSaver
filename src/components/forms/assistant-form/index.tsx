@@ -101,23 +101,15 @@ export const AssistantForm = ({
             label: ['h-8'],
           }}
           endContent={
-            <div>
-              <p
-                className={`text-xs ${
-                  prompt.length >= 100 &&
-                  prompt.length < 150 &&
-                  'text-yellow-300'
-                }
-                    ${
-                      prompt.length >= 150 &&
-                      prompt.length < 200 &&
-                      'text-warning'
-                    }
-                    ${prompt.length === 200 && 'text-danger'}
-                `}
-              >
-                {prompt.length}/200
-              </p>
+            <div
+              className={`flex self-end text-xs w-16 justify-end ${
+                prompt.length >= 100 && prompt.length < 150 && 'text-yellow-300'
+              }
+                ${prompt.length >= 150 && prompt.length < 200 && 'text-warning'}
+                ${prompt.length === 200 && 'text-danger'}
+            `}
+            >
+              <p>{prompt.length}/200</p>
             </div>
           }
         />
