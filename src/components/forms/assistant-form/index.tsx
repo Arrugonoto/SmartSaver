@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Input } from '@nextui-org/input';
+import { Textarea } from '@nextui-org/input';
 import FormButton from '@components/buttons/FormButton';
 
 type Message = {
@@ -27,6 +27,13 @@ export const AssistantForm = ({
 }) => {
   const [prompt, setPrompt] = useState<string>('');
   const [threadId, setThreadId] = useState<string | null>(null);
+  const [textLimit, setTextLimit] = useState<number>(200);
+
+  const handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length <= 200) {
+      setPrompt(e.target.value);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -74,22 +81,50 @@ export const AssistantForm = ({
   return (
     <div>
       <form onSubmit={handleSubmit} className="flex gap-2">
-        <Input
+        <Textarea
           label="Message"
           isRequired={!prompt}
           size="sm"
-          radius="sm"
+          radius="md"
           type="text"
           name="message"
           value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          className="w-full"
-          classNames={{ inputWrapper: ['bg-content3'] }}
+          onChange={(e) => handlechange(e)}
+          minRows={1}
+          maxRows={3}
+          className="w-full p-0"
+          classNames={{
+            inputWrapper: [
+              'bg-content3',
+              'group-data-[focus=true]:bg-content1',
+            ],
+            label: ['h-8'],
+          }}
+          endContent={
+            <div>
+              <p
+                className={`text-xs ${
+                  prompt.length >= 100 &&
+                  prompt.length < 150 &&
+                  'text-yellow-300'
+                }
+                    ${
+                      prompt.length >= 150 &&
+                      prompt.length < 200 &&
+                      'text-warning'
+                    }
+                    ${prompt.length === 200 && 'text-danger'}
+                `}
+              >
+                {prompt.length}/200
+              </p>
+            </div>
+          }
         />
         <FormButton
           type="submit"
           isDisabled={!prompt}
-          className="min-w-0 w-auto rounded-lg"
+          className="min-w-0 w-auto rounded-lg bg-content1"
         >
           ask
         </FormButton>
