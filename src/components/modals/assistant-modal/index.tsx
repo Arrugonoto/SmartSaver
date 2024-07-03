@@ -7,6 +7,7 @@ import { Tooltip } from '@nextui-org/react';
 import { Divider } from '@nextui-org/divider';
 import { AssistantForm } from '@components/forms/assistant-form';
 import { capitalizeString } from '@lib/helpers/capitalize';
+import { LoaderDots } from '@components/loaders/loader-dots';
 
 type Message = {
   id: string;
@@ -160,6 +161,7 @@ export const AssistantModal = () => {
                   <p>{userMessage}</p>
                 </div>
               )}
+              {loading && <LoaderDots />}
             </div>
             <AssistantForm
               setMessages={setMessages}
