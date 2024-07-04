@@ -9,6 +9,7 @@ import {
   FaPlus,
   FaMinus,
   FaUserTie,
+  FaPaperPlane,
 } from 'react-icons/fa6';
 import { TbMessageQuestion } from 'react-icons/tb';
 
@@ -33,6 +34,7 @@ export const menuIcons = {
 
 export const btnIcons = {
   plus: FaPlus,
+  send: FaPaperPlane,
 };
 
 export const asistantIcons = {
