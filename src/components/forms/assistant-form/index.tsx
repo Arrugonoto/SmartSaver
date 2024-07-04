@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { Textarea } from '@nextui-org/input';
 import FormButton from '@components/buttons/FormButton';
+import { btnIcons } from '@lib/constants/icons';
+import { Tooltip } from '@nextui-org/tooltip';
 
 type Message = {
   id: string;
@@ -80,14 +82,15 @@ export const AssistantForm = ({
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      <form onSubmit={handleSubmit} className="flex gap-2 items-center">
         <Textarea
-          label="Message"
+          aria-label="Message"
           isRequired={!prompt}
           size="sm"
-          radius="md"
+          radius="full"
           type="text"
           name="message"
+          placeholder="Question"
           value={prompt}
           onChange={(e) => handlechange(e)}
           minRows={1}
@@ -116,9 +119,10 @@ export const AssistantForm = ({
         <FormButton
           type="submit"
           isDisabled={!prompt}
-          className="min-w-0 w-auto rounded-lg bg-content1"
+          className="w-auto rounded-full bg-content1"
+          isIconOnly
         >
-          ask
+          <btnIcons.send className="text-[1rem]" />
         </FormButton>
       </form>
     </div>
