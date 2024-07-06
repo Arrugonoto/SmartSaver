@@ -6,8 +6,7 @@ import { Button } from '@nextui-org/button';
 import { Tooltip } from '@nextui-org/react';
 import { Divider } from '@nextui-org/divider';
 import { AssistantForm } from '@components/forms/assistant-form';
-import { capitalizeString } from '@lib/helpers/capitalize';
-import { LoaderDots } from '@components/loaders/loader-dots';
+import { AssistantChatWindow } from '@components/assistant/assistant-chat-window';
 
 type Message = {
   id: string;
@@ -127,42 +126,12 @@ export const AssistantModal = () => {
               </Tooltip>
             </div>
             <Divider />
-            <div
+            <AssistantChatWindow
               ref={messagesContainerRef}
-              className="flex flex-col h-full gap-4 overflow-auto scroll-smooth"
-            >
-              <div className="bg-content3 p-2 rounded-md max-w-[80%]">
-                <p className="text-sm">{`Hi. I'm Your personal Assistant. Sometimes I can make mistakes. Remember, it is always best to contact an experienced professional.`}</p>
-              </div>
-              {messages.map((message, index, array) => (
-                <div
-                  key={message.id}
-                  className={` ${
-                    message.role === 'user' && 'self-end pr-3'
-                  } max-w-[80%]`}
-                >
-                  {message.role !== 'user' &&
-                    message.role !== array[index - 1].role && (
-                      <p>{capitalizeString(message.role)}</p>
-                    )}
-
-                  <p
-                    className={` ${
-                      message.role === 'user' ? 'bg-content1' : 'bg-content3'
-                    }  p-2 rounded-lg text-sm
-                  `}
-                  >
-                    {message.content[0].text.value}
-                  </p>
-                </div>
-              ))}
-              {loading && (
-                <div className="self-end text-sm max-w-[80%] bg-content3 opacity-60 p-2 rounded-lg">
-                  <p>{userMessage}</p>
-                </div>
-              )}
-              {loading && <LoaderDots />}
-            </div>
+              messages={messages}
+              loading={loading}
+              userMessage={userMessage}
+            />
             <AssistantForm
               setMessages={setMessages}
               setLoading={setLoading}

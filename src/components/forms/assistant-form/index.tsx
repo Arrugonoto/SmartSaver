@@ -85,6 +85,7 @@ export const AssistantForm = ({
       <form onSubmit={handleSubmit} className="flex gap-2 items-center">
         <Textarea
           aria-label="Message"
+          id="textarea-height"
           isRequired={!prompt}
           size="sm"
           radius="full"
@@ -101,15 +102,17 @@ export const AssistantForm = ({
               'bg-content3',
               'group-data-[focus=true]:bg-content1',
             ],
-            label: ['h-8'],
+            input: ['min-h-[20px] !important', 'h-[20px] !important'],
           }}
           endContent={
             <div
               className={`flex self-end text-xs w-16 justify-end ${
-                prompt.length >= 100 && prompt.length < 150 && 'text-yellow-300'
+                prompt.length >= 100 && prompt.length < 150
+                  ? 'text-yellow-300'
+                  : ''
               }
                 ${prompt.length >= 150 && prompt.length < 200 && 'text-warning'}
-                ${prompt.length === 200 && 'text-danger'}
+                ${prompt.length === 200 ? 'text-danger' : ''}
             `}
             >
               <p>{prompt.length}/200</p>
