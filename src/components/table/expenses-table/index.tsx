@@ -69,6 +69,15 @@ export const ExpensesTable = () => {
     const sorted = expenses?.sort((a, b) => {
       let first = a[sortDescriptor.column as keyof Expense] as number | string;
       let next = b[sortDescriptor.column as keyof Expense] as number | string;
+
+      if (
+        sortDescriptor.column !== 'amount' &&
+        sortDescriptor.column !== 'created_at'
+      ) {
+        first = (first as string).toLowerCase();
+        next = (next as string).toLowerCase();
+      }
+
       if (sortDescriptor.column === 'amount') {
         first = parseFloat(first as any);
         next = parseFloat(next as any);
