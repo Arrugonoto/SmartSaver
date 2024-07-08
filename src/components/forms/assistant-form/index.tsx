@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Textarea } from '@nextui-org/input';
 import FormButton from '@components/buttons/FormButton';
 import { btnIcons } from '@lib/constants/icons';
-import { Tooltip } from '@nextui-org/tooltip';
 
 type Message = {
   id: string;
@@ -50,7 +49,7 @@ export const AssistantForm = ({
     };
 
     try {
-      const res = await fetch('api/assistant', {
+      const res = await fetch(`${window.origin}/api/assistant`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
