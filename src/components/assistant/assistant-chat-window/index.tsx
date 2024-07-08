@@ -2,6 +2,7 @@
 import React, { forwardRef } from 'react';
 import { capitalizeString } from '@lib/helpers/capitalize';
 import { LoaderDots } from '@components/loaders/loader-dots';
+import { asistantIcons } from '@lib/constants/icons';
 
 type Message = {
   id: string;
@@ -32,7 +33,10 @@ export const AssistantChatWindow = forwardRef(
         ref={ref}
         className="flex flex-col h-full gap-4 overflow-auto scroll-smooth"
       >
-        <div className="bg-content3 p-2 rounded-md max-w-[80%]">
+        <div className="flex gap-2 bg-content3 p-2 rounded-md max-w-[80%]">
+          <span>
+            <asistantIcons.assistant className="text-[1rem]" />
+          </span>
           <p className="text-sm">{`Hi. I'm Your personal Assistant. Sometimes I can make mistakes. Remember, it is always best to contact an experienced professional.`}</p>
         </div>
         {messages.map((message, index, array) => (

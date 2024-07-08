@@ -7,19 +7,7 @@ import { Tooltip } from '@nextui-org/react';
 import { Divider } from '@nextui-org/divider';
 import { AssistantForm } from '@components/forms/assistant-form';
 import { AssistantChatWindow } from '@components/assistant/assistant-chat-window';
-
-type Message = {
-  id: string;
-  role: string;
-  content: [
-    {
-      text: {
-        annotations: [];
-        value: string;
-      };
-    }
-  ];
-};
+import type { Message } from '@constants/types/message';
 
 export const AssistantModal = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);

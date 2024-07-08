@@ -3,19 +3,7 @@ import React, { useState } from 'react';
 import { Textarea } from '@nextui-org/input';
 import FormButton from '@components/buttons/FormButton';
 import { btnIcons } from '@lib/constants/icons';
-
-type Message = {
-  id: string;
-  role: string;
-  content: [
-    {
-      text: {
-        annotations: [];
-        value: string;
-      };
-    }
-  ];
-};
+import type { Message } from '@constants/types/message';
 
 export const AssistantForm = ({
   setMessages,
