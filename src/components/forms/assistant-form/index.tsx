@@ -4,6 +4,7 @@ import { Textarea } from '@nextui-org/input';
 import FormButton from '@components/buttons/FormButton';
 import { btnIcons } from '@lib/constants/icons';
 import type { Message } from '@constants/types/message';
+import { motion } from 'framer-motion';
 
 export const AssistantForm = ({
   setMessages,
@@ -16,7 +17,7 @@ export const AssistantForm = ({
 }) => {
   const [prompt, setPrompt] = useState<string>('');
   const [threadId, setThreadId] = useState<string | null>(null);
-  const [textLimit, setTextLimit] = useState<number>(200);
+  const textLimit = 200;
 
   const handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.length <= 200) {
@@ -68,8 +69,8 @@ export const AssistantForm = ({
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} className="flex gap-2 items-center">
+    <motion.div className="min-w-[200px]">
+      <form onSubmit={handleSubmit} className="flex gap-2 items-center w-full">
         <Textarea
           aria-label="Message"
           id="textarea-height"
@@ -98,11 +99,17 @@ export const AssistantForm = ({
                   ? 'text-yellow-300'
                   : ''
               }
-                ${prompt.length >= 150 && prompt.length < 200 && 'text-warning'}
-                ${prompt.length === 200 ? 'text-danger' : ''}
+                ${
+                  prompt.length >= 150 &&
+                  prompt.length < textLimit &&
+                  'text-warning'
+                }
+                ${prompt.length === textLimit ? 'text-danger' : ''}
             `}
             >
-              <p>{prompt.length}/200</p>
+              <p>
+                {prompt.length}/{textLimit}
+              </p>
             </div>
           }
         />
@@ -115,6 +122,6 @@ export const AssistantForm = ({
           <btnIcons.send className="text-[1rem]" />
         </FormButton>
       </form>
-    </div>
+    </motion.div>
   );
 };
