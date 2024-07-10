@@ -1,7 +1,8 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@app/api/auth/[...nextauth]/options';
 import { Metadata } from 'next';
-import { OverviewSection } from '@components/sections/overview-section';
+import { ExpensesOverview } from '@components/overview';
+import { AssistantModal } from '@components/modals/assistant-modal';
 
 export const metadata: Metadata = {
   title: 'Overview',
@@ -13,7 +14,8 @@ export default async function Dashboard() {
 
   return (
     <main className="flex flex-col w-full h-full overflow-auto">
-      <OverviewSection user_id={user_id} />
+      <ExpensesOverview user_id={user_id} />
+      <AssistantModal />
     </main>
   );
 }
