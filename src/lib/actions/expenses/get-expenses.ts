@@ -1,8 +1,11 @@
 'use server';
 import { sql } from '@vercel/postgres';
 import type { Expense } from '@lib/definitions';
+import { unstable_noStore as noStore } from 'next/cache';
 
 export async function getExpenses(user_id: string) {
+  noStore();
+
   try {
     const userExpenses = await sql<Expense>`
       SELECT id, name, amount, expense_type, payment_type, description, created_at, updated_at 
