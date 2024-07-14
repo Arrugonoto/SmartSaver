@@ -10,8 +10,13 @@ import { AnnualChartSection } from '@components/sections/overview/annual-chart';
 import { CreateExpenseModal } from '@components/modals/create-expense-modal';
 
 export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
-  const setExpenses = useExpensesStore((state) => state.setExpenses);
-  const setTotalResults = useExpensesStore((state) => state.setTotalResults);
+  const { setExpenses, setTotalResults, expenses } = useExpensesStore(
+    (state) => ({
+      setExpenses: state.setExpenses,
+      setTotalResults: state.setTotalResults,
+      expenses: state.expenses,
+    })
+  );
   const { data, totalResults } = useFetch<Expense[]>({
     action: getExpenses,
     user_id,
@@ -31,8 +36,8 @@ export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
         <h1 className="text-2xl mb-4">Expenses overview</h1>
         <CreateExpenseModal />
       </div>
-      <div className="flex flex-col gap-6">
-        <ExpensesSummarySection />
+      <div className="flex flex-col gap-6 pb-4">
+        <ExpensesSummarySection expenses={expenses} />
 
         <MonthlyChartsSection />
 
