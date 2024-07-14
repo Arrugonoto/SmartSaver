@@ -8,6 +8,7 @@ type State = {
   page: number;
   resultsPerPage: number;
   totalResults: number;
+  loadingExpenses: boolean;
 };
 
 type Action = {
@@ -16,6 +17,7 @@ type Action = {
   setPage: (page: State['page']) => void;
   setResultsPerPage: (resultsPerPage: State['resultsPerPage']) => void;
   setTotalResults: (totalResults: State['totalResults']) => void;
+  setLoadingExpenses: (loadingExpenses: State['loadingExpenses']) => void;
 };
 
 export const useExpensesStore = create(
@@ -26,12 +28,15 @@ export const useExpensesStore = create(
       page: 1,
       resultsPerPage: 20,
       totalResults: 0,
+      loadingExpenses: true,
       setUserId: (id) => set({ userId: id }),
       setExpenses: (newExpenses) => set({ expenses: newExpenses }),
       setPage: (pageNum) => set({ page: pageNum }),
       setResultsPerPage: (resPerPage) =>
         set(() => ({ resultsPerPage: resPerPage })),
       setTotalResults: (numOfTotal) => set({ totalResults: numOfTotal }),
+      setLoadingExpenses: (loadingState) =>
+        set({ loadingExpenses: loadingState }),
     }),
     {
       name: 'expenses-storage',
