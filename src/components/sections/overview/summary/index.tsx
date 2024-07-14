@@ -1,7 +1,4 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { useStore } from '@lib/hooks/useStore';
-import { useExpensesStore } from '@store/expensesStore';
+import { useState, useEffect, Suspense } from 'react';
 import { Card, CardHeader, CardBody } from '@nextui-org/card';
 import { TopSpendingsTabs } from '@components/tabs/top-spendings';
 import { months } from '@lib/constants/data/dummy/months';
@@ -12,6 +9,7 @@ import { getBudgetLimit } from '@lib/actions/budget/get-budget-limit';
 import type { BudgetLimit } from '@lib/constants/types/budget/budget';
 import { useSession } from 'next-auth/react';
 import { SpendingsWithBudgetChart } from '@components/charts/spendings-with-budget-chart';
+import { getExpenses } from '@lib/actions/expenses/get-expenses';
 
 const getTotalInMonth = (expenses: Expense[], monthNumber: number) => {
   const currentMonth = months[monthNumber].abbreviation;
@@ -44,16 +42,22 @@ const sumMonthlyCommitments = (expenses: Expense[]) => {
   return commitmentsSummary;
 };
 
-export const ExpensesSummarySection = () => {
-  const expenses = useStore(useExpensesStore, (state) => state.expenses);
+export const ExpensesSummarySection = ({
+  expenses,
+}: {
+  expenses: Expense[];
+}) => {
   const [totalInMonth, setTotalInMonth] = useState<number>(0);
   const [budgetLimit, setBudgetLimit] = useState<number | null>(null);
   const [monthlyCommitments, setMonthlyCommitments] = useState<number | null>(
     null
   );
-  const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const { data: session } = useSession();
   const user_id = session?.user.id;
+  const { data: userExpenses } = useFetch<Expense[]>({
+    action: getExpenses,
+    user_id,
+  });
 
   const currentMonth = new Date().getMonth();
 
@@ -68,11 +72,11 @@ export const ExpensesSummarySection = () => {
   );
 
   useEffect(() => {
-    if (expenses) {
-      const total = getTotalInMonth(expenses, currentMonth);
+    if (userExpenses) {
+      const total = getTotalInMonth(userExpenses, currentMonth);
       setTotalInMonth(total);
     }
-  }, [expenses, currentMonth]);
+  }, [userExpenses, currentMonth]);
 
   useEffect(() => {
     if (expenses) {
@@ -86,8 +90,7 @@ export const ExpensesSummarySection = () => {
       const limit = data.budget_limit;
       setBudgetLimit(limit);
     }
-    setInitialLoad(false);
-  }, [data]);
+  }, [data, budgetLimit]);
 
   return (
     <section className="flex flex-col w-full gap-4">
@@ -108,14 +111,16 @@ export const ExpensesSummarySection = () => {
             <h2 className="text-center text-xl">Budget</h2>
           </CardHeader>
           <CardBody className="items-center">
-            {!initialLoad && !isLoading && budgetLimit !== null ? (
-              <h2 className="text-center text-xl">{budgetLimit}</h2>
-            ) : (
+            {isLoading || !budgetLimit ? (
+              <p>loading. . .</p>
+            ) : budgetLimit === 0 ? (
               <BudgetLimitModal />
+            ) : (
+              <h2 className="text-center text-xl">{budgetLimit}</h2>
             )}
           </CardBody>
 
-          {budgetLimit && (
+          {!isLoading && budgetLimit && (
             <div className="absolute top-1 right-1 z-[100]">
               <BudgetLimitModal update />
             </div>
