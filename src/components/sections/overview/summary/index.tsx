@@ -10,6 +10,7 @@ import type { BudgetLimit } from '@lib/constants/types/budget/budget';
 import { useSession } from 'next-auth/react';
 import { SpendingsWithBudgetChart } from '@components/charts/spendings-with-budget-chart';
 import { getExpenses } from '@lib/actions/expenses/get-expenses';
+import { LoadingCard } from '@components/loaders/loading-card';
 
 const getTotalInMonth = (expenses: Expense[], monthNumber: number) => {
   const currentMonth = months[monthNumber].abbreviation;
@@ -47,7 +48,7 @@ export const ExpensesSummarySection = ({
 }: {
   expenses: Expense[];
 }) => {
-  const [totalInMonth, setTotalInMonth] = useState<number>(0);
+  const [totalInMonth, setTotalInMonth] = useState<number | null>(null);
   const [budgetLimit, setBudgetLimit] = useState<number | null>(null);
   const [monthlyCommitments, setMonthlyCommitments] = useState<number | null>(
     null
@@ -94,55 +95,68 @@ export const ExpensesSummarySection = ({
 
   return (
     <section className="flex flex-col w-full gap-4">
-      <div className="flex gap-2 w-full">
-        <Card className="w-full align-center justify-center">
-          <CardHeader className="justify-center">
-            <h2 className="text-center text-xl">
-              Spendings in {months[currentMonth].name}
-            </h2>
-          </CardHeader>
-          <CardBody>
-            <p className="text-center text-2xl">{totalInMonth}</p>
-          </CardBody>
-        </Card>
+      <div className="flex gap-2 w-full h-full min-h-[120px]">
+        {totalInMonth ? (
+          <Card className="w-full align-center justify-center">
+            <CardHeader className="justify-center">
+              <h2 className="text-center text-xl">
+                Spendings in {months[currentMonth].name}
+              </h2>
+            </CardHeader>
+            <CardBody>
+              <p className="text-center text-2xl">{totalInMonth}</p>
+            </CardBody>
+          </Card>
+        ) : (
+          <LoadingCard />
+        )}
+        {!budgetLimit ? (
+          <LoadingCard />
+        ) : (
+          <Card className="relative w-full align-center justify-center">
+            <CardHeader className="justify-center">
+              <h2 className="text-center text-xl">Budget</h2>
+            </CardHeader>
+            <CardBody className="items-center">
+              {budgetLimit === 0 ? (
+                <BudgetLimitModal />
+              ) : (
+                <h2 className="text-center text-xl">{budgetLimit}</h2>
+              )}
+            </CardBody>
 
-        <Card className="relative w-full align-center justify-center">
-          <CardHeader className="justify-center">
-            <h2 className="text-center text-xl">Budget</h2>
-          </CardHeader>
-          <CardBody className="items-center">
-            {isLoading || !budgetLimit ? (
-              <p>loading. . .</p>
-            ) : budgetLimit === 0 ? (
-              <BudgetLimitModal />
-            ) : (
-              <h2 className="text-center text-xl">{budgetLimit}</h2>
+            {!isLoading && budgetLimit && (
+              <div className="absolute top-1 right-1 z-[100]">
+                <BudgetLimitModal update />
+              </div>
             )}
-          </CardBody>
+          </Card>
+        )}
 
-          {!isLoading && budgetLimit && (
-            <div className="absolute top-1 right-1 z-[100]">
-              <BudgetLimitModal update />
-            </div>
-          )}
-        </Card>
-
-        <Card className="w-full align-center justify-center">
-          <CardHeader className="justify-center">
-            <h2 className="text-center text-xl">Total spendings</h2>
-          </CardHeader>
-          <CardBody>
-            <p className="text-center text-2xl">{totalExpenses}</p>
-          </CardBody>
-        </Card>
-        <Card className="w-full align-center justify-center">
-          <CardHeader className="justify-center">
-            <h2 className="text-center text-xl">Monthly commitments</h2>
-          </CardHeader>
-          <CardBody>
-            <p className="text-center text-2xl">{monthlyCommitments}</p>
-          </CardBody>
-        </Card>
+        {totalExpenses ? (
+          <Card className="w-full align-center justify-center">
+            <CardHeader className="justify-center">
+              <h2 className="text-center text-xl">Total spendings</h2>
+            </CardHeader>
+            <CardBody>
+              <p className="text-center text-2xl">{totalExpenses}</p>
+            </CardBody>
+          </Card>
+        ) : (
+          <LoadingCard />
+        )}
+        {monthlyCommitments ? (
+          <Card className="w-full align-center justify-center">
+            <CardHeader className="justify-center">
+              <h2 className="text-center text-xl">Monthly commitments</h2>
+            </CardHeader>
+            <CardBody>
+              <p className="text-center text-2xl">{monthlyCommitments}</p>
+            </CardBody>
+          </Card>
+        ) : (
+          <LoadingCard />
+        )}
       </div>
 
       <div className="flex w-full gap-2">
