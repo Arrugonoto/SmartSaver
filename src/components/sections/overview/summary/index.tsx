@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardBody } from '@nextui-org/card';
 import { TopSpendingsTabs } from '@components/tabs/top-spendings';
 import { months } from '@lib/constants/data/dummy/months';
@@ -11,6 +11,7 @@ import { useSession } from 'next-auth/react';
 import { SpendingsWithBudgetChart } from '@components/charts/spendings-with-budget-chart';
 import { getExpenses } from '@lib/actions/expenses/get-expenses';
 import { LoadingCard } from '@components/loaders/loading-card';
+import { LoadingTable } from '@components/loaders/loading-table';
 
 const getTotalInMonth = (expenses: Expense[], monthNumber: number) => {
   const currentMonth = months[monthNumber].abbreviation;
@@ -45,8 +46,10 @@ const sumMonthlyCommitments = (expenses: Expense[]) => {
 
 export const ExpensesSummarySection = ({
   expenses,
+  isLoading: loadingExpenses,
 }: {
   expenses: Expense[];
+  isLoading: boolean;
 }) => {
   const [totalInMonth, setTotalInMonth] = useState<number | null>(null);
   const [budgetLimit, setBudgetLimit] = useState<number | null>(null);
@@ -168,7 +171,11 @@ export const ExpensesSummarySection = ({
         <Card className="flex items-center min-h-[320px] w-1/2 p-4 gap-2">
           <h2 className="text-xl">10 most expensive spendings</h2>
           <CardBody>
-            <TopSpendingsTabs />
+            {!expenses || loadingExpenses ? (
+              <LoadingTable sm />
+            ) : (
+              <TopSpendingsTabs />
+            )}
           </CardBody>
         </Card>
       </div>

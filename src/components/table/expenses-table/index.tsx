@@ -29,6 +29,7 @@ import type { Expense } from '@constants/types/expenses/expenses';
 import { Spinner } from '@nextui-org/spinner';
 import type { Selection } from '@nextui-org/react';
 import { capitalizeString } from '@lib/helpers/capitalize';
+import { LoadingTable } from '@components/loaders/loading-table';
 
 const categoriesWithoutEmpty = expenseCategoriesList.slice(1);
 
@@ -274,12 +275,8 @@ export const ExpensesTable = () => {
     );
   }, [totalResults, resultsPerPage, page]);
 
-  if (!totalResults) {
-    return (
-      <div>
-        <Spinner />
-      </div>
-    );
+  if (!paginatedData || !totalResults) {
+    return <LoadingTable />;
   }
 
   return (
