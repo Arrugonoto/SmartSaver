@@ -15,6 +15,7 @@ import { Select, SelectItem } from '@nextui-org/select';
 import { selectIcons } from '@constants/icons';
 import { months } from '@lib/constants/data/dummy/months';
 import { SelectYearRange } from '@components/select/select-year-range';
+import { LoadingChart } from '@components/loaders/loading-chart';
 
 type AnnualChartElement = {
   name: string;
@@ -93,6 +94,10 @@ export const AnnualSpendingsAreaChart = () => {
     }
   }, [expenses, selectedYear]);
 
+  if (!expenses || chartData.length === 0) {
+    return <LoadingChart />;
+  }
+
   return (
     <div className="flex flex-col w-full gap-12">
       <div className="flex w-full justify-between items-center">
@@ -101,24 +106,6 @@ export const AnnualSpendingsAreaChart = () => {
         </div>
         {yearsOfData.length > 0 && (
           <SelectYearRange yearsOfData={yearsOfData} />
-          // <Select
-          //   label="Select year"
-          //   className="max-w-[200px]"
-          //   disallowEmptySelection={true}
-          //   startContent={<selectIcons.calendar />}
-          //   selectedKeys={[`${selectedYear}`]}
-          //   onChange={(e) => handleChange(e)}
-          //   variant="bordered"
-          //   size="sm"
-          //   radius="md"
-          //   classNames={{ label: 'pb-1' }}
-          // >
-          //   {yearsOfData.map((year) => (
-          //     <SelectItem key={year.value} value={year.value}>
-          //       {year.label}
-          //     </SelectItem>
-          //   ))}
-          // </Select>
         )}
       </div>
 

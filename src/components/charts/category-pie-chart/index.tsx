@@ -11,6 +11,7 @@ import {
 import { useState, useEffect } from 'react';
 import { chartIcons } from '@constants/icons';
 import type { Expense } from '@constants/types/expenses/expenses';
+import { LoadingChart } from '@components/loaders/loading-chart';
 
 const categoriesWithoutInitial = expenseCategoriesList.slice(1);
 
@@ -62,8 +63,12 @@ export const ExpenseCategoryPieChart = ({
     }
   }, [expenses]);
 
+  if (chartData.length === 0 || !expenses) {
+    return <LoadingChart sm />;
+  }
+
   return (
-    <div className="flex flex-col min-h-[400px] w-full lg:w-2/5 justify-center">
+    <div className="flex flex-col min-h-[400px] w-full lg:w-1/2 justify-center">
       <h3 className="font-medium">Summary by category</h3>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart width={400} height={400}>

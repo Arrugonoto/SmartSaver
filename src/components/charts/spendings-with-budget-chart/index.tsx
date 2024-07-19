@@ -1,3 +1,4 @@
+'use client';
 import { useState, useEffect } from 'react';
 import { useStore } from '@lib/hooks/useStore';
 import { useExpensesStore } from '@store/expensesStore';
@@ -17,6 +18,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { LoadingChart } from '@components/loaders/loading-chart';
 
 type ChartElement = {
   name: string;
@@ -105,7 +107,7 @@ export const SpendingsWithBudgetChart = () => {
     if (expenses) {
       const currentMonth = getCurrentMonthData(expenses);
       const prevMonth = getPreviousMonthData(expenses);
-
+      console.log('current:', currentMonth, 'previous:', prevMonth);
       setRawData([...currentMonth, ...prevMonth]);
     }
   }, [expenses]);
@@ -116,6 +118,8 @@ export const SpendingsWithBudgetChart = () => {
       setChartData(data);
     }
   }, [rawData, budgetData]);
+
+  if (!expenses || !budgetData) return <LoadingChart sm />;
 
   return (
     <div className="flex flex-col min-h-[400px] w-full gap-4">

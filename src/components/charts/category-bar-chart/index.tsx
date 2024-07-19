@@ -16,6 +16,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import type { Expense } from '@constants/types/expenses/expenses';
+import { LoadingChart } from '@components/loaders/loading-chart';
 
 const categoriesWithoutInitial = expenseCategoriesList.slice(1);
 
@@ -66,8 +67,12 @@ export const ExpenseCategoryBarChart = ({
     }
   }, [expenses]);
 
+  if (chartData.length === 0 || !expenses) {
+    return <LoadingChart sm />;
+  }
+
   return (
-    <div className="flex flex-col min-h-[400px] w-full lg:w-3/5 gap-8">
+    <div className="flex flex-col  w-full lg:w-1/2 gap-8">
       <h3 className="font-medium">Total by category</h3>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
