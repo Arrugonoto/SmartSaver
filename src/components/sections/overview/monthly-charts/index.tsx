@@ -97,7 +97,7 @@ export const MonthlyChartsSection = () => {
   return (
     <section>
       <Card className="flex flex-col w-full pt-2 px-4 gap-4">
-        <CardBody className="w-full gap-4">
+        <CardBody className="w-full h-full gap-4">
           <div className="flex w-full justify-between items-center bg-content2 px-4 py-1 rounded-lg">
             <div>
               <p>Total expenses: {totalNumOfExpensesInMonth}</p>
@@ -110,7 +110,8 @@ export const MonthlyChartsSection = () => {
               setDateRange={setDateRange}
             />
           </div>
-          <div className="flex flex-col w-full min-h-[800px] lg:flex-row lg:min-h-[440px] p-4">
+          {/*  */}
+          <div className="flex w-full min-h-[70vh]  lg:flex-row lg:min-h-[50vh] lg:h-[50vh] p-4 gap-4">
             <ExpenseCategoryPieChart expenses={dataByDates} />
             <ExpenseCategoryBarChart expenses={dataByDates} />
           </div>

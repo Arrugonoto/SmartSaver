@@ -3,9 +3,9 @@ import { AnnualSpendingsAreaChart } from '@components/charts/annual-spendings-ar
 
 export const AnnualChartSection = () => {
   return (
-    <section>
-      <Card className="w-full p-4">
-        <CardBody>
+    <section className="w-full h-full min-h-[50vh]">
+      <Card className="w-full h-full p-4">
+        <CardBody className="w-full h-full">
           <AnnualSpendingsAreaChart />
         </CardBody>
       </Card>
