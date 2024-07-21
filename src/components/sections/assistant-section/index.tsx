@@ -20,8 +20,8 @@ export const AssistantSection = () => {
   }, [messages, loading]);
 
   return (
-    <section className="flex flex-col h-full w-full bg-content2 ">
-      <div className="flex gap-1 p-2 items-end">
+    <section className="flex flex-col h-full w-full bg-content2 rounded-lg">
+      <div className="flex gap-1 py-3 px-4 items-end">
         <span>
           <asistantIcons.assistant className="text-[1.4rem]" />
         </span>

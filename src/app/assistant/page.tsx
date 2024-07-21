@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function Assistant() {
   return (
-    <main className="flex flex-col w-full h-full">
+    <main className="flex flex-col w-full h-full px-6 py-3">
       <AssistantSection />
     </main>
   );
