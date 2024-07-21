@@ -8,8 +8,8 @@ export const metadata: Metadata = {
 
 export default async function Expenses() {
   return (
-    <main className="flex flex-col w-full h-full px-4 py-2">
-      <div className="flex flex-col h-full gap-4 py-2 px-4">
+    <main className="flex flex-col w-full h-full px-6">
+      <div className="flex flex-col h-full gap-4 py-2">
         <div className="flex justify-between">
           <h1>My expenses</h1>
           <CreateExpenseModal />

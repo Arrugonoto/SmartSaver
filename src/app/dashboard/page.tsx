@@ -13,7 +13,7 @@ export default async function Dashboard() {
   const user_id = session?.user.id;
 
   return (
-    <main className="flex flex-col w-full h-full overflow-auto">
+    <main className="flex flex-col w-full h-full overflow-auto px-4">
       <ExpensesOverview user_id={user_id} />
       <AssistantModal />
     </main>
