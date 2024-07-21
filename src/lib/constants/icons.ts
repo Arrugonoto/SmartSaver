@@ -10,6 +10,8 @@ import {
   FaMinus,
   FaUserTie,
   FaPaperPlane,
+  FaChartLine,
+  FaMoneyCheckDollar,
 } from 'react-icons/fa6';
 import { TbMessageQuestion } from 'react-icons/tb';
 
@@ -30,6 +32,12 @@ export const chartIcons = {
 
 export const menuIcons = {
   gear: FaGear,
+};
+
+export const navMenuIcons = {
+  overview: FaChartLine,
+  expenses: FaMoneyCheckDollar,
+  assistant: FaUserTie,
 };
 
 export const btnIcons = {
