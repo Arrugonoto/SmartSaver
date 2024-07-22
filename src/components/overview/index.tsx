@@ -17,7 +17,7 @@ export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
       expenses: state.expenses,
     })
   );
-  const { data, totalResults } = useFetch<Expense[]>({
+  const { data, totalResults, isLoading } = useFetch<Expense[]>({
     action: getExpenses,
     user_id,
   });
@@ -37,7 +37,7 @@ export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
         <CreateExpenseModal />
       </div>
       <div className="flex flex-col gap-6 pb-4">
-        <ExpensesSummarySection expenses={expenses} />
+        <ExpensesSummarySection expenses={expenses} isLoading={isLoading} />
 
         <MonthlyChartsSection />
 

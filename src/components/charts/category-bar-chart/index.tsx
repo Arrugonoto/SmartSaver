@@ -72,12 +72,12 @@ export const ExpenseCategoryBarChart = ({
   }
 
   return (
-    <div className="flex flex-col  w-full lg:w-1/2 gap-8">
+    <div className="flex flex-col min-h-[500px] w-full xg:w-1/2 gap-8">
       <h3 className="font-medium">Total by category</h3>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           width={500}
-          height={380}
+          height={500}
           data={chartData}
           margin={{
             top: 5,

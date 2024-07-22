@@ -110,8 +110,7 @@ export const MonthlyChartsSection = () => {
               setDateRange={setDateRange}
             />
           </div>
-          {/*  */}
-          <div className="flex w-full min-h-[70vh]  lg:flex-row lg:min-h-[50vh] lg:h-[50vh] p-4 gap-4">
+          <div className="flex flex-col w-full min-h-[70vh] xl:min-h-[50vh] h-full p-4 gap-4 xl:flex-row">
             <ExpenseCategoryPieChart expenses={dataByDates} />
             <ExpenseCategoryBarChart expenses={dataByDates} />
           </div>

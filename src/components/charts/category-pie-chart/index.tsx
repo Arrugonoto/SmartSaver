@@ -68,10 +68,10 @@ export const ExpenseCategoryPieChart = ({
   }
 
   return (
-    <div className="flex flex-col min-h-[400px] w-full lg:w-1/2 justify-center">
+    <div className="flex flex-col min-h-[500px] w-full xl:w-1/2 justify-center">
       <h3 className="font-medium">Summary by category</h3>
       <ResponsiveContainer width="100%" height="100%">
-        <PieChart width={400} height={400}>
+        <PieChart width={400} height={500}>
           <Pie
             name="Spendings"
             data={chartData}

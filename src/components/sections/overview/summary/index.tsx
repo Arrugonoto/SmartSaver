@@ -98,7 +98,7 @@ export const ExpensesSummarySection = ({
 
   return (
     <section className="flex flex-col w-full gap-4">
-      <div className="flex gap-2 w-full h-full min-h-[120px]">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 w-full h-full min-h-[120px]">
         {totalInMonth ? (
           <Card className="w-full align-center justify-center">
             <CardHeader className="justify-center">
@@ -107,7 +107,7 @@ export const ExpensesSummarySection = ({
               </h2>
             </CardHeader>
             <CardBody>
-              <p className="text-center text-2xl">{totalInMonth}</p>
+              <p className="text-center text-xl">{totalInMonth}</p>
             </CardBody>
           </Card>
         ) : (
@@ -142,7 +142,7 @@ export const ExpensesSummarySection = ({
               <h2 className="text-center text-xl">Total spendings</h2>
             </CardHeader>
             <CardBody>
-              <p className="text-center text-2xl">{totalExpenses}</p>
+              <p className="text-center text-xl">{totalExpenses}</p>
             </CardBody>
           </Card>
         ) : (
@@ -154,7 +154,7 @@ export const ExpensesSummarySection = ({
               <h2 className="text-center text-xl">Monthly commitments</h2>
             </CardHeader>
             <CardBody>
-              <p className="text-center text-2xl">{monthlyCommitments}</p>
+              <p className="text-center text-xl">{monthlyCommitments}</p>
             </CardBody>
           </Card>
         ) : (
@@ -162,13 +162,13 @@ export const ExpensesSummarySection = ({
         )}
       </div>
 
-      <div className="flex w-full gap-2">
-        <Card className="w-1/2">
+      <div className="flex w-full flex-col lg:flex-row gap-2">
+        <Card className="w-full lg:w-1/2">
           <CardBody className="">
             <SpendingsWithBudgetChart />
           </CardBody>
         </Card>
-        <Card className="flex items-center min-h-[320px] w-1/2 p-4 gap-2">
+        <Card className="flex items-center min-h-[320px] w-full lg:w-1/2 p-4 gap-2">
           <h2 className="text-xl">10 most expensive spendings</h2>
           <CardBody>
             {!expenses || loadingExpenses ? (
