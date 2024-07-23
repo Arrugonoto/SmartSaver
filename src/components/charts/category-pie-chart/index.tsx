@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react';
 import { chartIcons } from '@constants/icons';
 import type { Expense } from '@constants/types/expenses/expenses';
 import { LoadingChart } from '@components/loaders/loading-chart';
+import { useWindowSize } from '@lib/hooks/useWindowSize';
 
 const categoriesWithoutInitial = expenseCategoriesList.slice(1);
 
@@ -55,6 +56,9 @@ export const ExpenseCategoryPieChart = ({
   expenses: Expense[];
 }) => {
   const [chartData, setChartData] = useState<ChartData[]>([]);
+  const { width } = useWindowSize();
+  const chartInnerRadius = width > 1024 ? 64 : width > 768 ? 50 : 34;
+  const chartOuterRadius = width > 1024 ? 90 : width > 768 ? 70 : 54;
 
   useEffect(() => {
     if (expenses) {
@@ -68,71 +72,73 @@ export const ExpenseCategoryPieChart = ({
   }
 
   return (
-    <div className="flex flex-col min-h-[500px] w-full xl:w-1/2 justify-center">
+    <div className="flex flex-col w-full xl:w-1/2 justify-center">
       <h3 className="font-medium">Summary by category</h3>
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart width={400} height={500}>
-          <Pie
-            name="Spendings"
-            data={chartData}
-            dataKey="quantity"
-            cx="50%"
-            cy="50%"
-            innerRadius={64}
-            outerRadius={90}
-            label
-            paddingAngle={2}
-          >
-            {chartData?.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={`#${entry.color}`}
-                stroke="transparent"
-              />
-            ))}
-          </Pie>
+      <div className="flex h-[500px] min-h-[500px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart width={400} height={500}>
+            <Pie
+              name="Spendings"
+              data={chartData}
+              dataKey="quantity"
+              cx="50%"
+              cy="50%"
+              innerRadius={chartInnerRadius}
+              outerRadius={chartOuterRadius}
+              label
+              paddingAngle={2}
+            >
+              {chartData?.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={`#${entry.color}`}
+                  stroke="transparent"
+                />
+              ))}
+            </Pie>
 
-          <Legend
-            iconType="rect"
-            content={
-              <ul className="flex gap-4 flex-wrap">
-                {chartData.map((entry, index) => (
-                  <li
-                    key={index}
-                    style={{
-                      display: 'flex',
-                      gap: '0.2rem',
-                      alignItems: 'center',
-                      color: `#${entry.color}`,
-                      whiteSpace: 'nowrap',
-                      fontSize: '0.9rem',
-                    }}
-                  >
-                    <chartIcons.square className="text-xs" />
-                    {`${entry.name} - ${entry.percentageValue}%`}
-                  </li>
-                ))}
-              </ul>
-            }
-          />
-          <Tooltip
-            contentStyle={{
-              borderRadius: '0.3rem',
-            }}
-            content={({ active, payload, label }) => {
-              if (active && payload && payload.length) {
-                return (
-                  <div className="bg-neutral-100 p-4 rounded-md text-black">
-                    <p className="label">{`Spendings : ${payload[0].value}`}</p>
-                  </div>
-                );
+            <Legend
+              iconType="rect"
+              content={
+                <ul className="flex gap-4 flex-wrap">
+                  {chartData.map((entry, index) => (
+                    <li
+                      key={index}
+                      style={{
+                        display: 'flex',
+                        gap: '0.2rem',
+                        alignItems: 'center',
+                        color: `#${entry.color}`,
+                        whiteSpace: 'nowrap',
+                        fontSize: '0.9rem',
+                      }}
+                    >
+                      <chartIcons.square className="text-xs" />
+                      {`${entry.name} - ${entry.percentageValue}%`}
+                    </li>
+                  ))}
+                </ul>
               }
+            />
+            <Tooltip
+              contentStyle={{
+                borderRadius: '0.3rem',
+              }}
+              content={({ active, payload, label }) => {
+                if (active && payload && payload.length) {
+                  return (
+                    <div className="bg-neutral-100 p-4 rounded-md text-black">
+                      <p className="label">{`Spendings : ${payload[0].value}`}</p>
+                    </div>
+                  );
+                }
 
-              return null;
-            }}
-          />
-        </PieChart>
-      </ResponsiveContainer>
+                return null;
+              }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };

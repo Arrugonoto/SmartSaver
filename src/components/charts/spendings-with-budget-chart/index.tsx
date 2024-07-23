@@ -107,7 +107,6 @@ export const SpendingsWithBudgetChart = () => {
     if (expenses) {
       const currentMonth = getCurrentMonthData(expenses);
       const prevMonth = getPreviousMonthData(expenses);
-      console.log('current:', currentMonth, 'previous:', prevMonth);
       setRawData([...currentMonth, ...prevMonth]);
     }
   }, [expenses]);
@@ -122,41 +121,43 @@ export const SpendingsWithBudgetChart = () => {
   if (!expenses || !budgetData) return <LoadingChart sm />;
 
   return (
-    <div className="flex flex-col min-h-[400px] w-full gap-4">
+    <div className="flex flex-col w-full gap-4">
       <div className="px-4">
         <h3 className="font-medium text-lg">Expenses with budged</h3>
       </div>
-      <ResponsiveContainer width="100%" height="100%">
-        <ComposedChart
-          width={500}
-          height={400}
-          data={chartData}
-          margin={{
-            top: 20,
-            right: 10,
-            bottom: 20,
-            left: 10,
-          }}
-        >
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip
-            labelStyle={{ color: '#000' }}
-            contentStyle={{
-              borderRadius: '0.3rem',
+      <div className="flex h-[260px] xs:h-[300px] sm:h-[400px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart
+            width={500}
+            height={400}
+            data={chartData}
+            margin={{
+              top: 20,
+              right: 10,
+              bottom: 20,
+              left: 10,
             }}
-          />
-          <Legend />
-          <Bar
-            dataKey="spendings"
-            barSize={30}
-            fill="#3182bd"
-            fillOpacity={0.8}
-            radius={[4, 4, 0, 0]}
-          />
-          <Line type="monotone" dataKey="budget" stroke="#3bb900" />
-        </ComposedChart>
-      </ResponsiveContainer>
+          >
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip
+              labelStyle={{ color: '#000' }}
+              contentStyle={{
+                borderRadius: '0.3rem',
+              }}
+            />
+            <Legend />
+            <Bar
+              dataKey="spendings"
+              barSize={30}
+              fill="#3182bd"
+              fillOpacity={0.8}
+              radius={[4, 4, 0, 0]}
+            />
+            <Line type="monotone" dataKey="budget" stroke="#3bb900" />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };

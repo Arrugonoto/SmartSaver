@@ -72,42 +72,44 @@ export const ExpenseCategoryBarChart = ({
   }
 
   return (
-    <div className="flex flex-col min-h-[500px] w-full xg:w-1/2 gap-8">
+    <div className="flex flex-col w-full xg:w-1/2 gap-8">
       <h3 className="font-medium">Total by category</h3>
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          width={500}
-          height={500}
-          data={chartData}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip
-            labelStyle={{ color: '#000' }}
-            contentStyle={{
-              borderRadius: '0.3rem',
+      <div className="flex h-[260px] xs:h-[300px] sm:h-[500px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            width={500}
+            height={500}
+            data={chartData}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
             }}
-          />
-          <Bar
-            name="Total"
-            dataKey="totalSpending"
-            fill="#8884d8"
-            activeBar={<Rectangle stroke="#000" />}
-            radius={[4, 4, 0, 0]}
-            barSize={40}
           >
-            {chartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={`#${entry.color}`} />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip
+              labelStyle={{ color: '#000' }}
+              contentStyle={{
+                borderRadius: '0.3rem',
+              }}
+            />
+            <Bar
+              name="Total"
+              dataKey="totalSpending"
+              fill="#8884d8"
+              activeBar={<Rectangle stroke="#000" />}
+              radius={[4, 4, 0, 0]}
+              barSize={40}
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={`#${entry.color}`} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };
