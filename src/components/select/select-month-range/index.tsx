@@ -32,21 +32,23 @@ export const MonthRangeSelect = ({
   };
 
   return (
-    <Select
-      label="Select date range"
-      variant="flat"
-      selectedKeys={[dateRange]}
-      disallowEmptySelection={true}
-      size="md"
-      className="max-w-[200px]"
-      startContent={<selectIcons.calendarEmpty />}
-      onChange={(e) => handleChange(e)}
-    >
-      {datesRange.map((el) => (
-        <SelectItem key={el.key} value={el.value}>
-          {el.name}
-        </SelectItem>
-      ))}
-    </Select>
+    <div className="flex w-full">
+      <Select
+        label="Select date range"
+        variant="bordered"
+        selectedKeys={[dateRange]}
+        disallowEmptySelection={true}
+        size="md"
+        className="min-w-[200px] w-auto"
+        startContent={<selectIcons.calendarEmpty />}
+        onChange={(e) => handleChange(e)}
+      >
+        {datesRange.map((el) => (
+          <SelectItem key={el.key} value={el.value}>
+            {el.name}
+          </SelectItem>
+        ))}
+      </Select>
+    </div>
   );
 };

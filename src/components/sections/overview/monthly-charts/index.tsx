@@ -7,6 +7,7 @@ import { Card, CardHeader, CardBody } from '@nextui-org/card';
 import { ExpenseCategoryPieChart } from '@components/charts/category-pie-chart';
 import { ExpenseCategoryBarChart } from '@components/charts/category-bar-chart';
 import { MonthRangeSelect } from '@components/select/select-month-range';
+import { Divider } from '@nextui-org/divider';
 
 const switchDateRange = (data: Expense[], dateRange: string) => {
   switch (dateRange) {
@@ -88,7 +89,7 @@ export const MonthlyChartsSection = () => {
   );
 
   useEffect(() => {
-    if (expenses) {
+    if (expenses && expenses.length > 0) {
       const data = switchDateRange(expenses, dateRange);
       setDataByDates(data);
     }
@@ -96,21 +97,33 @@ export const MonthlyChartsSection = () => {
 
   return (
     <section>
-      <Card className="flex flex-col w-full pt-2 px-4 gap-4">
+      <Card className="flex flex-col w-full pt-2 px-1 lg:px-4 gap-4">
         <CardBody className="w-full h-full gap-4">
-          <div className="flex w-full justify-between items-center bg-content2 px-4 py-1 rounded-lg">
+          <div className="flex w-full justify-between items-center bg-content2 px-4 py-1 rounded-lg flex-col md:flex-row gap-8">
             <div>
-              <p>Total expenses: {totalNumOfExpensesInMonth}</p>
-              <p>One time: {OneTimeSpendings?.length ?? 0}</p>
-              <p>Commitments: {numOfSubsAndMonthly?.length ?? 0}</p>
+              <MonthRangeSelect
+                dateRange={dateRange}
+                setDateRange={setDateRange}
+              />
             </div>
 
-            <MonthRangeSelect
-              dateRange={dateRange}
-              setDateRange={setDateRange}
-            />
+            <div className="flex flex-col w-full">
+              <div className="flex flex-row justify-between">
+                <p>Total expenses: </p>
+                <p>{totalNumOfExpensesInMonth}</p>
+              </div>
+              <Divider />
+              <div className="flex flex-row justify-between">
+                <p>One time: </p>
+                <p>{OneTimeSpendings?.length ?? 0}</p>
+              </div>
+              <div className="flex flex-row justify-between">
+                <p>Commitments: </p>
+                <p>{numOfSubsAndMonthly?.length ?? 0}</p>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col w-full min-h-[70vh] xl:min-h-[50vh] h-full p-4 gap-4 xl:flex-row">
+          <div className="flex flex-col w-full min-h-[70vh] xl:min-h-[50vh] h-full gap-4 xl:flex-row">
             <ExpenseCategoryPieChart expenses={dataByDates} />
             <ExpenseCategoryBarChart expenses={dataByDates} />
           </div>
