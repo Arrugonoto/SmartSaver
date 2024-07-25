@@ -12,6 +12,8 @@ import {
   FaPaperPlane,
   FaChartLine,
   FaMoneyCheckDollar,
+  FaArrowRightFromBracket,
+  FaArrowRightToBracket,
 } from 'react-icons/fa6';
 import { TbMessageQuestion } from 'react-icons/tb';
 
@@ -41,6 +43,7 @@ export const navMenuIcons = {
 };
 
 export const btnIcons = {
+  signin: FaArrowRightToBracket,
   plus: FaPlus,
   send: FaPaperPlane,
 };
@@ -49,4 +52,9 @@ export const asistantIcons = {
   message: TbMessageQuestion,
   minimize: FaMinus,
   assistant: FaUserTie,
+};
+
+export const userMenuIcons = {
+  settings: FaGear,
+  logout: FaArrowRightFromBracket,
 };
