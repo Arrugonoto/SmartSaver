@@ -8,6 +8,8 @@ import {
 import { Button } from '@nextui-org/button';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
+import { UserMenu } from '@components/menus/user-menu';
+import { btnIcons } from '@lib/constants/icons';
 
 export const Header = () => {
   const { data: session } = useSession();
@@ -20,17 +22,21 @@ export const Header = () => {
           <NavbarItem>
             <p>{session && `Hi ${session?.user?.name}`}</p>
           </NavbarItem>
-          <NavbarItem>
-            {session ? (
-              <Button onPress={() => signOut({ callbackUrl: '/' })}>
-                Logout
-              </Button>
-            ) : (
+
+          {session ? (
+            <NavbarItem>
+              <UserMenu />
+            </NavbarItem>
+          ) : (
+            <NavbarItem>
               <Link href="/login">
-                <Button>Sign In</Button>
+                <Button className="flex items-center px-2">
+                  <btnIcons.signin className="text-base" />
+                  <p>Sign In</p>
+                </Button>
               </Link>
-            )}
-          </NavbarItem>
+            </NavbarItem>
+          )}
         </NavbarContent>
       </Navbar>
     </header>
