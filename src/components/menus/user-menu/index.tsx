@@ -6,14 +6,12 @@ import {
   DropdownItem,
   DropdownSection,
 } from '@nextui-org/dropdown';
-import { Avatar, AvatarIcon } from '@nextui-org/avatar';
+import { Avatar } from '@nextui-org/avatar';
 import { useSession, signOut } from 'next-auth/react';
 import { userMenuIcons } from '@lib/constants/icons';
 
 export const UserMenu = () => {
   const { data: session } = useSession();
-
-  //   Record<"base"｜ "wrapper"｜ "title"｜ "description"｜ "shortcut" ｜ "selectedIcon", string>
 
   return (
     <section>
@@ -40,6 +38,7 @@ export const UserMenu = () => {
             <DropdownItem
               key="settings"
               startContent={<userMenuIcons.settings className="text-base" />}
+              href="/user-settings"
             >
               Settings
             </DropdownItem>
