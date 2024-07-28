@@ -16,7 +16,7 @@ export const BudgetLimitModal = ({ update }: { update?: boolean }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
-    <div className="z-[100]">
+    <div>
       {!update && (
         <Button onPress={onOpen} color="primary" variant="flat" size="sm">
           Set a budget limit

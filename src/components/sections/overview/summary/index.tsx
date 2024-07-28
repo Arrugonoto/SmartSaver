@@ -131,7 +131,7 @@ export const ExpensesSummarySection = ({
             </CardBody>
 
             {!isLoading && budgetLimit && (
-              <div className="absolute top-1 right-1 z-[100]">
+              <div className="absolute top-1 right-1 z-50">
                 <BudgetLimitModal update />
               </div>
             )}
