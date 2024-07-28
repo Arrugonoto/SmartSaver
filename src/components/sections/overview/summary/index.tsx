@@ -58,17 +58,19 @@ export const ExpensesSummarySection = ({
   );
   const { data: session } = useSession();
   const user_id = session?.user.id;
+
   const { data: userExpenses } = useFetch<Expense[]>({
     action: getExpenses,
     user_id,
+    initialFetch: true,
   });
-
-  const currentMonth = new Date().getMonth();
-
   const { data, isLoading } = useFetch<BudgetLimit>({
     action: getBudgetLimit,
     user_id,
+    initialFetch: true,
   });
+
+  const currentMonth = new Date().getMonth();
 
   const totalExpenses = expenses?.reduce(
     (sum, expense) => sum + parseFloat(expense.amount as any),
@@ -83,18 +85,18 @@ export const ExpensesSummarySection = ({
   }, [userExpenses, currentMonth]);
 
   useEffect(() => {
-    if (expenses) {
-      const data = sumMonthlyCommitments(expenses);
-      setMonthlyCommitments(data);
-    }
-  }, [expenses]);
-
-  useEffect(() => {
     if (data) {
       const limit = data.budget_limit;
       setBudgetLimit(limit);
     }
   }, [data, budgetLimit]);
+
+  useEffect(() => {
+    if (expenses) {
+      const data = sumMonthlyCommitments(expenses);
+      setMonthlyCommitments(data);
+    }
+  }, [expenses]);
 
   return (
     <section className="flex flex-col w-full gap-4">

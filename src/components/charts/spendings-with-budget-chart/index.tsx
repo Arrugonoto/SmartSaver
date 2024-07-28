@@ -101,6 +101,7 @@ export const SpendingsWithBudgetChart = () => {
   const { data: budgetData } = useFetch<BudgetLimit>({
     action: getBudgetLimit,
     user_id,
+    initialFetch: true,
   });
 
   useEffect(() => {

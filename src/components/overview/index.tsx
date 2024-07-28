@@ -20,6 +20,7 @@ export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
   const { data, totalResults, isLoading } = useFetch<Expense[]>({
     action: getExpenses,
     user_id,
+    initialFetch: true,
   });
 
   useEffect(() => {
