@@ -4,8 +4,15 @@ import type { Session } from 'next-auth';
 import { Divider } from '@nextui-org/divider';
 import { accountIcons } from '@lib/constants/icons';
 import { Input } from '@nextui-org/input';
-import { Modal, ModalContent, ModalHeader, ModalBody } from '@nextui-org/modal';
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from '@nextui-org/modal';
 import { Button } from '@nextui-org/button';
+import { useDisclosure } from '@nextui-org/modal';
 
 export const UserSettingsSection = ({
   userSession,
@@ -13,9 +20,22 @@ export const UserSettingsSection = ({
   userSession: Session;
 }) => {
   const user = userSession.user;
-  const [password, setPassword] = useState<string | null>(null);
-  const [confirmPassword, setConfirmPassword] = useState<string | null>(null);
-  const [username, setUsername] = useState<string | null>(null);
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenPassword,
+    onOpen: onOpenPassword,
+    onOpenChange: onOpenChangePassword,
+    onClose: onClosePassword,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenDelete,
+    onOpen: onOpenDelete,
+    onOpenChange: onOpenChangeDelete,
+    onClose: onCloseDelete,
+  } = useDisclosure();
 
   return (
     <section className="flex flex-col bg-content1 h-full px-4 py-2 gap-2 rounded-lg">
@@ -38,15 +58,55 @@ export const UserSettingsSection = ({
               type="text"
               name="confirmNewPassword"
               placeholder={user?.name}
+              value={username}
+              onValueChange={(value) => setUsername(value)}
               className="min-w-[200px] md:min-w-[280px] lg:min-w-[360px]"
             />
             <Button
               variant="ghost"
               color="success"
               className="self-end min-w-[160px]"
+              isDisabled={!username || username.length < 3}
+              onPress={() => onOpen()}
             >
               Change name
             </Button>
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+              <ModalContent className="flex flex-col gap-2">
+                {(onClose) => (
+                  <>
+                    <ModalHeader className="flex flex-col">
+                      <h4 className="text-success font-normal">
+                        Confirm username change
+                      </h4>
+                      <p className="text-sm font-normal">
+                        To confirm the change, enter your password
+                      </p>
+                    </ModalHeader>
+                    <ModalBody>
+                      <Input
+                        label="Confirm password"
+                        // isRequired={!formData.password}
+                        size="sm"
+                        radius="sm"
+                        type="password"
+                        name="confirmPassword"
+                        // value={formData.password}
+                        // onChange={(e) => handleChange(e)}
+                      />
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button color="danger" variant="flat" onPress={onClose}>
+                        Cancel
+                      </Button>
+                      <Button color="success" variant="flat" onPress={onClose}>
+                        Change
+                      </Button>
+                    </ModalFooter>
+                  </>
+                )}
+              </ModalContent>
+            </Modal>
           </form>
         </div>
       </div>
@@ -65,6 +125,8 @@ export const UserSettingsSection = ({
               radius="sm"
               type="password"
               name="newPassword"
+              value={password}
+              onValueChange={(value) => setPassword(value)}
               className="min-w-[200px] md:min-w-[280px] lg:min-w-[360px]"
 
               // value={formData.password}
@@ -77,6 +139,8 @@ export const UserSettingsSection = ({
               radius="sm"
               type="password"
               name="confirmNewPassword"
+              value={confirmPassword}
+              onValueChange={(value) => setConfirmPassword(value)}
               className="min-w-[200px] md:min-w-[280px] lg:min-w-[360px]"
               // value={formData.password}
               // onChange={(e) => handleChange(e)}
@@ -85,9 +149,49 @@ export const UserSettingsSection = ({
               variant="ghost"
               color="success"
               className="self-end min-w-[160px]"
+              onPress={() => onOpenPassword()}
+              isDisabled={
+                !password || !confirmPassword || password !== confirmPassword
+              }
             >
               Change password
             </Button>
+            <Modal isOpen={isOpenPassword} onOpenChange={onOpenChangePassword}>
+              <ModalContent className="flex flex-col gap-2">
+                {(onClose) => (
+                  <>
+                    <ModalHeader className="flex flex-col">
+                      <h4 className="text-success font-normal">
+                        Confirm password change
+                      </h4>
+                      <p className="text-sm font-normal">
+                        To confirm the change, enter your password
+                      </p>
+                    </ModalHeader>
+                    <ModalBody>
+                      <Input
+                        label="Confirm password"
+                        // isRequired={!formData.password}
+                        size="sm"
+                        radius="sm"
+                        type="password"
+                        name="confirmPassword"
+                        // value={formData.password}
+                        // onChange={(e) => handleChange(e)}
+                      />
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button color="danger" variant="flat" onPress={onClose}>
+                        Cancel
+                      </Button>
+                      <Button color="success" variant="flat" onPress={onClose}>
+                        Change
+                      </Button>
+                    </ModalFooter>
+                  </>
+                )}
+              </ModalContent>
+            </Modal>
           </form>
         </div>
       </div>
@@ -102,15 +206,48 @@ export const UserSettingsSection = ({
             </p>
           </div>
           <div className="flex w-auto justify-end items-end">
-            <Button variant="ghost" color="danger" className="min-w-[160px]">
+            <Button
+              variant="ghost"
+              color="danger"
+              className="min-w-[160px]"
+              onPress={() => onOpenDelete()}
+            >
               Delete my account
             </Button>
-            <Modal>
-              <ModalContent>
-                <ModalHeader></ModalHeader>
-                <ModalBody>
-                  <p>e?</p>
-                </ModalBody>
+            <Modal isOpen={isOpenDelete} onOpenChange={onOpenChangeDelete}>
+              <ModalContent className="flex flex-col gap-2">
+                {(onClose) => (
+                  <>
+                    <ModalHeader className="flex flex-col">
+                      <h4 className="text-danger font-normal">
+                        Confirm account deletion
+                      </h4>
+                      <p className="text-danger text-sm font-normal opacity-80">
+                        To confirm deletion, enter your password
+                      </p>
+                    </ModalHeader>
+                    <ModalBody>
+                      <Input
+                        label="Confirm password"
+                        // isRequired={!formData.password}
+                        size="sm"
+                        radius="sm"
+                        type="password"
+                        name="confirmPassword"
+                        // value={formData.password}
+                        // onChange={(e) => handleChange(e)}
+                      />
+                    </ModalBody>
+                    <ModalFooter className="gap-4">
+                      <Button color="success" variant="flat" onPress={onClose}>
+                        Cancel
+                      </Button>
+                      <Button color="danger" onPress={onClose}>
+                        Delete my account
+                      </Button>
+                    </ModalFooter>
+                  </>
+                )}
               </ModalContent>
             </Modal>
           </div>
