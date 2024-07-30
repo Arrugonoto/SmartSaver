@@ -13,6 +13,8 @@ import {
 } from '@nextui-org/modal';
 import { Button } from '@nextui-org/button';
 import { useDisclosure } from '@nextui-org/modal';
+import { useSession } from 'next-auth/react';
+import { updateName, updatePassword } from '@lib/actions/user/update-user';
 
 export const UserSettingsSection = ({
   userSession,
@@ -20,22 +22,65 @@ export const UserSettingsSection = ({
   userSession: Session;
 }) => {
   const user = userSession.user;
+  const { update } = useSession();
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [username, setUsername] = useState<string>('');
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [currentPassword, setCurrentPassword] = useState<string>('');
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
     isOpen: isOpenPassword,
     onOpen: onOpenPassword,
     onOpenChange: onOpenChangePassword,
-    onClose: onClosePassword,
+    onClose,
   } = useDisclosure();
   const {
     isOpen: isOpenDelete,
     onOpen: onOpenDelete,
     onOpenChange: onOpenChangeDelete,
-    onClose: onCloseDelete,
   } = useDisclosure();
+
+  const handleUpdateName = async () => {
+    const formData = {
+      newUsername: username,
+      password: currentPassword,
+      email: user.email,
+    };
+
+    try {
+      const response = await updateName(formData);
+      if (response?.error) console.error(response?.error);
+    } catch (error) {
+      console.error(error);
+    }
+
+    update();
+    setCurrentPassword('');
+  };
+
+  const handleUpdatePassword = async () => {
+    const formData = {
+      newPassword: confirmPassword,
+      password: currentPassword,
+      email: user.email,
+    };
+
+    try {
+      const response = await updatePassword(formData);
+      if (response?.error) console.error(response?.error);
+    } catch (error) {
+      console.error(error);
+    }
+
+    setCurrentPassword('');
+  };
+
+  const sanitizeInputs = () => {
+    setPassword('');
+    setConfirmPassword('');
+    setUsername('');
+    setCurrentPassword('');
+  };
 
   return (
     <section className="flex flex-col bg-content1 h-full px-4 py-2 gap-2 rounded-lg">
@@ -71,19 +116,25 @@ export const UserSettingsSection = ({
             >
               Change name
             </Button>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-              <ModalContent className="flex flex-col gap-2">
-                {(onClose) => (
-                  <>
-                    <ModalHeader className="flex flex-col">
-                      <h4 className="text-success font-normal">
-                        Confirm username change
-                      </h4>
-                      <p className="text-sm font-normal">
-                        To confirm the change, enter your password
-                      </p>
-                    </ModalHeader>
-                    <ModalBody>
+          </form>
+          <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            onClose={() => sanitizeInputs()}
+          >
+            <ModalContent className="flex flex-col gap-2">
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col">
+                    <h4 className="text-success font-normal">
+                      Confirm username change
+                    </h4>
+                    <p className="text-sm font-normal">
+                      To confirm the change, enter your password
+                    </p>
+                  </ModalHeader>
+                  <ModalBody>
+                    <form>
                       <Input
                         label="Confirm password"
                         // isRequired={!formData.password}
@@ -91,23 +142,35 @@ export const UserSettingsSection = ({
                         radius="sm"
                         type="password"
                         name="confirmPassword"
-                        // value={formData.password}
-                        // onChange={(e) => handleChange(e)}
+                        value={currentPassword}
+                        onValueChange={(value) => setCurrentPassword(value)}
                       />
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button color="danger" variant="flat" onPress={onClose}>
-                        Cancel
-                      </Button>
-                      <Button color="success" variant="flat" onPress={onClose}>
-                        Change
-                      </Button>
-                    </ModalFooter>
-                  </>
-                )}
-              </ModalContent>
-            </Modal>
-          </form>
+                    </form>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button
+                      color="danger"
+                      variant="flat"
+                      onPress={() => {
+                        setCurrentPassword('');
+                        onClose();
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      color="success"
+                      variant="flat"
+                      onPress={() => handleUpdateName()}
+                      isDisabled={!currentPassword}
+                    >
+                      Change
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
         </div>
       </div>
       <Divider className="opacity-60" />
@@ -156,7 +219,11 @@ export const UserSettingsSection = ({
             >
               Change password
             </Button>
-            <Modal isOpen={isOpenPassword} onOpenChange={onOpenChangePassword}>
+            <Modal
+              isOpen={isOpenPassword}
+              onOpenChange={onOpenChangePassword}
+              onClose={() => sanitizeInputs()}
+            >
               <ModalContent className="flex flex-col gap-2">
                 {(onClose) => (
                   <>
@@ -176,15 +243,27 @@ export const UserSettingsSection = ({
                         radius="sm"
                         type="password"
                         name="confirmPassword"
-                        // value={formData.password}
-                        // onChange={(e) => handleChange(e)}
+                        value={currentPassword}
+                        onValueChange={(value) => setCurrentPassword(value)}
                       />
                     </ModalBody>
                     <ModalFooter>
-                      <Button color="danger" variant="flat" onPress={onClose}>
+                      <Button
+                        color="danger"
+                        variant="flat"
+                        onPress={() => {
+                          setCurrentPassword('');
+                          onClose();
+                        }}
+                      >
                         Cancel
                       </Button>
-                      <Button color="success" variant="flat" onPress={onClose}>
+                      <Button
+                        color="success"
+                        variant="flat"
+                        onPress={() => handleUpdatePassword()}
+                        isDisabled={!currentPassword}
+                      >
                         Change
                       </Button>
                     </ModalFooter>
