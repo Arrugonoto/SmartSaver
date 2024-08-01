@@ -15,6 +15,8 @@ import {
   FaArrowRightFromBracket,
   FaArrowRightToBracket,
   FaUserGear,
+  FaMoon,
+  FaSun,
 } from 'react-icons/fa6';
 import { TbMessageQuestion } from 'react-icons/tb';
 
@@ -58,6 +60,8 @@ export const asistantIcons = {
 export const userMenuIcons = {
   settings: FaGear,
   logout: FaArrowRightFromBracket,
+  themeDark: FaMoon,
+  themeLight: FaSun,
 };
 
 export const accountIcons = {
