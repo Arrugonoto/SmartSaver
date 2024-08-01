@@ -27,7 +27,7 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <div className="flex flex-col w-full h-[100vh]">
           <SessionProvider>
