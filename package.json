@@ -1,6 +1,6 @@
 {
   "name": "smart-saver",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "prettier": {
     "singleQuote": true
@@ -22,6 +22,7 @@
     "framer-motion": "^11.2.10",
     "next": "^14.2.5",
     "next-auth": "^4.24.7",
+    "next-themes": "^0.3.0",
     "openai": "^4.52.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
