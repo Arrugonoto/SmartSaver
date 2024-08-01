@@ -7,5 +7,6 @@ export const config = {
     '/assistant/:path*',
     '/notes/:path*',
     '/calendar/:path*',
+    '/user-settings:path*',
   ],
 };
