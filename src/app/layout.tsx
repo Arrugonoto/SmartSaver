@@ -29,11 +29,11 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <div className="flex flex-col w-full h-[100vh]">
+        <div className="flex w-full">
           <SessionProvider>
-            <Header />
             <Providers>
-              <div className="flex w-full h-full">
+              <Header />
+              <div className="flex w-full h-full overflow-y-scroll">
                 {session && <SideMenu />}
                 {children}
               </div>
