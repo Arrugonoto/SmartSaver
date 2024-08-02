@@ -18,18 +18,16 @@ export const UserMenu = () => {
   const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
-  const [isLightMode, setIsLightMode] = useState<boolean>(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    setTheme(isLightMode ? 'light' : 'dark');
-    console.log('The theme mode is:', theme);
-  }, [isLightMode, setTheme, theme]);
-
   if (!mounted) return null;
+
+  const handleThemeChange = (isSelected: boolean) => {
+    setTheme(isSelected ? 'light' : 'dark');
+  };
 
   return (
     <section>
@@ -63,8 +61,8 @@ export const UserMenu = () => {
                   size="md"
                   startContent={<userMenuIcons.themeLight />}
                   endContent={<userMenuIcons.themeDark />}
-                  isSelected={isLightMode}
-                  onValueChange={(isSelected) => setIsLightMode(isSelected)}
+                  isSelected={theme === 'light'}
+                  onValueChange={(isSelected) => handleThemeChange(isSelected)}
                   classNames={{
                     wrapper: ['bg-secondary/[0.6]'],
                     endContent: ['text-white'],
