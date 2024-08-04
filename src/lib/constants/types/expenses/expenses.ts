@@ -29,6 +29,7 @@ export interface SingleExpense {
   name: string;
   amount: number;
   expense_type: string;
+  payment_type: PaymentType;
   description?: string;
   created_at: Date;
   updated_at?: Date;
