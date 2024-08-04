@@ -7,7 +7,7 @@ async function createUsersTable(client) {
     const createTable = await client.sql`
       CREATE TABLE IF NOT EXISTS users (
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
+        name TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
         created_at TIMESTAMP NOT NULL
@@ -25,13 +25,11 @@ async function createExpensesSummaryTable(client) {
   try {
     await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
     // Create the "expenses_summary" table if doesn't exist
-    // Changed amount data type from INT to NUMERIC
-    // to be able to store floating number values
     const createTable = await client.sql`
       CREATE TABLE IF NOT EXISTS expenses_summary (
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         user_id UUID NOT NULL,
-        total_amount NUMERIC(40, 2) NOT NULL
+        total_amount NUMERIC(200, 2) NOT NULL
       );
     `;
 
@@ -46,17 +44,42 @@ async function createExpensesTable(client) {
   try {
     await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
     // Create the "expenses" table if doesn't exist
-    // Changed amount data type from INT to NUMERIC
-    // to be able to store floating number values
     const createTable = await client.sql`
       CREATE TABLE IF NOT EXISTS expenses (
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         user_id UUID NOT NULL,
-        name VARCHAR(255) NOT NULL,
-        amount NUMERIC(500, 2) NOT NULL,
-        expense_type VARCHAR(255) NOT NULL,
-        payment_type VARCHAR(255) NOT NULL,
-        description VARCHAR(255),
+        name TEXT NOT NULL,
+        amount NUMERIC(100, 2) NOT NULL,
+        expense_type TEXT NOT NULL,
+        payment_type TEXT NOT NULL,
+        payment_duration INT,
+        description TEXT,
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP,
+      );
+    `;
+
+    console.log(`Created "expenses" table`);
+  } catch (error) {
+    console.error('Error while creating expenses table:', error);
+    throw error;
+  }
+}
+
+async function createSubscriptionsTable(client) {
+  try {
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+    // Create the "subscriptions" table if doesn't exist
+    const createTable = await client.sql`
+      CREATE TABLE IF NOT EXISTS subscriptions (
+        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+        user_id UUID NOT NULL,
+        name TEXT NOT NULL,
+        amount NUMERIC(100, 2) NOT NULL,
+        expense_type TEXT NOT NULL,
+        payment_type TEXT NOT NULL,
+        payment_duration INT NOT NULL,
+        description TEXT,
         created_at TIMESTAMP NOT NULL,
         updated_at TIMESTAMP
       );
@@ -77,8 +100,8 @@ async function createBudgetLimitTable(client) {
        CREATE TABLE IF NOT EXISTS budget (
          id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
          user_id UUID NOT NULL,
-         budget_limit NUMERIC(1000, 2) NOT NULL,
-         first_limit NUMERIC(1000, 2) NOT NULL,
+         budget_limit NUMERIC(200, 2) NOT NULL,
+         first_limit NUMERIC(200, 2) NOT NULL,
          created_at TIMESTAMP NOT NULL,
          updated_at TIMESTAMP
        );
@@ -94,8 +117,10 @@ async function createBudgetLimitTable(client) {
 async function initDatabase() {
   const client = await db.connect();
   await createUsersTable(client);
-  await createExpensesSummaryTable(client);
   await createExpensesTable(client);
+  await createSubscriptionsTable(client);
+  await createExpensesSummaryTable(client);
+  await createBudgetLimitTable(client);
 
   await client.end();
 }
