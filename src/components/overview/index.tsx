@@ -1,6 +1,6 @@
 'use client';
 import { useEffect } from 'react';
-import type { Expense } from '@constants/types/expenses/expenses';
+import type { Expenses } from '@constants/types/expenses/expenses';
 import { getExpenses } from '@lib/actions/expenses/get-expenses';
 import { useFetch } from '@lib/hooks/useFetch';
 import { useExpensesStore } from '@store/expensesStore';
@@ -10,22 +10,22 @@ import { AnnualChartSection } from '@components/sections/overview/annual-chart';
 import { CreateExpenseModal } from '@components/modals/create-expense-modal';
 
 export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
-  const { setExpenses, setTotalResults, expenses } = useExpensesStore(
+  const { setSpendings, setTotalResults, spendings } = useExpensesStore(
     (state) => ({
-      setExpenses: state.setExpenses,
+      setSpendings: state.setSpendings,
       setTotalResults: state.setTotalResults,
-      expenses: state.expenses,
+      spendings: state.spendings,
     })
   );
-  const { data, totalResults, isLoading } = useFetch<Expense[]>({
+  const { data, totalResults, isLoading } = useFetch<Expenses>({
     action: getExpenses,
     user_id,
     initialFetch: true,
   });
 
   useEffect(() => {
-    if (data) setExpenses(data);
-  }, [setExpenses, data]);
+    if (data) setSpendings(data);
+  }, [setSpendings, data]);
 
   useEffect(() => {
     setTotalResults(totalResults);
@@ -38,11 +38,11 @@ export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
         <CreateExpenseModal />
       </div>
       <div className="flex flex-col gap-6 pb-4">
-        <ExpensesSummarySection expenses={expenses} isLoading={isLoading} />
+        <ExpensesSummarySection spendings={spendings} isLoading={isLoading} />
 
-        <MonthlyChartsSection />
+        {/* <MonthlyChartsSection /> */}
 
-        <AnnualChartSection />
+        {/* <AnnualChartSection /> */}
       </div>
     </div>
   );
