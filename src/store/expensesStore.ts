@@ -13,7 +13,7 @@ type State = {
 
 type Action = {
   setUserId: (userId: State['userId']) => void;
-  setExpenses: (spendings: State['spendings']) => void;
+  setSpendings: (spendings: State['spendings']) => void;
   setPage: (page: State['page']) => void;
   setResultsPerPage: (resultsPerPage: State['resultsPerPage']) => void;
   setTotalResults: (totalResults: State['totalResults']) => void;
@@ -30,7 +30,7 @@ export const useExpensesStore = create(
       totalResults: 0,
       loadingSpendings: true,
       setUserId: (id) => set({ userId: id }),
-      setExpenses: (newSpendings) => set({ spendings: newSpendings }),
+      setSpendings: (newSpendings) => set({ spendings: newSpendings }),
       setPage: (pageNum) => set({ page: pageNum }),
       setResultsPerPage: (resPerPage) =>
         set(() => ({ resultsPerPage: resPerPage })),
@@ -39,7 +39,7 @@ export const useExpensesStore = create(
         set({ loadingSpendings: loadingState }),
     }),
     {
-      name: 'expenses-storage',
+      name: 'spendings-storage',
       storage: createJSONStorage(() => localStorage),
     }
   )
