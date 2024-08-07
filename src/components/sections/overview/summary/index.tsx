@@ -62,8 +62,6 @@ const getTotalInMonth = (spendings: Expenses, monthNumber: number) => {
     }
   });
 
-  console.log('expenses:', { singleSpendings, monthlyPayments, subscriptions });
-
   const expensesTotal = singleSpendings.reduce(
     (sum, expense) => sum + parseFloat(expense.amount as any),
     0
@@ -79,35 +77,11 @@ const getTotalInMonth = (spendings: Expenses, monthNumber: number) => {
     0
   );
 
-  // const filteredByMonth = spendings?.filter(
-  //   (expense) =>
-  //     expense.created_at.toString().includes(currentMonth) ||
-  //     expense.payment_type.toLocaleLowerCase().includes('monthly') ||
-  //     expense.payment_type.toLowerCase().includes('subscription')
-  // );
-
   const totalInMonth = expensesTotal + monthlyTotal + subscriptionsTotal;
+  const monthlyCommitments = monthlyTotal + subscriptionsTotal;
 
-  // const totalInMonth = filteredByMonth.reduce(
-  //   (sum, expense) => sum + parseFloat(expense.amount as any),
-  //   0
-  // );
-
-  return totalInMonth as number;
+  return { totalInMonth, monthlyCommitments };
 };
-
-// const sumMonthlyCommitments = (spendings: Expense[]) => {
-//   const monthlyPayments = spendings?.filter(
-//     (expense) => expense.payment_type !== 'one-time'
-//   );
-
-//   const commitmentsSummary = monthlyPayments?.reduce(
-//     (sum, expense) => sum + parseFloat(expense.amount as any),
-//     0
-//   );
-
-//   return commitmentsSummary;
-// };
 
 export const ExpensesSummarySection = ({
   spendings,
@@ -124,11 +98,6 @@ export const ExpensesSummarySection = ({
   const { data: session } = useSession();
   const user_id = session?.user.id;
 
-  // const { data: userExpenses } = useFetch<Expenses>({
-  //   action: getExpenses,
-  //   user_id,
-  //   initialFetch: true,
-  // });
   const { data, isLoading } = useFetch<BudgetLimit>({
     action: getBudgetLimit,
     user_id,
@@ -145,7 +114,8 @@ export const ExpensesSummarySection = ({
   useEffect(() => {
     if (spendings) {
       const total = getTotalInMonth(spendings, currentMonth);
-      setTotalInMonth(total);
+      setTotalInMonth(total.totalInMonth);
+      setMonthlyCommitments(total.monthlyCommitments);
     }
   }, [spendings, currentMonth]);
 
@@ -155,13 +125,6 @@ export const ExpensesSummarySection = ({
       setBudgetLimit(limit);
     }
   }, [data, budgetLimit]);
-
-  // useEffect(() => {
-  //   if (spendings) {
-  //     const data = sumMonthlyCommitments(spendings);
-  //     setMonthlyCommitments(data);
-  //   }
-  // }, [spendings]);
 
   return (
     <section className="flex flex-col w-full gap-4">
@@ -215,7 +178,7 @@ export const ExpensesSummarySection = ({
         ) : (
           <LoadingCard />
         )} */}
-        {/* {monthlyCommitments ? (
+        {monthlyCommitments ? (
           <Card className="w-full align-center justify-center">
             <CardHeader className="justify-center">
               <h2 className="text-center text-xl">Monthly commitments</h2>
@@ -226,12 +189,12 @@ export const ExpensesSummarySection = ({
           </Card>
         ) : (
           <LoadingCard />
-        )} */}
+        )}
       </div>
 
       {/* <div className="flex w-full flex-col lg:flex-row gap-2">
         <Card className="w-full lg:w-1/2">
-          <CardBody className="">
+          <CardBody>
             <SpendingsWithBudgetChart />
           </CardBody>
         </Card>
