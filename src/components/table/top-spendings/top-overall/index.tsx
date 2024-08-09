@@ -1,6 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
-import type { Expense } from '@constants/types/expenses/expenses';
+import type {
+  Expenses,
+  SingleExpense,
+  Subscription,
+} from '@constants/types/expenses/expenses';
 import {
   Table,
   TableHeader,
@@ -23,8 +27,10 @@ const columns = [
   { key: 'payment_type', label: 'PAYMENT TYPE' },
 ];
 
-const sortExpensesByHighest = (expenses: Expense[]) => {
-  const sortedExpenses = expenses
+const sortExpensesByHighest = (spendings: Expenses) => {
+  const spendingsList = [...spendings?.expenses, ...spendings?.subscriptions];
+
+  const sortedExpenses = spendingsList
     ?.sort(
       (curr, next) =>
         parseFloat(next.amount as any) - parseFloat(curr.amount as any)
@@ -35,18 +41,20 @@ const sortExpensesByHighest = (expenses: Expense[]) => {
 };
 
 export const TopOverallSpendingsTable = ({
-  expenses,
+  spendings,
 }: {
-  expenses: Expense[];
+  spendings: Expenses;
 }) => {
-  const [tableData, setTableData] = useState<Expense[]>([]);
+  const [tableData, setTableData] = useState<SingleExpense[] | Subscription[]>(
+    []
+  );
 
   useEffect(() => {
-    if (expenses) {
-      const data = sortExpensesByHighest(expenses);
+    if (spendings) {
+      const data = sortExpensesByHighest(spendings);
       setTableData(data);
     }
-  }, [expenses]);
+  }, [spendings]);
 
   return (
     <Table
@@ -64,7 +72,7 @@ export const TopOverallSpendingsTable = ({
               ? 'One time'
               : item.payment_type === 'subscription'
               ? 'Subscription'
-              : 'Monthly';
+              : 'Monthly payment';
 
           const capitalizedName = capitalizeString(item.name);
 

@@ -1,6 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
-import type { Expense } from '@constants/types/expenses/expenses';
+import type {
+  Expenses,
+  Subscription,
+} from '@constants/types/expenses/expenses';
 import {
   Table,
   TableHeader,
@@ -23,28 +26,27 @@ const columns = [
   },
 ];
 
-const sortHighestSubscriptions = (expenses: Expense[]) => {
-  const highestSubscriptions = expenses
-    ?.filter((expense) => expense.payment_type === 'subscription')
-    .sort((a, b) => parseFloat(b.amount as any) - parseFloat(a.amount as any))
+const sortHighestSubscriptions = (spendings: Expenses) => {
+  const highestSubscriptions = spendings?.subscriptions
+    ?.sort((a, b) => parseFloat(b.amount as any) - parseFloat(a.amount as any))
     .slice(0, 10);
 
   return highestSubscriptions;
 };
 
 export const TopSubscriptionsTable = ({
-  expenses,
+  spendings,
 }: {
-  expenses: Expense[];
+  spendings: Expenses;
 }) => {
-  const [tableData, setTableData] = useState<Expense[]>([]);
+  const [tableData, setTableData] = useState<Subscription[]>([]);
 
   useEffect(() => {
-    if (expenses) {
-      const data = sortHighestSubscriptions(expenses);
+    if (spendings) {
+      const data = sortHighestSubscriptions(spendings);
       setTableData(data);
     }
-  }, [expenses]);
+  }, [spendings]);
 
   return (
     <Table

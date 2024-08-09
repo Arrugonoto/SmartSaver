@@ -5,13 +5,13 @@ import { TopOneTimeSpendingsTable } from '@components/table/top-spendings/top-on
 import { TopSubscriptionsTable } from '@components/table/top-spendings/top-subscriptions';
 import { useStore } from '@lib/hooks/useStore';
 import { useExpensesStore } from '@store/expensesStore';
-import type { Expense } from '@constants/types/expenses/expenses';
+import type { Expenses } from '@constants/types/expenses/expenses';
 
 export const TopSpendingsTabs = () => {
-  const expenses = useStore(
+  const spendings = useStore(
     useExpensesStore,
-    (state) => state.expenses
-  ) as Expense[];
+    (state) => state.spendings
+  ) as Expenses;
 
   return (
     <Tabs
@@ -21,13 +21,13 @@ export const TopSpendingsTabs = () => {
       radius="lg"
     >
       <Tab key="overall" title="Overall" className="w-full">
-        <TopOverallSpendingsTable expenses={expenses} />
+        <TopOverallSpendingsTable spendings={spendings} />
       </Tab>
       <Tab key="one time" title="One Time" className="w-full">
-        <TopOneTimeSpendingsTable expenses={expenses} />
+        <TopOneTimeSpendingsTable spendings={spendings} />
       </Tab>
       <Tab key="subscriptions" title="Subscriptions" className="w-full">
-        <TopSubscriptionsTable expenses={expenses} />
+        <TopSubscriptionsTable spendings={spendings} />
       </Tab>
     </Tabs>
   );

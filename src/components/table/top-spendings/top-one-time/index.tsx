@@ -1,8 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
-import type { Expense } from '@constants/types/expenses/expenses';
-import { useStore } from '@lib/hooks/useStore';
-import { useExpensesStore } from '@store/expensesStore';
+import type {
+  Expenses,
+  SingleExpense,
+  Subscription,
+} from '@constants/types/expenses/expenses';
 import {
   Table,
   TableHeader,
@@ -24,8 +26,8 @@ const columns = [
     label: 'AMOUNT',
   },
 ];
-const sortOneTimePayments = (expenses: Expense[]) => {
-  const highestOneTimePayments = expenses
+const sortOneTimePayments = (spendings: Expenses) => {
+  const highestOneTimePayments = spendings?.expenses
     ?.filter((expense) => expense.payment_type === 'one-time')
     .sort(
       (curr, next) =>
@@ -37,18 +39,18 @@ const sortOneTimePayments = (expenses: Expense[]) => {
 };
 
 export const TopOneTimeSpendingsTable = ({
-  expenses,
+  spendings,
 }: {
-  expenses: Expense[];
+  spendings: Expenses;
 }) => {
-  const [tableData, setTableData] = useState<Expense[]>([]);
+  const [tableData, setTableData] = useState<SingleExpense[]>([]);
 
   useEffect(() => {
-    if (expenses) {
-      const data = sortOneTimePayments(expenses);
+    if (spendings) {
+      const data = sortOneTimePayments(spendings);
       setTableData(data);
     }
-  }, [expenses]);
+  }, [spendings]);
 
   return (
     <Table
