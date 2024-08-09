@@ -45,7 +45,7 @@ export const TopOverallSpendingsTable = ({
 }: {
   spendings: Expenses;
 }) => {
-  const [tableData, setTableData] = useState<SingleExpense[] | Subscription[]>(
+  const [tableData, setTableData] = useState<(SingleExpense | Subscription)[]>(
     []
   );
 

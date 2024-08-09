@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import type {
   Expenses,
   SingleExpense,
-  Subscription,
 } from '@constants/types/expenses/expenses';
 import {
   Table,
