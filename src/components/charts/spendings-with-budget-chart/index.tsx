@@ -24,11 +24,16 @@ import {
 } from 'recharts';
 import { LoadingChart } from '@components/loaders/loading-chart';
 
-type ChartElement = {
+interface ChartElement {
   name: string;
   spendings: number;
   budget: number;
-};
+}
+
+interface RawDataTypes {
+  currentMonthSpendings: (SingleExpense | Subscription)[];
+  lastMonthSpendings: (SingleExpense | Subscription)[];
+}
 
 const getCurrentMonthData = (data: Expenses, currentDate: Date) => {
   // function for filtering data based on expense creation and duration dates
@@ -178,35 +183,42 @@ const getPreviousMonthData = (data: Expenses, currentDate: Date) => {
   ];
 };
 
-// const formatChartData = (data: any[], budgetLimit: number) => {
-//   const formattedData = months.map((month) => {
-//     const eachMonthSpendings = data
-//       ?.map((expense) => {
-//         if (expense.created_at.toString().includes(month.abbreviation))
-//           return expense.amount;
-//       })
-//       .filter((amount) => amount !== undefined);
+const formatChartData = (
+  data: RawDataTypes,
+  budgetLimit: number,
+  currentDate: Date
+) => {
+  const currentMonth = currentDate.getMonth();
+  const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
 
-//     const totalMonthlySpendings = eachMonthSpendings?.reduce(
-//       (sum, amount) => parseFloat(sum as any) + parseFloat(amount as any),
-//       0
-//     );
+  const formattedData = Object.entries(data).map((entries) => {
+    const totalSpendingsInMonth = entries[1].reduce(
+      (sum: any, entry: any) => parseFloat(sum) + parseFloat(entry.amount),
+      0
+    );
+    const monthName =
+      entries[0] === 'currentMonthSpendings'
+        ? months[currentMonth].name
+        : months[lastMonth].name;
 
-//     return {
-//       name: month.name,
-//       spendings: totalMonthlySpendings === 0 ? null : totalMonthlySpendings,
-//       budget: budgetLimit,
-//     };
-//   });
-
-//   return formattedData?.filter((month) => month.spendings) as ChartElement[];
-// };
+    return {
+      name: monthName,
+      spendings: totalSpendingsInMonth,
+      budget: budgetLimit,
+    };
+  });
+  console.log(formattedData);
+  return formattedData.reverse() as ChartElement[];
+};
 
 export const SpendingsWithBudgetChart = () => {
   const spendings = useStore(useExpensesStore, (state) => state.spendings);
   const { data: session } = useSession();
   const user_id = session?.user.id;
-  const [rawData, setRawData] = useState<(SingleExpense | Subscription)[]>([]);
+  const [rawData, setRawData] = useState<RawDataTypes>({
+    currentMonthSpendings: [],
+    lastMonthSpendings: [],
+  });
   const [chartData, setChartData] = useState<ChartElement[]>([]);
   const { data: budgetData } = useFetch<BudgetLimit>({
     action: getBudgetLimit,
@@ -217,18 +229,25 @@ export const SpendingsWithBudgetChart = () => {
   useEffect(() => {
     const currentDate = new Date();
     if (spendings) {
-      const currentMonth = getCurrentMonthData(spendings, currentDate);
-      const prevMonth = getPreviousMonthData(spendings, currentDate);
-      setRawData([...currentMonth, ...prevMonth]);
+      const currentMonthSpendings = getCurrentMonthData(spendings, currentDate);
+      const lastMonthSpendings = getPreviousMonthData(spendings, currentDate);
+      setRawData({ currentMonthSpendings, lastMonthSpendings });
     }
+    //eslint-disable-next-line
   }, [spendings]);
 
-  // useEffect(() => {
-  //   if (rawData.length > 0 && budgetData) {
-  //     const data = formatChartData(rawData, budgetData.budget_limit);
-  //     setChartData(data);
-  //   }
-  // }, [rawData, budgetData]);
+  useEffect(() => {
+    const currentDate = new Date();
+    if (rawData.currentMonthSpendings.length > 0 && budgetData) {
+      const data = formatChartData(
+        rawData,
+        budgetData.budget_limit,
+        currentDate
+      );
+      setChartData(data);
+    }
+    //eslint-disable-next-line
+  }, [spendings, budgetData]);
 
   if (!spendings || !budgetData) return <LoadingChart sm />;
 
@@ -238,7 +257,7 @@ export const SpendingsWithBudgetChart = () => {
         <h3 className="font-medium text-lg">Expenses with budged</h3>
       </div>
       <div className="flex h-[260px] xs:h-[300px] sm:h-[400px]">
-        {/* <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             width={500}
             height={400}
@@ -268,7 +287,7 @@ export const SpendingsWithBudgetChart = () => {
             />
             <Line type="monotone" dataKey="budget" stroke="#3bb900" />
           </ComposedChart>
-        </ResponsiveContainer> */}
+        </ResponsiveContainer>
       </div>
     </div>
   );
