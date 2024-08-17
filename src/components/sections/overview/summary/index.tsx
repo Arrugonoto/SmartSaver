@@ -11,8 +11,8 @@ import { useSession } from 'next-auth/react';
 import { SpendingsWithBudgetChart } from '@components/charts/spendings-with-budget-chart';
 import { LoadingCard } from '@components/loaders/loading-card';
 import { LoadingTable } from '@components/loaders/loading-table';
-import { getTotalInMonth } from '@lib/helpers/getTotalinMonth';
-import { calcTotalExpensesSoFar } from '@lib/helpers/getTotalSpendingsSoFar';
+import { getTotalInMonth } from '@lib/helpers/get-total-in-month';
+import { calcTotalExpensesSoFar } from '@lib/helpers/get-total-spendings-so-far';
 
 export const ExpensesSummarySection = ({
   spendings,
