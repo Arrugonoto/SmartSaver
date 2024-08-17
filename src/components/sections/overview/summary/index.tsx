@@ -9,158 +9,10 @@ import { getBudgetLimit } from '@lib/actions/budget/get-budget-limit';
 import type { BudgetLimit } from '@lib/constants/types/budget/budget';
 import { useSession } from 'next-auth/react';
 import { SpendingsWithBudgetChart } from '@components/charts/spendings-with-budget-chart';
-import { getExpenses } from '@lib/actions/expenses/get-expenses';
 import { LoadingCard } from '@components/loaders/loading-card';
 import { LoadingTable } from '@components/loaders/loading-table';
-
-const getTotalInMonth = (spendings: Expenses, monthNumber: number) => {
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear().toString();
-  const currentMonth = months[monthNumber].abbreviation;
-
-  const singleSpendings = spendings?.expenses?.filter(
-    (expense) =>
-      expense.created_at.toString().includes(currentMonth) &&
-      expense.payment_type.toLowerCase().includes('one-time') &&
-      expense.created_at.toString().includes(currentYear)
-  );
-
-  const monthlySpendings = spendings?.expenses?.filter(
-    (expense) => expense.payment_duration
-  );
-
-  const monthlyPayments = monthlySpendings?.map((expense) => {
-    const startOfPayment = expense.created_at;
-    const endOfPayment = new Date(startOfPayment).setMonth(
-      new Date(startOfPayment).getMonth() + expense.payment_duration!
-    );
-
-    const compareDates =
-      currentDate.getFullYear() === new Date(endOfPayment).getFullYear() &&
-      currentDate.getMonth() === new Date(endOfPayment).getMonth();
-
-    if (
-      new Date(endOfPayment).getTime() > currentDate.getTime() ||
-      compareDates
-    ) {
-      return expense;
-    }
-  });
-
-  const subscriptions = spendings?.subscriptions?.map((subscription) => {
-    const startOfSub = subscription.created_at;
-    const endOfSub = new Date(startOfSub).setMonth(
-      new Date(startOfSub).getMonth() + subscription?.payment_duration
-    );
-
-    const compareDates =
-      currentDate.getFullYear() === new Date(endOfSub).getFullYear() &&
-      currentDate.getMonth() === new Date(endOfSub).getMonth();
-
-    if (new Date(endOfSub).getTime() > currentDate.getTime() || compareDates) {
-      return subscription;
-    }
-  });
-
-  const expensesTotal = singleSpendings.reduce(
-    (sum, expense) => sum + parseFloat(expense.amount as any),
-    0
-  );
-
-  const monthlyTotal = monthlyPayments?.reduce(
-    (sum, expense) => sum + parseFloat(expense?.amount as any),
-    0
-  );
-
-  const subscriptionsTotal = subscriptions.reduce(
-    (sum, subscription) => sum + parseFloat(subscription?.amount as any),
-    0
-  );
-
-  const totalInMonth = expensesTotal + monthlyTotal + subscriptionsTotal;
-  const monthlyCommitments = monthlyTotal + subscriptionsTotal;
-
-  return { totalInMonth, monthlyCommitments };
-};
-
-const calcTotalExpenses = (spendings: Expenses) => {
-  // declare arrays which will hold values of total spendings, and subscriptions so far of monthly payments
-  const monthlyPaymentsSoFar: number[] = [];
-  const subscriptionsSoFar: number[] = [];
-
-  const singleSpendings = spendings?.expenses.filter(
-    (expense) => expense.payment_type === 'one-time'
-  );
-
-  const monthlySpendings = spendings?.expenses.filter(
-    (expense) => expense.payment_type === 'monthly'
-  );
-
-  const calcMonthlySoFar = monthlySpendings.map((expense) => {
-    // Calculate difference in month from start of payment, to current date
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth();
-    const startYear = new Date(expense.created_at).getFullYear();
-    const startMonth = new Date(expense.created_at).getMonth();
-
-    const yearDiff = (currentYear - startYear) * 12; // multiply year with 12 months
-    const monthDiff = currentMonth - startMonth + 1; // payment always starts from first month, add 1 to include first payment on start
-
-    const totalMonthDiff = yearDiff + monthDiff;
-
-    if (totalMonthDiff <= (expense.payment_duration as number)) {
-      monthlyPaymentsSoFar.push(
-        totalMonthDiff * parseFloat(expense.amount as any)
-      );
-    } else {
-      monthlyPaymentsSoFar.push(
-        (expense.payment_duration as number) * parseFloat(expense.amount as any)
-      );
-    }
-  });
-
-  const calcSubscriptionsSoFar = spendings.subscriptions.map((subscription) => {
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth();
-    const startYear = new Date(subscription.created_at).getFullYear();
-    const startMonth = new Date(subscription.created_at).getMonth();
-
-    const yearDiff = (currentYear - startYear) * 12;
-    const monthDiff = currentMonth - startMonth + 1;
-
-    const totalMonthDiff = yearDiff + monthDiff;
-
-    if (totalMonthDiff <= (subscription.payment_duration as number)) {
-      subscriptionsSoFar.push(
-        totalMonthDiff * parseFloat(subscription.amount as any)
-      );
-    } else {
-      subscriptionsSoFar.push(
-        (subscription.payment_duration as number) *
-          parseFloat(subscription.amount as any)
-      );
-    }
-  });
-
-  const totalSingle = singleSpendings.reduce(
-    (sum, expense) => sum + parseFloat(expense.amount as any),
-    0
-  );
-
-  const totalMonthly = monthlyPaymentsSoFar.reduce(
-    (sum, amount) => sum + amount,
-    0
-  );
-
-  const totalSubscriptions = subscriptionsSoFar.reduce(
-    (sum, amount) => sum + amount,
-    0
-  );
-
-  const totalSpendingsSoFar = totalSingle + totalMonthly + totalSubscriptions;
-  console.log(totalSpendingsSoFar);
-  return totalSpendingsSoFar;
-};
+import { getTotalInMonth } from '@lib/helpers/getTotalinMonth';
+import { calcTotalExpensesSoFar } from '@lib/helpers/getTotalSpendingsSoFar';
 
 export const ExpensesSummarySection = ({
   spendings,
@@ -188,11 +40,11 @@ export const ExpensesSummarySection = ({
 
   const currentMonth = new Date().getMonth();
 
-  // all of spendings so far subs * months, monthly * months, to current date
-
   useEffect(() => {
+    const currentDate = new Date();
+
     if (spendings) {
-      const total = getTotalInMonth(spendings, currentMonth);
+      const total = getTotalInMonth(spendings, currentDate);
       setTotalInMonth(total.totalInMonth);
       setMonthlyCommitments(total.monthlyCommitments);
     }
@@ -200,7 +52,7 @@ export const ExpensesSummarySection = ({
 
   useEffect(() => {
     if (spendings) {
-      const totalSpendings = calcTotalExpenses(spendings);
+      const totalSpendings = calcTotalExpensesSoFar(spendings);
       setTotalSpendingsSoFar(totalSpendings);
     }
   }, [spendings]);
@@ -278,7 +130,7 @@ export const ExpensesSummarySection = ({
         )}
       </div>
 
-      {/* <div className="flex w-full flex-col lg:flex-row gap-2">
+      <div className="flex w-full flex-col lg:flex-row gap-2">
         <Card className="w-full lg:w-1/2">
           <CardBody>
             <SpendingsWithBudgetChart />
@@ -294,7 +146,7 @@ export const ExpensesSummarySection = ({
             )}
           </CardBody>
         </Card>
-      </div> */}
+      </div>
     </section>
   );
 };
