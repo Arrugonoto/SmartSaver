@@ -6,12 +6,13 @@ import { useSession } from 'next-auth/react';
 import { useFetch } from '@lib/hooks/useFetch';
 import { getBudgetLimit } from '@lib/actions/budget/get-budget-limit';
 import type {
-  Expenses,
   SingleExpense,
   Subscription,
 } from '@constants/types/expenses/expenses';
 import type { BudgetLimit } from '@lib/constants/types/budget/budget';
 import { months } from '@lib/constants/data/dummy/months';
+import { filterLastMonthData } from '@lib/helpers/filter-last-month-spendings';
+import { filterCurrentMonthData } from '@lib/helpers/filter-current-month-spendings';
 import {
   ComposedChart,
   Line,
@@ -34,154 +35,6 @@ interface RawDataTypes {
   currentMonthSpendings: (SingleExpense | Subscription)[];
   lastMonthSpendings: (SingleExpense | Subscription)[];
 }
-
-const getCurrentMonthData = (data: Expenses, currentDate: Date) => {
-  // function for filtering data based on expense creation and duration dates
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth();
-
-  const filterSingleSpendings = data?.expenses
-    .filter((expense) => expense.payment_type === 'one-time')
-    .map((spending) => {
-      const expenseDate = new Date(spending.created_at);
-      const yearOfExpense = expenseDate.getFullYear();
-      const monthOfExpense = expenseDate.getMonth();
-
-      if (yearOfExpense === currentYear && monthOfExpense === currentMonth) {
-        return spending;
-      }
-    })
-    .filter((expense) => expense !== undefined);
-
-  const filterMonthlySpendings = data?.expenses
-    .filter((expense) => expense.payment_type === 'monthly')
-    .map((spending) => {
-      const startOfPayment = new Date(spending.created_at);
-      const lastPayment = new Date(
-        startOfPayment.setMonth(
-          startOfPayment.getMonth() + spending.payment_duration!
-        )
-      );
-
-      const lastPaymentDate = new Date(
-        lastPayment.getFullYear(),
-        lastPayment.getMonth()
-      );
-
-      if (lastPaymentDate >= new Date(currentYear, currentMonth))
-        return spending;
-    })
-    .filter((spending) => spending !== undefined);
-
-  const filterSubscriptions = data?.subscriptions
-    .map((subscription) => {
-      const startOfSub = new Date(subscription.created_at);
-      const lastPayment = new Date(
-        startOfSub.setMonth(
-          startOfSub.getMonth() + subscription.payment_duration!
-        )
-      );
-
-      const lastPaymentDate = new Date(
-        lastPayment.getFullYear(),
-        lastPayment.getMonth()
-      );
-
-      if (lastPaymentDate >= new Date(currentYear, currentMonth))
-        return subscription;
-    })
-    .filter((subscription) => subscription !== undefined);
-
-  return [
-    ...filterSingleSpendings,
-    ...filterMonthlySpendings,
-    ...filterSubscriptions,
-  ];
-};
-
-const getPreviousMonthData = (data: Expenses, currentDate: Date) => {
-  const currentMonth = currentDate.getMonth();
-  const currentYear = currentDate.getFullYear();
-  const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-  const previousYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-
-  // get last month and last year as date
-  const lastMonth = new Date(previousYear, previousMonth);
-
-  const filterLastMonthSingleSpendings = data?.expenses
-    .filter((expense) => expense.payment_type === 'one-time')
-    .map((spending) => {
-      const expenseDate = new Date(spending.created_at);
-      const expenseMonthAndYear = new Date(
-        expenseDate.getFullYear(),
-        expenseDate.getMonth()
-      );
-
-      if (expenseMonthAndYear.getTime() === lastMonth.getTime()) {
-        return spending;
-      }
-    })
-    .filter((expense) => expense !== undefined);
-
-  const filterLastMonthSpendings = data?.expenses
-    .filter(
-      (expense) =>
-        expense.payment_type === 'monthly' &&
-        new Date(
-          new Date(expense.created_at).getFullYear(),
-          new Date(expense.created_at).getMonth()
-        ) <= lastMonth
-    )
-    .map((spending) => {
-      const startOfPayment = new Date(spending.created_at);
-      const lastPayment = new Date(
-        startOfPayment.setMonth(
-          startOfPayment.getMonth() + spending.payment_duration!
-        )
-      );
-
-      const lastPaymentDate = new Date(
-        lastPayment.getFullYear(),
-        lastPayment.getMonth()
-      );
-
-      if (lastPaymentDate >= new Date(currentYear, currentMonth))
-        return spending;
-    })
-    .filter((spending) => spending !== undefined);
-
-  const filterLastMonthSubscriptions = data?.subscriptions
-    .filter(
-      (subscription) =>
-        new Date(
-          new Date(subscription.created_at).getFullYear(),
-          new Date(subscription.created_at).getMonth()
-        ) <= lastMonth
-    )
-    .map((subscription) => {
-      const startOfSub = new Date(subscription.created_at);
-      const lastPayment = new Date(
-        startOfSub.setMonth(
-          startOfSub.getMonth() + subscription.payment_duration!
-        )
-      );
-
-      const lastPaymentDate = new Date(
-        lastPayment.getFullYear(),
-        lastPayment.getMonth()
-      );
-
-      if (lastPaymentDate >= new Date(currentYear, currentMonth))
-        return subscription;
-    })
-    .filter((subscription) => subscription !== undefined);
-
-  return [
-    ...filterLastMonthSingleSpendings,
-    ...filterLastMonthSpendings,
-    ...filterLastMonthSubscriptions,
-  ];
-};
 
 const formatChartData = (
   data: RawDataTypes,
@@ -207,7 +60,7 @@ const formatChartData = (
       budget: budgetLimit,
     };
   });
-  console.log(formattedData);
+
   return formattedData.reverse() as ChartElement[];
 };
 
@@ -229,8 +82,11 @@ export const SpendingsWithBudgetChart = () => {
   useEffect(() => {
     const currentDate = new Date();
     if (spendings) {
-      const currentMonthSpendings = getCurrentMonthData(spendings, currentDate);
-      const lastMonthSpendings = getPreviousMonthData(spendings, currentDate);
+      const currentMonthSpendings = filterCurrentMonthData(
+        spendings,
+        currentDate
+      );
+      const lastMonthSpendings = filterLastMonthData(spendings, currentDate);
       setRawData({ currentMonthSpendings, lastMonthSpendings });
     }
     //eslint-disable-next-line
