@@ -1,21 +1,30 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useStore } from '@lib/hooks/useStore';
 import { useExpensesStore } from '@store/expensesStore';
-import type { Expense } from '@constants/types/expenses/expenses';
+import type {
+  Expenses,
+  SingleExpense,
+  Subscription,
+} from '@constants/types/expenses/expenses';
+import { filterLastMonthData } from '@lib/helpers/filter-last-month-spendings';
 import { Card, CardHeader, CardBody } from '@nextui-org/card';
 import { ExpenseCategoryPieChart } from '@components/charts/category-pie-chart';
 import { ExpenseCategoryBarChart } from '@components/charts/category-bar-chart';
 import { MonthRangeSelect } from '@components/select/select-month-range';
 import { Divider } from '@nextui-org/divider';
 
-const switchDateRange = (data: Expense[], dateRange: string) => {
+const switchDateRange = (
+  data: Expenses,
+  dateRange: string,
+  currentDate: Date
+) => {
   switch (dateRange) {
     case 'current_month': {
       return filterByDateRange(data, 1);
     }
     case 'last_month': {
-      return getPreviousMonthData(data);
+      return filterLastMonthData(data, currentDate);
     }
     case 'last_three_months': {
       return filterByDateRange(data, 3);
@@ -32,53 +41,82 @@ const switchDateRange = (data: Expense[], dateRange: string) => {
   }
 };
 
-const filterByDateRange = (data: Expense[], monthsRange: number) => {
+const filterByDateRange = (data: Expenses, monthsRange: number) => {
   // function for filtering data based on range of dates
+
   const currentDate = new Date();
-  const lastDayOfMonth = new Date(
+
+  const startDateOfSearch = new Date(
     currentDate.getFullYear(),
-    currentDate.getMonth() + 1,
-    0
-  );
-  // get first day of first month in range
-  const startDate = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth() - monthsRange + 1,
-    1
+    currentDate.getMonth() - monthsRange + 1
   );
 
-  const filteredData = data.filter((expense) => {
-    const expenseDate = new Date(expense.created_at);
-    // check if searched element is inside specified date range
-    return expenseDate >= startDate && expenseDate <= lastDayOfMonth;
-  });
+  const filterSingleSpendings = data.expenses
+    .filter((expense) => expense.payment_type === 'one-time')
+    .map((expense) => {
+      const expenseDate = new Date(expense.created_at);
+      const stableDate = new Date(
+        expenseDate.getFullYear(),
+        expenseDate.getMonth()
+      );
 
-  return filteredData;
-};
+      if (stableDate >= startDateOfSearch) return expense;
+    })
+    .filter((expense) => expense !== undefined);
 
-const getPreviousMonthData = (data: Expense[]) => {
-  const currentDate = new Date();
-  const currentMonth = currentDate.getMonth();
-  const currentYear = currentDate.getFullYear();
+  const filterMonthlySpendings = data.expenses
+    .filter((expense) => expense.payment_type === 'monthly')
+    .map((expense) => {
+      const expenseDate = new Date(expense.created_at);
+      const lastPaymentDate = new Date(
+        expenseDate.setMonth(expenseDate.getMonth() + expense.payment_duration!)
+      );
+      const stableLastPaymentDate = new Date(
+        lastPaymentDate.getFullYear(),
+        lastPaymentDate.getMonth()
+      );
 
-  const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-  const previousMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+      if (stableLastPaymentDate >= startDateOfSearch) return expense;
+    })
+    .filter((expense) => expense !== undefined);
 
-  const startDate = new Date(previousMonthYear, previousMonth, 1);
-  const endDate = new Date(previousMonthYear, previousMonth + 1, 0);
+  const filterSubscriptions = data?.subscriptions
+    .map((subscription) => {
+      const subscriptionDate = new Date(subscription.created_at);
+      const lastPaymentDate = new Date(
+        subscriptionDate.setMonth(
+          subscriptionDate.getMonth() + subscription.payment_duration!
+        )
+      );
+      const stableLastPaymentDate = new Date(
+        lastPaymentDate.getFullYear(),
+        lastPaymentDate.getMonth()
+      );
 
-  return data.filter((item) => {
-    const itemDate = new Date(item.created_at);
-    return itemDate >= startDate && itemDate <= endDate;
-  });
+      if (stableLastPaymentDate >= startDateOfSearch) return subscription;
+    })
+    .filter((subscription) => subscription !== undefined);
+
+  return [
+    ...filterSingleSpendings,
+    ...filterMonthlySpendings,
+    ...filterSubscriptions,
+  ];
 };
 
 export const MonthlyChartsSection = () => {
-  const expenses = useStore(useExpensesStore, (state) => state.expenses);
+  const spendings = useStore(useExpensesStore, (state) => state.spendings);
+  const stableSpendings = useMemo(
+    () => spendings,
+    // eslint-disable-next-line
+    [spendings?.expenses, spendings?.subscriptions]
+  );
   const [dateRange, setDateRange] = useState<string>('current_month');
-  const [dataByDates, setDataByDates] = useState<Expense[]>([]);
+  const [dataByDates, setDataByDates] = useState<
+    (SingleExpense | Subscription)[]
+  >([]);
 
-  const totalNumOfExpensesInMonth = dataByDates.length;
+  const totalNumOfExpensesInRange = dataByDates.length;
   const OneTimeSpendings = dataByDates.filter(
     (expense) => expense.payment_type === 'one-time'
   );
@@ -89,16 +127,23 @@ export const MonthlyChartsSection = () => {
   );
 
   useEffect(() => {
-    if (expenses && expenses.length > 0) {
-      const data = switchDateRange(expenses, dateRange);
-      setDataByDates(data);
+    const currentDate = new Date();
+    if (
+      stableSpendings &&
+      (stableSpendings.expenses.length > 0 ||
+        stableSpendings?.subscriptions.length > 0)
+    ) {
+      const data = switchDateRange(stableSpendings, dateRange, currentDate);
+      if (data) {
+        setDataByDates(data);
+      }
     }
-  }, [expenses, dateRange]);
+  }, [stableSpendings, dateRange]);
 
   return (
     <section>
       <Card className="flex flex-col w-full pt-2 px-1 lg:px-4 gap-4">
-        <CardBody className="w-full h-full gap-4">
+        <CardHeader>
           <div className="flex w-full justify-between items-center bg-content2 px-4 py-1 rounded-lg flex-col md:flex-row gap-8">
             <div>
               <MonthRangeSelect
@@ -110,7 +155,7 @@ export const MonthlyChartsSection = () => {
             <div className="flex flex-col w-full">
               <div className="flex flex-row justify-between">
                 <p>Total expenses: </p>
-                <p>{totalNumOfExpensesInMonth}</p>
+                <p>{totalNumOfExpensesInRange}</p>
               </div>
               <Divider />
               <div className="flex flex-row justify-between">
@@ -123,9 +168,11 @@ export const MonthlyChartsSection = () => {
               </div>
             </div>
           </div>
+        </CardHeader>
+        <CardBody className="w-full h-full gap-4">
           <div className="flex flex-col w-full min-h-[70vh] xl:min-h-[50vh] h-full gap-4 xl:flex-row">
-            <ExpenseCategoryPieChart expenses={dataByDates} />
-            <ExpenseCategoryBarChart expenses={dataByDates} />
+            {/* <ExpenseCategoryPieChart expenses={dataByDates} />
+            <ExpenseCategoryBarChart expenses={dataByDates} /> */}
           </div>
         </CardBody>
       </Card>
