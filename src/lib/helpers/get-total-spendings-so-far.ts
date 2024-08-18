@@ -2,8 +2,6 @@ import { Expenses } from '@lib/constants/types/expenses/expenses';
 
 export const calcTotalExpensesSoFar = (spendings: Expenses) => {
   // declare arrays which will hold values of total spendings, and subscriptions so far of monthly payments
-  const monthlyPaymentsSoFar: number[] = [];
-  const subscriptionsSoFar: number[] = [];
 
   const singleSpendings = spendings?.expenses.filter(
     (expense) => expense.payment_type === 'one-time'
@@ -26,14 +24,11 @@ export const calcTotalExpensesSoFar = (spendings: Expenses) => {
     const totalMonthDiff = yearDiff + monthDiff;
 
     if (totalMonthDiff <= (expense.payment_duration as number)) {
-      monthlyPaymentsSoFar.push(
-        totalMonthDiff * parseFloat(expense.amount as any)
-      );
-    } else {
-      monthlyPaymentsSoFar.push(
+      return totalMonthDiff * parseFloat(expense.amount as any);
+    } else
+      return (
         (expense.payment_duration as number) * parseFloat(expense.amount as any)
       );
-    }
   });
 
   const calcSubscriptionsSoFar = spendings.subscriptions.map((subscription) => {
@@ -48,15 +43,12 @@ export const calcTotalExpensesSoFar = (spendings: Expenses) => {
     const totalMonthDiff = yearDiff + monthDiff;
 
     if (totalMonthDiff <= (subscription.payment_duration as number)) {
-      subscriptionsSoFar.push(
-        totalMonthDiff * parseFloat(subscription.amount as any)
-      );
-    } else {
-      subscriptionsSoFar.push(
+      return totalMonthDiff * parseFloat(subscription.amount as any);
+    } else
+      return (
         (subscription.payment_duration as number) *
-          parseFloat(subscription.amount as any)
+        parseFloat(subscription.amount as any)
       );
-    }
   });
 
   const totalSingle = singleSpendings.reduce(
@@ -64,12 +56,12 @@ export const calcTotalExpensesSoFar = (spendings: Expenses) => {
     0
   );
 
-  const totalMonthly = monthlyPaymentsSoFar.reduce(
+  const totalMonthly = calcMonthlySoFar.reduce(
     (sum, amount) => sum + amount,
     0
   );
 
-  const totalSubscriptions = subscriptionsSoFar.reduce(
+  const totalSubscriptions = calcSubscriptionsSoFar.reduce(
     (sum, amount) => sum + amount,
     0
   );
