@@ -11,7 +11,6 @@ import {
 import { useState, useEffect } from 'react';
 import { chartIcons } from '@constants/icons';
 import type {
-  Expenses,
   SingleExpense,
   Subscription,
 } from '@constants/types/expenses/expenses';
