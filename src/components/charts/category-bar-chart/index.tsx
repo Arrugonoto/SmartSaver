@@ -15,7 +15,10 @@ import {
   YAxis,
   CartesianGrid,
 } from 'recharts';
-import type { Expense } from '@constants/types/expenses/expenses';
+import type {
+  SingleExpense,
+  Subscription,
+} from '@constants/types/expenses/expenses';
 import { LoadingChart } from '@components/loaders/loading-chart';
 
 const categoriesWithoutInitial = expenseCategoriesList.slice(1);
@@ -26,7 +29,7 @@ type ChartElement = {
   color: string;
 };
 
-const formatChartData = (expenses: any[]) => {
+const formatChartData = (expenses: (SingleExpense | Subscription)[]) => {
   const qtyByCategory = categoriesWithoutInitial.map((category) => {
     const expensesByCategory = expenses
       ?.map((expense) => {
@@ -56,7 +59,7 @@ const formatChartData = (expenses: any[]) => {
 export const ExpenseCategoryBarChart = ({
   expenses,
 }: {
-  expenses: Expense[];
+  expenses: (SingleExpense | Subscription)[];
 }) => {
   const [chartData, setChartData] = useState<ChartElement[]>([]);
 
@@ -101,7 +104,7 @@ export const ExpenseCategoryBarChart = ({
               fill="#8884d8"
               activeBar={<Rectangle stroke="#000" />}
               radius={[4, 4, 0, 0]}
-              barSize={40}
+              barSize={30}
             >
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={`#${entry.color}`} />
