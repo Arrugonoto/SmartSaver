@@ -10,7 +10,11 @@ import {
 } from 'recharts';
 import { useState, useEffect } from 'react';
 import { chartIcons } from '@constants/icons';
-import type { Expense } from '@constants/types/expenses/expenses';
+import type {
+  Expenses,
+  SingleExpense,
+  Subscription,
+} from '@constants/types/expenses/expenses';
 import { LoadingChart } from '@components/loaders/loading-chart';
 import { useWindowSize } from '@lib/hooks/useWindowSize';
 
@@ -21,39 +25,55 @@ type ChartData = {
   quantity: number;
   percentageValue: number;
   color: string;
+  single_spendings: number;
+  monthly_payments: number;
+  subscriptions: number;
 };
 
-const formatChartData = (expenses: Expense[]) => {
+const formatChartData = (expenses: (SingleExpense | Subscription)[]) => {
   const totalExpensesInRange = expenses.length;
 
-  const qtyByCategory = categoriesWithoutInitial.map((category) => {
-    const numOfFeesByCategory = expenses?.filter(
-      (expense) => expense.expense_type === category.value
-    );
+  const qtyByCategory = categoriesWithoutInitial
+    .map((category) => {
+      const numOfFeesByCategory = expenses?.filter(
+        (expense) => expense.expense_type === category.value
+      );
 
-    const calculatedPercent = parseFloat(
-      ((numOfFeesByCategory.length / totalExpensesInRange) * 100).toFixed(2)
-    );
+      const numOfSpendings = numOfFeesByCategory.filter(
+        (expense) => expense.payment_type === 'one-time'
+      ).length;
+      const numOfMonthlyPayments = numOfFeesByCategory.filter(
+        (expense) => expense.payment_type === 'monthly'
+      ).length;
+      const numOfSubs = numOfFeesByCategory.filter(
+        (expense) => expense.payment_type === 'subscription'
+      ).length;
 
-    if (numOfFeesByCategory && numOfFeesByCategory.length > 0) {
-      return {
-        name: category.label,
-        percentageValue: calculatedPercent,
-        quantity: numOfFeesByCategory.length,
-        color: category.color,
-      };
-    }
-  });
+      const calculatedPercent = parseFloat(
+        ((numOfFeesByCategory.length / totalExpensesInRange) * 100).toFixed(2)
+      );
 
-  return qtyByCategory?.filter(
-    (category) => category !== undefined
-  ) as ChartData[];
+      if (numOfFeesByCategory && numOfFeesByCategory.length > 0) {
+        return {
+          name: category.label,
+          percentageValue: calculatedPercent,
+          quantity: numOfFeesByCategory.length,
+          single_spendings: numOfSpendings,
+          monthly_payments: numOfMonthlyPayments,
+          subscriptions: numOfSubs,
+          color: category.color,
+        };
+      }
+    })
+    .filter((category) => category !== undefined);
+
+  return qtyByCategory as ChartData[];
 };
 
 export const ExpenseCategoryPieChart = ({
   expenses,
 }: {
-  expenses: Expense[];
+  expenses: (SingleExpense | Subscription)[];
 }) => {
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const { width } = useWindowSize();
@@ -128,7 +148,30 @@ export const ExpenseCategoryPieChart = ({
                 if (active && payload && payload.length) {
                   return (
                     <div className="bg-neutral-100 p-4 rounded-md text-black">
-                      <p className="label">{`Spendings : ${payload[0].value}`}</p>
+                      {payload[0].payload.single_spendings > 0 && (
+                        <div className="flex justify-between gap-4">
+                          <p className="label">{`One time spendings:`}</p>
+                          <p className="inline-flex min-w-4 justify-center">
+                            {payload[0].payload.single_spendings}
+                          </p>
+                        </div>
+                      )}
+                      {payload[0].payload.monthly_payments > 0 && (
+                        <div className="flex justify-between gap-4">
+                          <p className="label">{`Monthly payments: `}</p>
+                          <p className="inline-flex min-w-4 justify-center">
+                            {payload[0].payload.monthly_payments}
+                          </p>
+                        </div>
+                      )}
+                      {payload[0].payload.subscriptions > 0 && (
+                        <div className="flex justify-between gap-4">
+                          <p className="label">{`Subscriptions:`}</p>
+                          <p className="inline-flex min-w-4 justify-center">
+                            {payload[0].payload.subscriptions}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   );
                 }
