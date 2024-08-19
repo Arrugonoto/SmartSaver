@@ -152,7 +152,7 @@ export const MonthlyChartsSection = () => {
               />
             </div>
 
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full md:w-1/4">
               <div className="flex flex-row justify-between">
                 <p>Total expenses: </p>
                 <p>{totalNumOfExpensesInRange}</p>
@@ -171,8 +171,8 @@ export const MonthlyChartsSection = () => {
         </CardHeader>
         <CardBody className="w-full h-full gap-4">
           <div className="flex flex-col w-full min-h-[70vh] xl:min-h-[50vh] h-full gap-4 xl:flex-row">
-            {/* <ExpenseCategoryPieChart expenses={dataByDates} />
-            <ExpenseCategoryBarChart expenses={dataByDates} /> */}
+            <ExpenseCategoryPieChart expenses={dataByDates} />
+            <ExpenseCategoryBarChart expenses={dataByDates} />
           </div>
         </CardBody>
       </Card>
