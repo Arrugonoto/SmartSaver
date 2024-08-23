@@ -10,13 +10,15 @@ type YearsOfData = {
 
 interface PropTypes {
   yearOfData: YearsOfData[];
+  selectedYear: string;
+  setSelectedYear: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const currentYear = new Date().getFullYear().toString();
-
-export const SelectYearRange = ({ yearOfData }: PropTypes) => {
-  const [selectedYear, setSelectedYear] = useState<string>(currentYear);
-
+export const SelectYearRange = ({
+  yearOfData,
+  selectedYear,
+  setSelectedYear,
+}: PropTypes) => {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedYear(e.target.value);
   };
