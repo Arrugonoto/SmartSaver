@@ -8,13 +8,13 @@ type YearsOfData = {
   value: string;
 };
 
-type PropTypes = {
-  yearsOfData: YearsOfData[];
-};
+interface PropTypes {
+  yearOfData: YearsOfData[];
+}
 
 const currentYear = new Date().getFullYear().toString();
 
-export const SelectYearRange = ({ yearsOfData }: PropTypes) => {
+export const SelectYearRange = ({ yearOfData }: PropTypes) => {
   const [selectedYear, setSelectedYear] = useState<string>(currentYear);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -34,7 +34,7 @@ export const SelectYearRange = ({ yearsOfData }: PropTypes) => {
       radius="md"
       classNames={{ label: 'pb-1' }}
     >
-      {yearsOfData.map((year) => (
+      {yearOfData.map((year) => (
         <SelectItem key={year.value} value={year.value}>
           {year.label}
         </SelectItem>
