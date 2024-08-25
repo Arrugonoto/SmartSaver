@@ -39,8 +39,6 @@ interface DataByYear {
   subscriptions: Subscription[];
 }
 
-// FIXME: Fix formatting of chart data
-// remember to include dates based on year and month
 const formatChartData = (data: DataByYear, selectedYear: string) => {
   const chartData = months.map((month) => {
     // filter spendings for each month separately
@@ -230,9 +228,9 @@ export const AnnualSpendingsAreaChart = () => {
     }
   }, [stableSpendings, selectedYear]);
 
-  // if (!stableSpendings || chartData.length === 0) {
-  //   return <LoadingChart />;
-  // }
+  if (!stableSpendings || chartData.length === 0) {
+    return <LoadingChart />;
+  }
 
   return (
     <div className="flex flex-col w-full gap-12">
@@ -264,12 +262,6 @@ export const AnnualSpendingsAreaChart = () => {
           >
             <XAxis dataKey="name" />
             <YAxis />
-            {/* <Tooltip
-              labelStyle={{ color: '#000' }}
-              contentStyle={{
-                borderRadius: '0.3rem',
-              }}
-            /> */}
             <Legend />
             <Area
               type="bumpX"
