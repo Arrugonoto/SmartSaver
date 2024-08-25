@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   AreaChart,
   Area,
@@ -11,92 +11,228 @@ import {
 } from 'recharts';
 import { useExpensesStore } from '@store/expensesStore';
 import { useStore } from '@lib/hooks/useStore';
-import { Select, SelectItem } from '@nextui-org/select';
-import { selectIcons } from '@constants/icons';
 import { months } from '@lib/constants/data/dummy/months';
 import { SelectYearRange } from '@components/select/select-year-range';
 import { LoadingChart } from '@components/loaders/loading-chart';
+import {
+  Expenses,
+  SingleExpense,
+  Subscription,
+} from '@lib/constants/types/expenses/expenses';
 
-type AnnualChartElement = {
+interface AnnualChartElement {
   name: string;
-  spendings: number;
-};
+  single_payments: number;
+  monthly_payments: number;
+  subscriptions: number;
+  total_expenses: number;
+}
 
-type YearsOfData = {
+interface YearsOfData {
   label: string;
   value: string;
-};
+}
 
-const currentYear = new Date().getFullYear().toString();
+interface DataByYear {
+  single_spendings: SingleExpense[];
+  monthly_spendings: SingleExpense[];
+  subscriptions: Subscription[];
+}
 
-const formatChartData = (data: any[], year: string) => {
-  const filteredByYear = data.filter((expense) =>
-    expense.created_at.toString().includes(year)
-  );
-
+// FIXME: Fix formatting of chart data
+// remember to include dates based on year and month
+const formatChartData = (data: DataByYear, selectedYear: string) => {
   const chartData = months.map((month) => {
     // filter spendings for each month separately
-    // and filter empty values(undefined)
-    const eachMonthSpendings = filteredByYear
-      ?.map((expense) => {
-        if (expense.created_at.toString().includes(month.abbreviation))
-          return expense.amount;
-      })
-      .filter((amount) => amount !== undefined);
+    // and filter empty values (undefined)
+    const dateToCompare = new Date(parseInt(selectedYear), month.numeric);
 
-    // sum values for each month to return total spendings in month
-    const totalMonthlySpendings = eachMonthSpendings?.reduce(
-      (sum, amount) => parseFloat(sum as any) + parseFloat(amount as any),
+    const singleSpendingsInMonth = data.single_spendings.filter(
+      (expense) => new Date(expense.created_at).getMonth() === month.numeric
+    );
+
+    // return data based on years and months
+    const recurringPayments = data.monthly_spendings
+      .map((expense) => {
+        const startDate = new Date(
+          new Date(expense.created_at).getFullYear(),
+          new Date(expense.created_at).getMonth()
+        );
+        const endDate = new Date(expense.created_at);
+        endDate.setMonth(endDate.getMonth() + expense.payment_duration!);
+
+        if (endDate >= dateToCompare && dateToCompare >= startDate) {
+          return expense;
+        }
+      })
+      .filter((expense) => expense !== undefined);
+
+    const subscriptionsInMonth = data.subscriptions.map((subscription) => {
+      const startDate = new Date(
+        new Date(subscription.created_at).getFullYear(),
+        new Date(subscription.created_at).getMonth()
+      );
+      const endDate = new Date(subscription.created_at);
+      endDate.setMonth(endDate.getMonth() + subscription.payment_duration!);
+
+      if (endDate >= dateToCompare && dateToCompare >= startDate) {
+        return subscription;
+      }
+    });
+
+    const spendingsInMonth = [
+      ...singleSpendingsInMonth,
+      ...recurringPayments,
+      ...subscriptionsInMonth,
+    ].filter((subscription) => subscription !== undefined);
+
+    const totalInMonth = spendingsInMonth.reduce(
+      (sum, spending) =>
+        parseFloat(sum as any) + parseFloat(spending.amount as any),
       0
     );
 
     return {
       name: month.name,
-      spendings: totalMonthlySpendings === 0 ? null : totalMonthlySpendings,
+      single_payments: singleSpendingsInMonth.length,
+      monthly_payments: recurringPayments.length,
+      subscriptions: subscriptionsInMonth.length,
+      total_expenses: totalInMonth === 0 ? null : totalInMonth,
     };
   });
 
   return chartData as AnnualChartElement[];
 };
 
-const getYears = (data: any[]) => {
-  const years = data?.map((expense) => {
-    const createdAt = new Date(expense.created_at);
-    return createdAt.getFullYear().toString();
+const getYearsOfData = (data: Expenses) => {
+  const yearsByExpenses = data?.expenses
+    .filter((expense) => expense.payment_type === 'one-time')
+    .map((expense) => {
+      const dateOfCreation = new Date(expense.created_at);
+      return dateOfCreation.getFullYear().toString();
+    });
+
+  const yearsByMonthlyPayments = data?.expenses
+    .filter((expense) => expense.payment_type === 'monthly')
+    .map((expense) => {
+      const startDate = new Date(expense.created_at);
+      const endDate = new Date(expense.created_at);
+      endDate.setMonth(endDate.getMonth() + expense.payment_duration!);
+
+      const years = Array.from(
+        { length: endDate.getFullYear() - startDate.getFullYear() + 1 },
+        (_, i) => (startDate.getFullYear() + i).toString()
+      );
+
+      return years;
+    });
+
+  const yearsBySubscriptions = data?.subscriptions.map((subscription) => {
+    const startDate = new Date(subscription.created_at);
+    const endDate = new Date(subscription.created_at);
+    endDate.setMonth(endDate.getMonth() + subscription.payment_duration!);
+
+    const years = Array.from(
+      { length: endDate.getFullYear() - startDate.getFullYear() + 1 },
+      (_, i) => (startDate.getFullYear() + i).toString()
+    );
+
+    return years;
   });
-  const uniqYears = [...new Set(years)].map((year) => {
+
+  const arrayOfYears = [
+    ...new Set(yearsByExpenses),
+    ...new Set(yearsByMonthlyPayments.flat()),
+    ...new Set(yearsBySubscriptions.flat()),
+  ];
+
+  const uniqYears = [...new Set(arrayOfYears)].map((year) => {
     return {
       label: year,
       value: year,
     };
   });
+
   return uniqYears as { label: string; value: string }[];
 };
 
+const filterDataByYear = (spendings: Expenses, selectedYear: string) => {
+  const singleSpendings = spendings.expenses
+    .filter((expense) => expense.payment_type === 'one-time')
+    .filter(
+      (expense) =>
+        new Date(expense.created_at).getFullYear().toString() === selectedYear
+    );
+
+  const monthlySpendings = spendings.expenses
+    .filter((expense) => expense.payment_type === 'monthly')
+    .map((expense) => {
+      const startDate = new Date(expense.created_at);
+      const endDate = new Date(
+        startDate.setMonth(startDate.getMonth() + expense.payment_duration!)
+      );
+
+      if (endDate.getFullYear() >= parseInt(selectedYear)) {
+        return expense;
+      }
+    })
+    .filter((expense) => expense !== undefined);
+
+  const subscriptions = spendings.subscriptions
+    .map((subscription) => {
+      const startDate = new Date(subscription.created_at);
+      const endDate = new Date(
+        startDate.setMonth(
+          startDate.getMonth() + subscription.payment_duration!
+        )
+      );
+
+      if (endDate.getFullYear() >= parseInt(selectedYear)) {
+        return subscription;
+      }
+    })
+    .filter((subscription) => subscription !== undefined);
+  return {
+    single_spendings: singleSpendings,
+    monthly_spendings: monthlySpendings,
+    subscriptions: subscriptions,
+  };
+};
+
 export const AnnualSpendingsAreaChart = () => {
-  const expenses = useStore(useExpensesStore, (state) => state.expenses);
+  const spendings = useStore(useExpensesStore, (state) => state.spendings);
+  const stableSpendings = useMemo(
+    () => spendings,
+    // eslint-disable-next-line
+    [spendings?.expenses, spendings?.subscriptions]
+  );
   const [chartData, setChartData] = useState<AnnualChartElement[]>([]);
-  const [yearsOfData, setYearsOfData] = useState<YearsOfData[]>([]);
+  const [yearOfData, setYearOfData] = useState<YearsOfData[]>([]);
+  const currentYear = new Date().getFullYear().toString();
   const [selectedYear, setSelectedYear] = useState<string>(currentYear);
 
   useEffect(() => {
-    if (expenses) {
-      const years = getYears(expenses);
-      setYearsOfData(years);
+    if (
+      stableSpendings &&
+      (stableSpendings.expenses.length > 0 ||
+        stableSpendings.subscriptions.length > 0)
+    ) {
+      const years = getYearsOfData(stableSpendings);
+      setYearOfData(years);
     }
-  }, [expenses]);
+  }, [stableSpendings]);
 
   useEffect(() => {
-    if (expenses) {
-      const data = formatChartData(expenses, selectedYear);
-
+    if (stableSpendings) {
+      const filteredData = filterDataByYear(stableSpendings, selectedYear);
+      const data = formatChartData(filteredData, selectedYear);
       setChartData(data);
     }
-  }, [expenses, selectedYear]);
+  }, [stableSpendings, selectedYear]);
 
-  if (!expenses || chartData.length === 0) {
-    return <LoadingChart />;
-  }
+  // if (!stableSpendings || chartData.length === 0) {
+  //   return <LoadingChart />;
+  // }
 
   return (
     <div className="flex flex-col w-full gap-12">
@@ -104,8 +240,12 @@ export const AnnualSpendingsAreaChart = () => {
         <div className="px-4">
           <h3 className="font-medium text-lg">Annual summary of expenses</h3>
         </div>
-        {yearsOfData.length > 0 && (
-          <SelectYearRange yearsOfData={yearsOfData} />
+        {yearOfData.length > 0 && (
+          <SelectYearRange
+            yearOfData={yearOfData}
+            selectedYear={selectedYear}
+            setSelectedYear={setSelectedYear}
+          />
         )}
       </div>
 
@@ -124,19 +264,70 @@ export const AnnualSpendingsAreaChart = () => {
           >
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip
+            {/* <Tooltip
               labelStyle={{ color: '#000' }}
               contentStyle={{
                 borderRadius: '0.3rem',
               }}
-            />
+            /> */}
             <Legend />
             <Area
               type="bumpX"
               name="Total in month"
-              dataKey="spendings"
+              dataKey="total_expenses"
               fill="#3182bd"
               fillOpacity={0.2}
+            />
+            <Tooltip
+              contentStyle={{
+                borderRadius: '0.3rem',
+              }}
+              labelStyle={{ color: '#000' }}
+              content={({ active, payload, label }) => {
+                console.log(payload);
+                if (active && payload && payload.length) {
+                  return (
+                    <div className="bg-neutral-100 p-4 rounded-md text-black">
+                      <div className="flex">
+                        <p className="w-full text-center">
+                          {payload[0].payload.name}
+                        </p>
+                      </div>
+                      <div className="flex justify-between gap-4">
+                        <p className="text-[#3182bd]">
+                          Total in month: {payload[0].payload.total_expenses}
+                        </p>
+                      </div>
+                      {payload[0].payload.single_payments > 0 && (
+                        <div className="flex justify-between gap-4 text-sm">
+                          <p className="label">{`One time payments:`}</p>
+                          <p className="inline-flex min-w-4 justify-center ">
+                            {payload[0].payload.single_payments}
+                          </p>
+                        </div>
+                      )}
+                      {payload[0].payload.monthly_payments > 0 && (
+                        <div className="flex justify-between gap-4 text-sm">
+                          <p className="label">{`Monthly payments: `}</p>
+                          <p className="inline-flex min-w-4 justify-center">
+                            {payload[0].payload.monthly_payments}
+                          </p>
+                        </div>
+                      )}
+                      {payload[0].payload.subscriptions > 0 && (
+                        <div className="flex justify-between gap-4 text-sm">
+                          <p className="label">{`Subscriptions:`}</p>
+                          <p className="inline-flex min-w-4 justify-center">
+                            {payload[0].payload.subscriptions}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                return null;
+              }}
             />
           </AreaChart>
         </ResponsiveContainer>
