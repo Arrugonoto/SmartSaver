@@ -40,9 +40,9 @@ export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
       <div className="flex flex-col gap-6 pb-4">
         <ExpensesSummarySection spendings={spendings} isLoading={isLoading} />
 
-        {/* <MonthlyChartsSection /> */}
+        <MonthlyChartsSection />
 
-        {/* <AnnualChartSection /> */}
+        <AnnualChartSection />
       </div>
     </div>
   );
