@@ -40,8 +40,8 @@ export async function getExpenses(user_id: string) {
     }
 
     const totalResults =
-      numOfExpenses.rows[0].total_result +
-      numOfSubscriptions.rows[0].total_result;
+      parseInt(numOfExpenses.rows[0].total_results) +
+      parseInt(numOfSubscriptions.rows[0].total_results);
 
     return {
       data: {
