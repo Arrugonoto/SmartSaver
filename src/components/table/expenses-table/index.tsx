@@ -25,7 +25,11 @@ import {
 import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import { Select, SelectItem } from '@nextui-org/select';
-import type { Expense } from '@constants/types/expenses/expenses';
+import type {
+  Expenses,
+  SingleExpense,
+  Subscription,
+} from '@constants/types/expenses/expenses';
 import { Spinner } from '@nextui-org/spinner';
 import type { Selection } from '@nextui-org/react';
 import { capitalizeString } from '@lib/helpers/capitalize';
@@ -40,12 +44,13 @@ const columns = [
   { key: 'amount', label: 'AMOUNT' },
   { key: 'expense_type', label: 'EXPENSE TYPE' },
   { key: 'payment_type', label: 'PAYMENT TYPE' },
+  { key: 'payment_duration', label: 'PAYMENT DURATION' },
   { key: 'created_at', label: 'LAST CHANGE' },
   { key: 'actions', label: 'ACTIONS' },
 ];
 
 export const ExpensesTable = () => {
-  const expenses = useStore(useExpensesStore, (state) => state.expenses);
+  const spendings = useStore(useExpensesStore, (state) => state.spendings);
   const resultsPerPage =
     useStore(useExpensesStore, (state) => state.resultsPerPage) ?? 20;
   const totalResults = useStore(
@@ -64,12 +69,19 @@ export const ExpensesTable = () => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<Selection>('all');
   const [selectedPayment, setSelectedPayment] = useState<Selection>('all');
-
   const sortedData = useMemo(() => {
+    const expenses: (SingleExpense | Subscription)[] = [
+      ...(spendings?.expenses ?? []),
+      ...(spendings?.subscriptions ?? []),
+    ];
     setIsLoading(true);
     const sorted = expenses?.sort((a, b) => {
-      let first = a[sortDescriptor.column as keyof Expense] as number | string;
-      let next = b[sortDescriptor.column as keyof Expense] as number | string;
+      let first = a[
+        sortDescriptor.column as keyof (SingleExpense | Subscription)
+      ] as number | string;
+      let next = b[
+        sortDescriptor.column as keyof (SingleExpense | Subscription)
+      ] as number | string;
 
       if (
         sortDescriptor.column !== 'amount' &&
@@ -92,10 +104,13 @@ export const ExpensesTable = () => {
 
     setIsLoading(false);
     return sorted;
-  }, [sortDescriptor, expenses]);
+  }, [sortDescriptor, spendings?.expenses, spendings?.subscriptions]);
 
   const searchedData = useMemo(() => {
-    let data: Expense[] = sortedData as Expense[];
+    let data: (SingleExpense | Subscription)[] = sortedData as (
+      | SingleExpense
+      | Subscription
+    )[];
 
     if (sortedData && searchValue) {
       data = data.filter((expense) =>
@@ -275,7 +290,8 @@ export const ExpensesTable = () => {
     );
   }, [totalResults, resultsPerPage, page]);
 
-  if (!paginatedData || !totalResults) {
+  // CONDITIONAL CHECK
+  if (!paginatedData || !totalResults || !spendings) {
     return <LoadingTable />;
   }
 
@@ -293,12 +309,17 @@ export const ExpensesTable = () => {
         setSortDescriptor(descriptor);
       }}
       classNames={{
-        base: 'overflow-y-hidden justify-between',
+        base: 'overflow-y-hidden',
       }}
     >
       <TableHeader columns={columns}>
         {(column) => (
-          <TableColumn key={column.key} allowsSorting={column.key != 'actions'}>
+          <TableColumn
+            key={column.key}
+            allowsSorting={
+              column.key !== 'actions' && column.key !== 'payment_duration'
+            }
+          >
             {column.label}
           </TableColumn>
         )}
@@ -329,12 +350,19 @@ export const ExpensesTable = () => {
               ? 'Subscription'
               : 'Monthly';
 
+          const paymentDuration = item.payment_duration
+            ? `${item.payment_duration} ${
+                item.payment_duration > 1 ? 'months' : 'month'
+              }`
+            : '-';
+
           return (
             <TableRow key={item.id}>
               <TableCell>{capitalizedName}</TableCell>
               <TableCell>{item.amount}</TableCell>
               <TableCell>{expenseType}</TableCell>
               <TableCell>{paymentType}</TableCell>
+              <TableCell>{paymentDuration}</TableCell>
               <TableCell>{format(date, 'dd MMM yyy, H:mm')}</TableCell>
               <TableCell>
                 <DropdownTable expense={item} />
