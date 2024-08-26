@@ -276,7 +276,6 @@ export const AnnualSpendingsAreaChart = () => {
               }}
               labelStyle={{ color: '#000' }}
               content={({ active, payload, label }) => {
-                console.log(payload);
                 if (active && payload && payload.length) {
                   return (
                     <div className="bg-neutral-100 p-4 rounded-md text-black">
