@@ -57,7 +57,7 @@ const formatChartData = (data: DataByYear, selectedYear: string) => {
           new Date(expense.created_at).getMonth()
         );
         const endDate = new Date(expense.created_at);
-        endDate.setMonth(endDate.getMonth() + expense.payment_duration!);
+        endDate.setMonth(endDate.getMonth() + (expense.payment_duration! - 1));
 
         if (endDate >= dateToCompare && dateToCompare >= startDate) {
           return expense;
@@ -65,24 +65,28 @@ const formatChartData = (data: DataByYear, selectedYear: string) => {
       })
       .filter((expense) => expense !== undefined);
 
-    const subscriptionsInMonth = data.subscriptions.map((subscription) => {
-      const startDate = new Date(
-        new Date(subscription.created_at).getFullYear(),
-        new Date(subscription.created_at).getMonth()
-      );
-      const endDate = new Date(subscription.created_at);
-      endDate.setMonth(endDate.getMonth() + subscription.payment_duration!);
+    const subscriptionsInMonth = data.subscriptions
+      .map((subscription) => {
+        const startDate = new Date(
+          new Date(subscription.created_at).getFullYear(),
+          new Date(subscription.created_at).getMonth()
+        );
+        const endDate = new Date(subscription.created_at);
+        endDate.setMonth(
+          endDate.getMonth() + (subscription.payment_duration! - 1)
+        );
 
-      if (endDate >= dateToCompare && dateToCompare >= startDate) {
-        return subscription;
-      }
-    });
+        if (endDate >= dateToCompare && dateToCompare >= startDate) {
+          return subscription;
+        }
+      })
+      .filter((subscription) => subscription !== undefined);
 
     const spendingsInMonth = [
       ...singleSpendingsInMonth,
       ...recurringPayments,
       ...subscriptionsInMonth,
-    ].filter((subscription) => subscription !== undefined);
+    ];
 
     const totalInMonth = spendingsInMonth.reduce(
       (sum, spending) =>
