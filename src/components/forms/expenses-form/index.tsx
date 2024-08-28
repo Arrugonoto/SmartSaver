@@ -3,19 +3,24 @@ import React, { useState } from 'react';
 import { Select, SelectItem } from '@nextui-org/select';
 import { Input } from '@nextui-org/input';
 import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
-import { Expense } from '@constants/types/expenses/expenses';
+import { SingleExpense } from '@constants/types/expenses/expenses';
 import FormButton from '@components/buttons/FormButton';
 import { createExpense } from '@lib/actions/expenses/create-expense';
 import { Textarea } from '@nextui-org/input';
+// import { useExpensesStore } from '@store/expensesStore';
 
 export const ExpensesForm = ({ user_id }: { user_id: string }) => {
-  const [formData, setFormData] = useState<Omit<Expense, 'id' | 'created_at'>>({
+  // const setExpenses = useExpensesStore((state) => state.setExpenses);
+  const [formData, setFormData] = useState<
+    Omit<SingleExpense, 'id' | 'created_at'>
+  >({
     user_id: user_id,
     name: '',
     amount: 0,
     expense_type: '',
     payment_type: '',
     description: '',
+    payment_duration: undefined,
   });
 
   const resetForm = () => {
@@ -26,6 +31,7 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
       expense_type: '',
       payment_type: '',
       description: '',
+      payment_duration: undefined,
     });
   };
 
@@ -43,16 +49,33 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // sometime TS is a conversion hell, knows that 'amount' should be number but,
-    // select makes it a string... I'm converting 'string to string' to be able to convert it to float...
-    const { amount } = formData;
+    // input makes it into string... I'm converting 'string to string' to be able to convert it to float...
+    const { amount, payment_duration } = formData;
     const stringAmount = amount.toString();
+    const duration = payment_duration?.toString();
     const expenseAmount = parseFloat(stringAmount);
-    const expenseData = {
-      ...formData,
-      amount: expenseAmount,
-    };
+    let expenseDuration = null;
+    if (duration) {
+      expenseDuration = parseInt(duration);
+    }
 
-    await createExpense(expenseData);
+    if (!expenseDuration) {
+      const expenseData = {
+        ...formData,
+        amount: expenseAmount,
+      };
+      await createExpense(expenseData);
+    }
+
+    if (expenseDuration) {
+      const expenseData = {
+        ...formData,
+        amount: expenseAmount,
+        payment_duration: expenseDuration,
+      };
+      await createExpense(expenseData);
+    }
+
     resetForm();
   };
 
@@ -105,12 +128,23 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
             Select type
           </SelectItem>
           <SelectItem key="one-time" value={'one-time'}>
-            Single
+            One time payment
           </SelectItem>
           <SelectItem key="monthly" value={'monthly'}>
             Monthly
           </SelectItem>
         </Select>
+        <Input
+          isDisabled={formData.payment_type !== 'monthly'}
+          type="number"
+          name="payment_duration"
+          label="Duration(months)"
+          value={formData?.payment_duration?.toString()}
+          step="1"
+          min={1}
+          isRequired
+          onChange={(e) => handleChange(e)}
+        />
         <Textarea
           label="Description"
           placeholder="(optional)"
