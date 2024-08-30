@@ -110,7 +110,9 @@ export const ExpensesSummarySection = ({
               <h2 className="text-center text-xl">Total spendings</h2>
             </CardHeader>
             <CardBody>
-              <p className="text-center text-xl">{totalSpendingsSoFar}</p>
+              <p className="text-center text-xl">
+                {totalSpendingsSoFar.toFixed(2)}
+              </p>
             </CardBody>
           </Card>
         ) : (
