@@ -24,8 +24,14 @@ export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
   });
 
   useEffect(() => {
-    if (data) setSpendings(data);
-  }, [setSpendings, data]);
+    if (
+      spendings.expenses.length === 0 &&
+      spendings.subscriptions.length === 0
+    ) {
+      if (data) setSpendings(data);
+      console.log('initial fetch fired');
+    }
+  }, [spendings, setSpendings, data]);
 
   useEffect(() => {
     setTotalResults(totalResults);
