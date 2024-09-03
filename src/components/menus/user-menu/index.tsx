@@ -13,6 +13,7 @@ import { userMenuIcons } from '@lib/constants/icons';
 import { Switch } from '@nextui-org/switch';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
+import { useExpensesStore } from '@store/expensesStore';
 
 export const UserMenu = () => {
   const { data: session } = useSession();
@@ -27,6 +28,11 @@ export const UserMenu = () => {
 
   const handleThemeChange = (isSelected: boolean) => {
     setTheme(isSelected ? 'light' : 'dark');
+  };
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/' });
+    useExpensesStore.persist.clearStorage();
   };
 
   return (
@@ -92,7 +98,7 @@ export const UserMenu = () => {
             <DropdownItem
               key="log-out"
               startContent={<userMenuIcons.logout className="text-base" />}
-              onPress={() => signOut({ callbackUrl: '/' })}
+              onPress={() => handleLogout()}
               closeOnSelect={true}
             >
               Log Out
