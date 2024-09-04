@@ -23,8 +23,6 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
     })
   );
 
-  console.log('spendings before update: ', spendings);
-
   const { fetchData, isLoading, data, totalResults } = useFetch<Expenses>({
     action: getExpenses,
     user_id: session?.user.id,
