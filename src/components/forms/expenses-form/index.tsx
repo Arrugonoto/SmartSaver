@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Select, SelectItem } from '@nextui-org/select';
 import { Input } from '@nextui-org/input';
 import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
@@ -7,10 +7,35 @@ import { SingleExpense } from '@constants/types/expenses/expenses';
 import FormButton from '@components/buttons/FormButton';
 import { createExpense } from '@lib/actions/expenses/create-expense';
 import { Textarea } from '@nextui-org/input';
-// import { useExpensesStore } from '@store/expensesStore';
+import { useExpensesStore } from '@store/expensesStore';
+import { useFetch } from '@lib/hooks/useFetch';
+import { getExpenses } from '@lib/actions/expenses/get-expenses';
+import { useSession } from 'next-auth/react';
+import type { Expenses } from '@constants/types/expenses/expenses';
 
 export const ExpensesForm = ({ user_id }: { user_id: string }) => {
-  // const setExpenses = useExpensesStore((state) => state.setExpenses);
+  const { data: session } = useSession();
+  const { setSpendings, spendings, setTotalResults } = useExpensesStore(
+    (state) => ({
+      spendings: state.spendings,
+      setSpendings: state.setSpendings,
+      setTotalResults: state.setTotalResults,
+    })
+  );
+
+  console.log('spendings before update: ', spendings);
+
+  const { fetchData, isLoading, data, totalResults } = useFetch<Expenses>({
+    action: getExpenses,
+    user_id: session?.user.id,
+  });
+
+  const handleManualFetch = () => {
+    if (session?.user.id) {
+      fetchData(session?.user.id);
+    }
+  };
+
   const [formData, setFormData] = useState<
     Omit<SingleExpense, 'id' | 'created_at'>
   >({
@@ -77,7 +102,15 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
     }
 
     resetForm();
+    handleManualFetch();
   };
+
+  useEffect(() => {
+    if (data) {
+      setSpendings(data);
+      setTotalResults(totalResults);
+    }
+  }, [data, totalResults, setSpendings, setTotalResults]);
 
   return (
     <div className="flex p-2 rounded-md w-full">
