@@ -10,9 +10,16 @@ import { Button } from '@nextui-org/button';
 import { tableIcons } from '@constants/icons';
 import { DeleteExpenseModal } from '@components/modals/delete-expense';
 import { UpdateExpenseModal } from '@components/modals/update-expense';
-import type { ExpenseIdRequired } from '@lib/constants/types/expenses/expenses';
+import type {
+  ExpenseIdRequired,
+  Subscription,
+} from '@lib/constants/types/expenses/expenses';
 
-export const DropdownTable = ({ expense }: { expense: ExpenseIdRequired }) => {
+export const DropdownTable = ({
+  expense,
+}: {
+  expense: ExpenseIdRequired | Subscription;
+}) => {
   const updateModal = useDisclosure();
   const deleteModal = useDisclosure();
 
