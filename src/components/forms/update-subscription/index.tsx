@@ -1,36 +1,52 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from '@nextui-org/input';
-import { ExpenseIdRequired } from '@constants/types/expenses/expenses';
+import { Subscription } from '@constants/types/expenses/expenses';
 import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
 import FormButton from '@components/buttons/FormButton';
 import { updateExpense } from '@lib/actions/expenses/update-expense';
-import { Accordion, AccordionItem } from '@nextui-org/accordion';
 import { Select, SelectItem } from '@nextui-org/select';
-import { Divider } from '@nextui-org/divider';
+import { useExpensesStore } from '@store/expensesStore';
+import { useFetch } from '@lib/hooks/useFetch';
+import { getExpenses } from '@lib/actions/expenses/get-expenses';
+import { useSession } from 'next-auth/react';
+import type { Expenses } from '@constants/types/expenses/expenses';
 
 export const UpdateSubscriptionForm = ({
   expense,
 }: {
-  expense: ExpenseIdRequired;
+  expense: Subscription;
 }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<
-    Omit<ExpenseIdRequired, 'user_id' | 'created_at'>
+    Omit<Subscription, 'user_id' | 'created_at'>
   >({
     id: expense.id,
-    name: '',
+    name: expense.name,
     amount: expense.amount,
-    expense_type: '',
+    expense_type: expense.expense_type,
     payment_type: 'subscription',
+    description: expense.description || '',
+    payment_duration: expense.payment_duration,
+  });
+  const { data: session } = useSession();
+  const { setSpendings, spendings, setTotalResults } = useExpensesStore(
+    (state) => ({
+      spendings: state.spendings,
+      setSpendings: state.setSpendings,
+      setTotalResults: state.setTotalResults,
+    })
+  );
+
+  const { fetchData, data, totalResults } = useFetch<Expenses>({
+    action: getExpenses,
+    user_id: session?.user.id,
   });
 
-  const resetForm = () => {
-    setFormData((prev) => ({
-      ...prev,
-      name: '',
-      amount: 0,
-      expense_type: '',
-    }));
+  const handleManualFetch = () => {
+    if (session?.user.id) {
+      fetchData(session?.user.id);
+    }
   };
 
   const handleChange = (
@@ -46,19 +62,33 @@ export const UpdateSubscriptionForm = ({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     // sometime TS is a conversion hell, knows that 'amount' should be number but,
     // select makes it a string... I'm converting 'string to string' to be able to convert it to float...
-    const { amount } = formData;
+    const { amount, payment_duration } = formData;
     const stringAmount = amount.toString();
+    const duration = payment_duration?.toString();
     const expenseAmount = parseFloat(stringAmount);
+    const expenseDuration = parseInt(duration);
+
     const expenseData = {
       ...formData,
       amount: expenseAmount,
+      payment_duration: expenseDuration,
     };
 
     await updateExpense(expenseData);
-    resetForm();
+
+    handleManualFetch();
+    setIsLoading(false);
   };
+
+  useEffect(() => {
+    if (data) {
+      setSpendings(data);
+      setTotalResults(totalResults);
+    }
+  }, [data, totalResults, setSpendings, setTotalResults]);
 
   return (
     <div className="w-full">
@@ -81,6 +111,16 @@ export const UpdateSubscriptionForm = ({
           isRequired
           onChange={(e) => handleChange(e)}
         />
+        <Input
+          type="number"
+          name="payment_duration"
+          label="Duration(months)"
+          value={formData?.payment_duration?.toString()}
+          step="1"
+          min={1}
+          isRequired
+          onChange={(e) => handleChange(e)}
+        />
         <Select
           label="Expense type"
           name="expense_type"
@@ -96,8 +136,8 @@ export const UpdateSubscriptionForm = ({
             </SelectItem>
           ))}
         </Select>
-        <FormButton type="submit" color="primary">
-          Add Subscription
+        <FormButton type="submit" color="primary" loading={isLoading}>
+          {isLoading ? '' : 'Update'}
         </FormButton>
       </form>
     </div>
