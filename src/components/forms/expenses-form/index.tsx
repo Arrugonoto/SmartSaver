@@ -14,6 +14,7 @@ import { useSession } from 'next-auth/react';
 import type { Expenses } from '@constants/types/expenses/expenses';
 
 export const ExpensesForm = ({ user_id }: { user_id: string }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { data: session } = useSession();
   const { setSpendings, spendings, setTotalResults } = useExpensesStore(
     (state) => ({
@@ -23,7 +24,7 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
     })
   );
 
-  const { fetchData, isLoading, data, totalResults } = useFetch<Expenses>({
+  const { fetchData, data, totalResults } = useFetch<Expenses>({
     action: getExpenses,
     user_id: session?.user.id,
   });
@@ -71,6 +72,7 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     // sometime TS is a conversion hell, knows that 'amount' should be number but,
     // input makes it into string... I'm converting 'string to string' to be able to convert it to float...
     const { amount, payment_duration } = formData;
@@ -101,6 +103,7 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
 
     resetForm();
     handleManualFetch();
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -183,8 +186,8 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
           value={formData.description}
           onChange={(e) => handleChange(e)}
         />
-        <FormButton type="submit" color="primary">
-          Create Expense
+        <FormButton type="submit" color="primary" loading={isLoading}>
+          {isLoading ? '' : 'Create Expense'}
         </FormButton>
       </form>
     </div>

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from '@nextui-org/input';
 import { Subscription } from '@constants/types/expenses/expenses';
 import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
@@ -8,8 +8,14 @@ import { createExpense } from '@lib/actions/expenses/create-expense';
 import { Accordion, AccordionItem } from '@nextui-org/accordion';
 import { Select, SelectItem } from '@nextui-org/select';
 import { Divider } from '@nextui-org/divider';
+import { useExpensesStore } from '@store/expensesStore';
+import { useFetch } from '@lib/hooks/useFetch';
+import { getExpenses } from '@lib/actions/expenses/get-expenses';
+import { useSession } from 'next-auth/react';
+import type { Expenses } from '@constants/types/expenses/expenses';
 
 export const SubscriptionForm = ({ user_id }: { user_id: string }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<
     Omit<Subscription, 'id' | 'created_at'>
   >({
@@ -21,6 +27,24 @@ export const SubscriptionForm = ({ user_id }: { user_id: string }) => {
     payment_duration: 0,
     description: '',
   });
+  const { data: session } = useSession();
+  const { setSpendings, spendings, setTotalResults } = useExpensesStore(
+    (state) => ({
+      spendings: state.spendings,
+      setSpendings: state.setSpendings,
+      setTotalResults: state.setTotalResults,
+    })
+  );
+  const { fetchData, data, totalResults } = useFetch<Expenses>({
+    action: getExpenses,
+    user_id: session?.user.id,
+  });
+
+  const handleManualFetch = () => {
+    if (session?.user.id) {
+      fetchData(session?.user.id);
+    }
+  };
 
   const resetForm = () => {
     setFormData((prev) => ({
@@ -46,6 +70,7 @@ export const SubscriptionForm = ({ user_id }: { user_id: string }) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     // sometime TS is a conversion hell, knows that 'amount' should be number but,
     // select element makes it a string... I'm converting 'string to string' to be able to convert it to float...
     const { amount, payment_duration } = formData;
@@ -61,7 +86,17 @@ export const SubscriptionForm = ({ user_id }: { user_id: string }) => {
 
     await createExpense(expenseData);
     resetForm();
+
+    handleManualFetch();
+    setIsLoading(false);
   };
+
+  useEffect(() => {
+    if (data) {
+      setSpendings(data);
+      setTotalResults(totalResults);
+    }
+  }, [data, totalResults, setSpendings, setTotalResults]);
 
   return (
     <div className="w-full">
@@ -118,8 +153,8 @@ export const SubscriptionForm = ({ user_id }: { user_id: string }) => {
                 </SelectItem>
               ))}
             </Select>
-            <FormButton type="submit" color="primary">
-              Add Subscription
+            <FormButton type="submit" color="primary" loading={isLoading}>
+              {isLoading ? '' : 'Add Subscription'}
             </FormButton>
           </form>
         </AccordionItem>
