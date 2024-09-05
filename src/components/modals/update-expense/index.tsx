@@ -74,7 +74,7 @@ const ModalSubscription = ({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              Update Subscription shit man
+              Update Subscription
             </ModalHeader>
             <ModalBody>
               <UpdateSubscriptionForm expense={expense} />
