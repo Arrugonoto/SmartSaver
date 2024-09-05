@@ -15,6 +15,17 @@ import type { Expenses } from '@constants/types/expenses/expenses';
 
 export const ExpensesForm = ({ user_id }: { user_id: string }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [formData, setFormData] = useState<
+    Omit<SingleExpense, 'id' | 'created_at'>
+  >({
+    user_id: user_id,
+    name: '',
+    amount: 0,
+    expense_type: '',
+    payment_type: '',
+    description: '',
+    payment_duration: undefined,
+  });
   const { data: session } = useSession();
   const { setSpendings, spendings, setTotalResults } = useExpensesStore(
     (state) => ({
@@ -34,18 +45,6 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
       fetchData(session?.user.id);
     }
   };
-
-  const [formData, setFormData] = useState<
-    Omit<SingleExpense, 'id' | 'created_at'>
-  >({
-    user_id: user_id,
-    name: '',
-    amount: 0,
-    expense_type: '',
-    payment_type: '',
-    description: '',
-    payment_duration: undefined,
-  });
 
   const resetForm = () => {
     setFormData({
