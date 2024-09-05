@@ -15,6 +15,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     | 'danger'
     | undefined;
   isIconOnly?: boolean;
+  loading?: boolean;
 }
 
 const FormButton = ({
@@ -25,6 +26,7 @@ const FormButton = ({
   isDisabled,
   color,
   isIconOnly,
+  loading,
 }: ButtonProps) => {
   const { pending } = useFormStatus();
 
@@ -37,6 +39,7 @@ const FormButton = ({
       isDisabled={isDisabled || pending}
       color={color}
       isIconOnly={isIconOnly}
+      isLoading={loading}
     >
       {children}
     </Button>
