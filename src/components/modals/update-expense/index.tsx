@@ -1,7 +1,9 @@
 'use client';
 import { Modal, ModalContent, ModalHeader, ModalBody } from '@nextui-org/modal';
-import { tableIcons } from '@lib/constants/icons';
-import { ExpenseIdRequired } from '@lib/constants/types/expenses/expenses';
+import {
+  ExpenseIdRequired,
+  Subscription,
+} from '@lib/constants/types/expenses/expenses';
 import { UpdateExpenseForm } from '@components/forms/update-expense';
 import { UpdateSubscriptionForm } from '@components/forms/update-subscription';
 import type { UseDisclosureReturn } from '@nextui-org/use-disclosure';
@@ -10,14 +12,19 @@ export const UpdateExpenseModal = ({
   expense,
   disclosure,
 }: {
-  expense: ExpenseIdRequired;
+  expense: ExpenseIdRequired | Subscription;
   disclosure: UseDisclosureReturn;
 }) => {
   if (expense.payment_type === 'one-time' || expense.payment_type === 'monthly')
     return <ModalExpense expense={expense} disclosure={disclosure} />;
 
   if (expense.payment_type === 'subscription')
-    return <ModalSubscription expense={expense} disclosure={disclosure} />;
+    return (
+      <ModalSubscription
+        expense={expense as Subscription}
+        disclosure={disclosure}
+      />
+    );
 };
 
 const ModalExpense = ({
@@ -57,7 +64,7 @@ const ModalSubscription = ({
   expense,
   disclosure,
 }: {
-  expense: ExpenseIdRequired;
+  expense: Subscription;
   disclosure: UseDisclosureReturn;
 }) => {
   const { isOpen, onOpen, onOpenChange, onClose } = disclosure;
