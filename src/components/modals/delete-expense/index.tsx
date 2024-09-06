@@ -7,21 +7,35 @@ import {
   ModalFooter,
 } from '@nextui-org/modal';
 import { Button } from '@nextui-org/button';
+import { useExpensesStore } from '@store/expensesStore';
 import { deleteExpense } from '@lib/actions/expenses/delete-expense';
-import { tableIcons } from '@constants/icons';
 import type { UseDisclosureReturn } from '@nextui-org/use-disclosure';
 
 export const DeleteExpenseModal = ({
   expense_id,
+  payment_type,
   disclosure,
 }: {
   expense_id: string;
+  payment_type: string;
   disclosure: UseDisclosureReturn;
 }) => {
   const { isOpen, onOpen, onOpenChange, onClose } = disclosure;
+  const { removeExpense, removeSubscription } = useExpensesStore((state) => ({
+    removeExpense: state.removeExpense,
+    removeSubscription: state.removeSubscription,
+  }));
 
   const handlePress = async () => {
-    await deleteExpense(expense_id);
+    if (payment_type === 'one-time' || payment_type === 'monthly') {
+      removeExpense(expense_id);
+    }
+
+    if (payment_type === 'subscription') {
+      removeSubscription(expense_id);
+    }
+
+    await deleteExpense(expense_id, payment_type);
   };
 
   return (
@@ -35,7 +49,9 @@ export const DeleteExpenseModal = ({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1 text-danger">
-              Delete expense
+              {payment_type === 'subscription'
+                ? 'Delete subscription'
+                : 'Delete expense'}
             </ModalHeader>
             <ModalBody>
               <p>

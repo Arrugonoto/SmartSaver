@@ -67,7 +67,11 @@ export const DropdownTable = ({
         </DropdownMenu>
       </Dropdown>
       <UpdateExpenseModal expense={expense} disclosure={updateModal} />
-      <DeleteExpenseModal expense_id={expense.id} disclosure={deleteModal} />
+      <DeleteExpenseModal
+        expense_id={expense.id}
+        payment_type={expense.payment_type}
+        disclosure={deleteModal}
+      />
     </>
   );
 };
