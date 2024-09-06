@@ -18,6 +18,8 @@ type Action = {
   setResultsPerPage: (resultsPerPage: State['resultsPerPage']) => void;
   setTotalResults: (totalResults: State['totalResults']) => void;
   setLoadingExpenses: (loadingExpenses: State['loadingSpendings']) => void;
+  removeExpense: (id: string) => void;
+  removeSubscription: (id: string) => void;
 };
 
 export const useExpensesStore = create(
@@ -37,6 +39,36 @@ export const useExpensesStore = create(
       setTotalResults: (numOfTotal) => set({ totalResults: numOfTotal }),
       setLoadingExpenses: (loadingState) =>
         set({ loadingSpendings: loadingState }),
+      removeExpense: (id) => {
+        const { spendings, totalResults } = get();
+
+        const filteredExpenses = spendings.expenses.filter(
+          (expense) => expense.id !== id
+        );
+
+        set({
+          spendings: {
+            ...spendings,
+            expenses: filteredExpenses,
+          },
+          totalResults: totalResults - 1,
+        });
+      },
+      removeSubscription: (id) => {
+        const { spendings, totalResults } = get();
+
+        const filteredSubscriptions = spendings.subscriptions.filter(
+          (subscription) => subscription.id !== id
+        );
+
+        set({
+          spendings: {
+            ...spendings,
+            subscriptions: filteredSubscriptions,
+          },
+          totalResults: totalResults - 1,
+        });
+      },
     }),
     {
       name: 'spendings-storage',
