@@ -7,7 +7,7 @@ import {
 } from '@nextui-org/navbar';
 import { Button } from '@nextui-org/button';
 import Link from 'next/link';
-import { signOut, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { UserMenu } from '@components/menus/user-menu';
 import { btnIcons } from '@lib/constants/icons';
 
