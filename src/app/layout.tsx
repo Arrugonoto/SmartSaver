@@ -7,6 +7,8 @@ import { getServerSession } from 'next-auth';
 import SessionProvider from './SessionProvider';
 import { authOptions } from './api/auth/[...nextauth]/options';
 import { SideMenu } from '@components/menus/side-menu';
+import { ToastContainer, Slide, Zoom } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -33,6 +35,13 @@ export default async function RootLayout({
           <SessionProvider>
             <Providers>
               <Header />
+              <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                stacked
+                transition={Zoom}
+                hideProgressBar={true}
+              />
               <div className="flex w-full h-full overflow-y-scroll">
                 {session && <SideMenu />}
                 {children}
