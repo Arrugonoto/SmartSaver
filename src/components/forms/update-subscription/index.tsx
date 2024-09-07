@@ -11,12 +11,16 @@ import { useFetch } from '@lib/hooks/useFetch';
 import { getExpenses } from '@lib/actions/expenses/get-expenses';
 import { useSession } from 'next-auth/react';
 import type { Expenses } from '@constants/types/expenses/expenses';
+import { pushNotification } from '@lib/helpers/push-notification';
+import { useTheme } from 'next-themes';
 
 export const UpdateSubscriptionForm = ({
   expense,
 }: {
   expense: Subscription;
 }) => {
+  const { data: session } = useSession();
+  const { theme } = useTheme();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<
     Omit<Subscription, 'user_id' | 'created_at'>
@@ -29,7 +33,6 @@ export const UpdateSubscriptionForm = ({
     description: expense.description || '',
     payment_duration: expense.payment_duration,
   });
-  const { data: session } = useSession();
   const { setSpendings, spendings, setTotalResults } = useExpensesStore(
     (state) => ({
       spendings: state.spendings,
@@ -81,6 +84,13 @@ export const UpdateSubscriptionForm = ({
 
     handleManualFetch();
     setIsLoading(false);
+    pushNotification({
+      status: 'success',
+      text: 'Updated subscription',
+      config: {
+        theme: theme,
+      },
+    });
   };
 
   useEffect(() => {

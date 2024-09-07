@@ -12,8 +12,12 @@ import { useFetch } from '@lib/hooks/useFetch';
 import { getExpenses } from '@lib/actions/expenses/get-expenses';
 import { useSession } from 'next-auth/react';
 import type { Expenses } from '@constants/types/expenses/expenses';
+import { pushNotification } from '@lib/helpers/push-notification';
+import { useTheme } from 'next-themes';
 
 export const ExpensesForm = ({ user_id }: { user_id: string }) => {
+  const { data: session } = useSession();
+  const { theme } = useTheme();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<
     Omit<SingleExpense, 'id' | 'created_at'>
@@ -26,7 +30,7 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
     description: '',
     payment_duration: undefined,
   });
-  const { data: session } = useSession();
+
   const { setSpendings, spendings, setTotalResults } = useExpensesStore(
     (state) => ({
       spendings: state.spendings,
@@ -103,6 +107,14 @@ export const ExpensesForm = ({ user_id }: { user_id: string }) => {
     resetForm();
     handleManualFetch();
     setIsLoading(false);
+
+    pushNotification({
+      status: 'success',
+      text: 'Succesfully added expense',
+      config: {
+        theme: theme,
+      },
+    });
   };
 
   useEffect(() => {

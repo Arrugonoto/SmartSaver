@@ -12,12 +12,16 @@ import { useFetch } from '@lib/hooks/useFetch';
 import { getExpenses } from '@lib/actions/expenses/get-expenses';
 import { useSession } from 'next-auth/react';
 import type { Expenses } from '@constants/types/expenses/expenses';
+import { pushNotification } from '@lib/helpers/push-notification';
+import { useTheme } from 'next-themes';
 
 export const UpdateExpenseForm = ({
   expense,
 }: {
   expense: ExpenseIdRequired;
 }) => {
+  const { data: session } = useSession();
+  const { theme } = useTheme();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<
     Omit<ExpenseIdRequired, 'user_id' | 'created_at'>
@@ -30,7 +34,7 @@ export const UpdateExpenseForm = ({
     description: expense.description || '',
     payment_duration: expense.payment_duration,
   });
-  const { data: session } = useSession();
+
   const { setSpendings, spendings, setTotalResults } = useExpensesStore(
     (state) => ({
       spendings: state.spendings,
@@ -95,6 +99,13 @@ export const UpdateExpenseForm = ({
 
     handleManualFetch();
     setIsLoading(false);
+    pushNotification({
+      status: 'success',
+      text: 'Updated expense',
+      config: {
+        theme: theme,
+      },
+    });
   };
 
   useEffect(() => {
@@ -142,35 +153,20 @@ export const UpdateExpenseForm = ({
             </SelectItem>
           ))}
         </Select>
-        <Select
-          label="Payment type"
-          name="payment_type"
-          placeholder="Select payment type"
-          selectedKeys={[`${formData.payment_type}`]}
-          disabledKeys={['']}
-          onChange={(e) => handleChange(e)}
-        >
-          <SelectItem key="" value={''}>
-            Select type
-          </SelectItem>
-          <SelectItem key="one-time" value={'one-time'}>
-            One time payment
-          </SelectItem>
-          <SelectItem key="monthly" value={'monthly'}>
-            Monthly
-          </SelectItem>
-        </Select>
-        <Input
-          isDisabled={formData.payment_type !== 'monthly'}
-          type="number"
-          name="payment_duration"
-          label="Duration(months)"
-          value={formData?.payment_duration?.toString()}
-          step="1"
-          min={1}
-          isRequired
-          onChange={(e) => handleChange(e)}
-        />
+        {formData.payment_duration && (
+          <Input
+            isDisabled={formData.payment_type !== 'monthly'}
+            type="number"
+            name="payment_duration"
+            label="Duration(months)"
+            value={formData?.payment_duration?.toString()}
+            step="1"
+            min={1}
+            isRequired
+            onChange={(e) => handleChange(e)}
+          />
+        )}
+
         <Textarea
           label="Description"
           placeholder={expense.description || 'description of expense'}

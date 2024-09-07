@@ -10,6 +10,8 @@ import { Button } from '@nextui-org/button';
 import { useExpensesStore } from '@store/expensesStore';
 import { deleteExpense } from '@lib/actions/expenses/delete-expense';
 import type { UseDisclosureReturn } from '@nextui-org/use-disclosure';
+import { pushNotification } from '@lib/helpers/push-notification';
+import { useTheme } from 'next-themes';
 
 export const DeleteExpenseModal = ({
   expense_id,
@@ -21,10 +23,14 @@ export const DeleteExpenseModal = ({
   disclosure: UseDisclosureReturn;
 }) => {
   const { isOpen, onOpen, onOpenChange, onClose } = disclosure;
+  const { theme } = useTheme();
   const { removeExpense, removeSubscription } = useExpensesStore((state) => ({
     removeExpense: state.removeExpense,
     removeSubscription: state.removeSubscription,
   }));
+
+  const spendingType =
+    payment_type === 'subscription' ? 'subscription' : 'expense';
 
   const handlePress = async () => {
     if (payment_type === 'one-time' || payment_type === 'monthly') {
@@ -36,6 +42,14 @@ export const DeleteExpenseModal = ({
     }
 
     await deleteExpense(expense_id, payment_type);
+
+    pushNotification({
+      status: 'warning',
+      text: `Removed selected ${spendingType}`,
+      config: {
+        theme: theme,
+      },
+    });
   };
 
   return (
