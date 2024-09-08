@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Textarea } from '@nextui-org/input';
 import FormButton from '@components/buttons/FormButton';
 import { btnIcons } from '@lib/constants/icons';
@@ -18,10 +18,20 @@ export const AssistantForm = ({
   const [prompt, setPrompt] = useState<string>('');
   const [threadId, setThreadId] = useState<string | null>(null);
   const textLimit = 200;
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.length <= 200) {
       setPrompt(e.target.value);
+    }
+  };
+
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement> | KeyboardEvent
+  ) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      formRef?.current?.requestSubmit();
     }
   };
 
@@ -70,7 +80,11 @@ export const AssistantForm = ({
 
   return (
     <motion.div className="min-w-[200px]">
-      <form onSubmit={handleSubmit} className="flex gap-2 items-center w-full">
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+        className="flex gap-2 items-center w-full"
+      >
         <Textarea
           aria-label="Message"
           id="textarea-height"
@@ -82,6 +96,7 @@ export const AssistantForm = ({
           placeholder="Question"
           value={prompt}
           onChange={(e) => handlechange(e)}
+          onKeyDown={(e) => handleKeyDown(e)}
           minRows={1}
           maxRows={3}
           className="w-full p-0"
