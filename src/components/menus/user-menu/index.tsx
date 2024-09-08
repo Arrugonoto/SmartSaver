@@ -39,7 +39,13 @@ export const UserMenu = () => {
     <section>
       <Dropdown placement="bottom-end" closeOnSelect={false}>
         <DropdownTrigger>
-          <Avatar name={session?.user.name} isBordered as="button" />
+          <Avatar
+            name={session?.user.name}
+            isBordered
+            as="button"
+            size="sm"
+            className="hover:bg-white/[.25] transition-all"
+          />
         </DropdownTrigger>
         <DropdownMenu aria-label="Static Actions" variant="faded">
           <DropdownSection aria-label="Profile" showDivider>
