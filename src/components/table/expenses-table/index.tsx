@@ -50,13 +50,9 @@ const columns = [
 ];
 
 export const ExpensesTable = () => {
-  const spendings = useStore(useExpensesStore, (state) => state.spendings);
+  const spendings = useStore(useExpensesStore, (state) => state.spendings!);
   const resultsPerPage =
     useStore(useExpensesStore, (state) => state.resultsPerPage) ?? 20;
-  const totalResults = useStore(
-    useExpensesStore,
-    (state) => state.totalResults
-  );
   const setResultsPerPage = useExpensesStore(
     (state) => state.setResultsPerPage
   );
@@ -69,6 +65,7 @@ export const ExpensesTable = () => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<Selection>('all');
   const [selectedPayment, setSelectedPayment] = useState<Selection>('all');
+
   const sortedData = useMemo(() => {
     const expenses: (SingleExpense | Subscription)[] = [
       ...(spendings?.expenses ?? []),
@@ -228,7 +225,11 @@ export const ExpensesTable = () => {
           </div>
         </div>
         <div className="flex justify-between">
-          <p>Total spendings: {totalResults}</p>
+          <p>
+            Total spendings:{' '}
+            {(spendings?.expenses?.length as number) +
+              (spendings?.subscriptions?.length as number)}
+          </p>
           <Select
             disallowEmptySelection
             size="md"
@@ -253,34 +254,42 @@ export const ExpensesTable = () => {
     onInputClear,
     selectedCategory,
     selectedPayment,
-    totalResults,
     resultsPerPage,
     handleSelectChange,
+    spendings?.expenses,
+    spendings?.subscriptions,
   ]);
 
   const bottomContent = useMemo(() => {
+    const totalElements =
+      (spendings?.expenses.length as number) +
+        (spendings?.subscriptions.length as number) || 0;
     const resultsInfo =
-      totalResults &&
+      totalElements &&
       `${1 + (page - 1) * resultsPerPage} - ${
-        page * resultsPerPage < totalResults
+        page * resultsPerPage < totalElements
           ? page * resultsPerPage
-          : totalResults
-      } of ${totalResults}`;
+          : totalElements
+      } of ${totalElements}`;
 
     return (
       <div className="flex w-1/2 justify-between">
-        {totalResults && (
+        {totalElements && (
           <span className="text-default-400 text-sm">{resultsInfo}</span>
         )}
 
-        {totalResults && (
+        {totalElements && (
           <Pagination
             isCompact
             showControls
             showShadow
             disableAnimation={false}
             disableCursorAnimation={false}
-            total={Math.ceil(totalResults / resultsPerPage)}
+            total={Math.ceil(
+              ((spendings?.expenses?.length as number) +
+                (spendings?.subscriptions?.length as number)) /
+                resultsPerPage
+            )}
             initialPage={1}
             onChange={(page) => handlePageChange(page)}
             className="self-center"
@@ -288,10 +297,10 @@ export const ExpensesTable = () => {
         )}
       </div>
     );
-  }, [totalResults, resultsPerPage, page]);
+  }, [resultsPerPage, page, spendings]);
 
   // CONDITIONAL CHECK
-  if (!paginatedData || !totalResults || !spendings) {
+  if (!paginatedData || !spendings) {
     return <LoadingTable />;
   }
 
