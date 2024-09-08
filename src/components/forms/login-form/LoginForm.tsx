@@ -6,6 +6,8 @@ import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import FormButton from '@components/buttons/FormButton';
 import { useRouter } from 'next/navigation';
+import { pushNotification } from '@lib/helpers/push-notification';
+import { useTheme } from 'next-themes';
 
 type FormDataType = {
   email: string;
@@ -13,6 +15,7 @@ type FormDataType = {
 };
 
 const LoginForm = () => {
+  const { theme } = useTheme();
   const [formData, setFormData] = useState<FormDataType>({
     email: '',
     password: '',
@@ -50,6 +53,13 @@ const LoginForm = () => {
     if (!res?.error) {
       router.push('/dashboard');
       router.refresh();
+      pushNotification({
+        status: 'success',
+        text: 'Succesfully logged in',
+        config: {
+          theme: theme,
+        },
+      });
     }
   };
 
@@ -96,8 +106,8 @@ const LoginForm = () => {
             </>
           )}
 
-          <FormButton type="submit" isDisabled={pending}>
-            Login
+          <FormButton type="submit" isDisabled={pending} loading={pending}>
+            {pending ? '' : 'Login'}
           </FormButton>
         </div>
         <div className="relative h-0.5 mt-8 mb-6 bg-black">
@@ -110,14 +120,16 @@ const LoginForm = () => {
           <FormButton
             onPress={() => signIn('github', { callbackUrl: '/dashboard' })}
             isDisabled={pending}
+            loading={pending}
           >
-            GitHub
+            {pending ? '' : 'GitHub'}
           </FormButton>
           <FormButton
             onPress={() => signIn('google', { callbackUrl: '/dashboard' })}
             isDisabled={pending}
+            loading={pending}
           >
-            Google
+            {pending ? '' : 'Google'}
           </FormButton>
         </div>
         <p className="text-sm pt-6 pb-2 text-center">
