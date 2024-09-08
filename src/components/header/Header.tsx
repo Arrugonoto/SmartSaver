@@ -10,18 +10,14 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { UserMenu } from '@components/menus/user-menu';
 import { btnIcons } from '@lib/constants/icons';
-import { useTheme } from 'next-themes';
 
 export const Header = () => {
   const { data: session } = useSession();
-  const { theme } = useTheme();
 
   return (
     <header className="sticky top-0 left-0 w-full z-[999]">
       <Navbar
-        className={`flex h-12 ${
-          theme === 'dark' ? 'bg-[#18181b]' : 'bg-[#f0f0f0]'
-        }`}
+        className="flex h-12 bg-default-50"
         isBordered
         shouldHideOnScroll
         maxWidth="full"

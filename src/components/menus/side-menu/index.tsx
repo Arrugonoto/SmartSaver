@@ -3,17 +3,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ROUTES } from '@constants/routes';
 import { Tooltip } from '@nextui-org/react';
-import { useTheme } from 'next-themes';
 
 export const SideMenu = () => {
   const pathname = usePathname();
-  const { theme } = useTheme();
 
   return (
     <section
-      className={`hidden sm:flex flex-col rounded-lg my-3 ml-2 ${
-        theme === 'dark' ? 'bg-[#18181b]' : 'bg-[#f0f0f0]'
-      }`}
+      className={`hidden sm:flex flex-col rounded-lg my-3 ml-2 bg-default-50`}
     >
       <nav className="p-2">
         <ul className="flex flex-col gap-2">
