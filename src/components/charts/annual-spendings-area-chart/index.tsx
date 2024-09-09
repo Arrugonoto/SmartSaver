@@ -88,18 +88,21 @@ const formatChartData = (data: DataByYear, selectedYear: string) => {
       ...subscriptionsInMonth,
     ];
 
-    const totalInMonth = spendingsInMonth.reduce(
-      (sum, spending) =>
-        parseFloat(sum as any) + parseFloat(spending.amount as any),
-      0
-    );
+    const totalInMonth = spendingsInMonth
+      .reduce(
+        (sum, spending) =>
+          parseFloat(sum as any) + parseFloat(spending.amount as any),
+        0
+      )
+      ?.toFixed(2);
 
     return {
       name: month.name,
       single_payments: singleSpendingsInMonth.length,
       monthly_payments: recurringPayments.length,
       subscriptions: subscriptionsInMonth.length,
-      total_expenses: totalInMonth === 0 ? null : totalInMonth,
+      total_expenses:
+        parseFloat(totalInMonth) === 0 ? null : parseFloat(totalInMonth),
     };
   });
 

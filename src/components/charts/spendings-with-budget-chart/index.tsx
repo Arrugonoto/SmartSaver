@@ -56,7 +56,7 @@ const formatChartData = (
 
     return {
       name: monthName,
-      spendings: totalSpendingsInMonth,
+      spendings: totalSpendingsInMonth.toFixed(2),
       budget: budgetLimit,
     };
   });

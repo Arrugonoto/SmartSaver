@@ -75,7 +75,7 @@ export const ExpensesSummarySection = ({
               </h2>
             </CardHeader>
             <CardBody>
-              <p className="text-center text-xl">{totalInMonth}</p>
+              <p className="text-center text-xl">{totalInMonth.toFixed(2)}</p>
             </CardBody>
           </Card>
         ) : (
@@ -92,7 +92,9 @@ export const ExpensesSummarySection = ({
               {budgetLimit === 0 ? (
                 <BudgetLimitModal />
               ) : (
-                <h2 className="text-center text-xl">{budgetLimit}</h2>
+                <h2 className="text-center text-xl">
+                  {parseFloat(budgetLimit.toString()).toFixed(2)}
+                </h2>
               )}
             </CardBody>
 
@@ -124,7 +126,9 @@ export const ExpensesSummarySection = ({
               <h2 className="text-center text-xl">Monthly commitments</h2>
             </CardHeader>
             <CardBody>
-              <p className="text-center text-xl">{monthlyCommitments}</p>
+              <p className="text-center text-xl">
+                {monthlyCommitments.toFixed(2)}
+              </p>
             </CardBody>
           </Card>
         ) : (

@@ -37,15 +37,17 @@ const formatChartData = (expenses: (SingleExpense | Subscription)[]) => {
       })
       .filter((amount) => amount !== undefined);
 
-    const totalInMonth = expensesByCategory.reduce(
-      (sum, amount) => parseFloat(sum as any) + parseFloat(amount as any),
-      0
-    );
+    const totalInMonth = expensesByCategory
+      .reduce(
+        (sum, amount) => parseFloat(sum as any) + parseFloat(amount as any),
+        0
+      )
+      ?.toFixed(2);
 
     if (expensesByCategory && expensesByCategory.length > 0) {
       return {
         name: category.label,
-        totalSpending: totalInMonth,
+        totalSpending: parseFloat(totalInMonth),
         color: category.color,
       };
     }
