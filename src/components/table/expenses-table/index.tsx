@@ -45,7 +45,8 @@ const columns = [
   { key: 'expense_type', label: 'EXPENSE TYPE' },
   { key: 'payment_type', label: 'PAYMENT TYPE' },
   { key: 'payment_duration', label: 'PAYMENT DURATION' },
-  { key: 'created_at', label: 'LAST CHANGE' },
+  { key: 'created_at', label: 'ADDED AT' },
+  { key: 'updated_at', label: 'LAST CHANGE' },
   { key: 'actions', label: 'ACTIONS' },
 ];
 
@@ -326,7 +327,9 @@ export const ExpensesTable = () => {
           <TableColumn
             key={column.key}
             allowsSorting={
-              column.key !== 'actions' && column.key !== 'payment_duration'
+              column.key !== 'actions' &&
+              column.key !== 'payment_duration' &&
+              column.key !== 'updated_at'
             }
           >
             {column.label}
@@ -345,7 +348,8 @@ export const ExpensesTable = () => {
         loadingState={isLoading ? 'loading' : 'idle'}
       >
         {(item) => {
-          const date = item.updated_at ? item.updated_at : item.created_at!;
+          const dateOfCreation = item.created_at;
+          const dateOfUpdate = item.updated_at;
           const expenseType = expenseCategoriesList.map((el) => {
             if (el.value === item.expense_type) return el.label;
           });
@@ -372,7 +376,12 @@ export const ExpensesTable = () => {
               <TableCell>{expenseType}</TableCell>
               <TableCell>{paymentType}</TableCell>
               <TableCell>{paymentDuration}</TableCell>
-              <TableCell>{format(date, 'dd MMM yyy, H:mm')}</TableCell>
+              <TableCell>
+                {format(dateOfCreation, 'dd MMM yyy, H:mm')}
+              </TableCell>
+              <TableCell>
+                {dateOfUpdate ? format(dateOfUpdate, 'dd MMM yyy, H:mm') : '-'}
+              </TableCell>
               <TableCell>
                 <DropdownTable expense={item} />
               </TableCell>
