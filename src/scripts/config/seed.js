@@ -10,7 +10,7 @@ async function createUsersTable(client) {
         name TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
-        created_at TIMESTAMP NOT NULL
+        created_at TIMESTAMP WITH TIME ZONE NOT NULL
       );
     `;
 
@@ -54,8 +54,8 @@ async function createExpensesTable(client) {
         payment_type TEXT NOT NULL,
         payment_duration INT,
         description TEXT,
-        created_at TIMESTAMP NOT NULL,
-        updated_at TIMESTAMP,
+        created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+        updated_at TIMESTAMP WITH TIME ZONE,
       );
     `;
 
@@ -80,8 +80,8 @@ async function createSubscriptionsTable(client) {
         payment_type TEXT NOT NULL,
         payment_duration INT NOT NULL,
         description TEXT,
-        created_at TIMESTAMP NOT NULL,
-        updated_at TIMESTAMP
+        created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+        updated_at TIMESTAMP WITH TIME ZONE
       );
     `;
 
@@ -102,8 +102,8 @@ async function createBudgetLimitTable(client) {
          user_id UUID NOT NULL,
          budget_limit NUMERIC(200, 2) NOT NULL,
          first_limit NUMERIC(200, 2) NOT NULL,
-         created_at TIMESTAMP NOT NULL,
-         updated_at TIMESTAMP
+         created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+         updated_at TIMESTAMP WITH TIME ZONE
        );
      `;
 
