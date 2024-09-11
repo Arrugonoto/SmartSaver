@@ -17,6 +17,7 @@ import {
   FaUserGear,
   FaMoon,
   FaSun,
+  FaCircleInfo,
 } from 'react-icons/fa6';
 import { TbMessageQuestion } from 'react-icons/tb';
 
@@ -66,4 +67,8 @@ export const userMenuIcons = {
 
 export const accountIcons = {
   settings: FaUserGear,
+};
+
+export const infoIcons = {
+  informative: FaCircleInfo,
 };
