@@ -8,6 +8,7 @@ import FormButton from '@components/buttons/FormButton';
 import { useRouter } from 'next/navigation';
 import { pushNotification } from '@lib/helpers/push-notification';
 import { useTheme } from 'next-themes';
+import { brandIcons } from '@lib/constants/icons';
 
 type FormDataType = {
   email: string;
@@ -117,20 +118,34 @@ const LoginForm = () => {
         </div>
         <div className="flex flex-col w-full items-center gap-3">
           <h2 className="w-full text-center text-md">Continue with</h2>
-          <FormButton
-            onPress={() => signIn('github', { callbackUrl: '/dashboard' })}
-            isDisabled={pending}
-            loading={pending}
-          >
-            {pending ? '' : 'GitHub'}
-          </FormButton>
-          <FormButton
-            onPress={() => signIn('google', { callbackUrl: '/dashboard' })}
-            isDisabled={pending}
-            loading={pending}
-          >
-            {pending ? '' : 'Google'}
-          </FormButton>
+          <div className="flex w-full gap-4">
+            <FormButton
+              onPress={() => signIn('github', { callbackUrl: '/dashboard' })}
+              isDisabled={pending}
+              loading={pending}
+              className="h-20 rounded-md hover:bg-[#6e40c9]"
+            >
+              <div className="flex flex-col w-full gap-2 items-center">
+                <span>
+                  <brandIcons.github className="text-3xl" />
+                </span>
+                <p className="text-base">{pending ? '' : 'GitHub'}</p>
+              </div>
+            </FormButton>
+            <FormButton
+              onPress={() => signIn('google', { callbackUrl: '/dashboard' })}
+              isDisabled={pending}
+              loading={pending}
+              className="h-20 rounded-md hover:bg-[#ea4335]"
+            >
+              <div className="flex flex-col w-full gap-2 items-center">
+                <span>
+                  <brandIcons.google className="text-3xl" />
+                </span>
+                <p className="text-base">{pending ? '' : 'Google'}</p>
+              </div>
+            </FormButton>
+          </div>
         </div>
         <p className="text-sm pt-6 pb-2 text-center">
           {`Don't have an account? `}
