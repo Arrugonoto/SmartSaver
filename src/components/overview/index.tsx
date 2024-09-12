@@ -8,8 +8,9 @@ import { ExpensesSummarySection } from '@components/sections/overview/summary';
 import { MonthlyChartsSection } from '@components/sections/overview/monthly-charts';
 import { AnnualChartSection } from '@components/sections/overview/annual-chart';
 import { CreateExpenseModal } from '@components/modals/create-expense-modal';
-import { Card, CardHeader, CardBody } from '@nextui-org/card';
+import { Card, CardBody } from '@nextui-org/card';
 import { infoIcons } from '@lib/constants/icons';
+import { Spinner } from '@nextui-org/spinner';
 
 export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
   const { setSpendings, setTotalResults, spendings } = useExpensesStore(
@@ -42,6 +43,14 @@ export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
   useEffect(() => {
     setTotalResults(totalResults);
   }, [totalResults, setTotalResults]);
+
+  if (isLoading) {
+    return (
+      <div className="flex w-full h-full items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col w-full h-full p-2 gap-4 xl:pr-6">
