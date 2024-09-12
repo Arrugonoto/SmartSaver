@@ -18,8 +18,15 @@ import {
   FaMoon,
   FaSun,
   FaCircleInfo,
+  FaGithub,
+  FaGoogle,
 } from 'react-icons/fa6';
 import { TbMessageQuestion } from 'react-icons/tb';
+
+export const brandIcons = {
+  google: FaGoogle,
+  github: FaGithub,
+};
 
 export const tableIcons = {
   delete: FaRegTrashCan,
@@ -50,6 +57,8 @@ export const btnIcons = {
   signin: FaArrowRightToBracket,
   plus: FaPlus,
   send: FaPaperPlane,
+  lightMode: FaSun,
+  darkMode: FaMoon,
 };
 
 export const asistantIcons = {
