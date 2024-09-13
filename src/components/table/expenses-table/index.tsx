@@ -26,7 +26,6 @@ import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import { Select, SelectItem } from '@nextui-org/select';
 import type {
-  Expenses,
   SingleExpense,
   Subscription,
 } from '@constants/types/expenses/expenses';
@@ -34,6 +33,10 @@ import { Spinner } from '@nextui-org/spinner';
 import type { Selection } from '@nextui-org/react';
 import { capitalizeString } from '@lib/helpers/capitalize';
 import { LoadingTable } from '@components/loaders/loading-table';
+import { CreateExpenseModal } from '@components/modals/create-expense-modal';
+import { Card, CardBody } from '@nextui-org/card';
+import { infoIcons } from '@lib/constants/icons';
+import { useTheme } from 'next-themes';
 
 const categoriesWithoutEmpty = expenseCategoriesList.slice(1);
 
@@ -57,6 +60,7 @@ export const ExpensesTable = () => {
   const setResultsPerPage = useExpensesStore(
     (state) => state.setResultsPerPage
   );
+  const { theme } = useTheme();
   const [page, setPage] = useState<number>(1);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'name',
@@ -275,11 +279,11 @@ export const ExpensesTable = () => {
 
     return (
       <div className="flex w-1/2 justify-between">
-        {totalElements && (
+        {totalElements > 0 && (
           <span className="text-default-400 text-sm">{resultsInfo}</span>
         )}
 
-        {totalElements && (
+        {totalElements > 0 && (
           <Pagination
             isCompact
             showControls
@@ -320,6 +324,7 @@ export const ExpensesTable = () => {
       }}
       classNames={{
         base: 'overflow-y-hidden',
+        wrapper: `${theme === 'dark' ? 'bg-content1' : 'bg-content2/40'}`,
       }}
     >
       <TableHeader columns={columns}>
@@ -340,9 +345,23 @@ export const ExpensesTable = () => {
       <TableBody
         items={paginatedData}
         emptyContent={
-          isLoading
-            ? ''
-            : "Currently You don't have any expenses to keep track on."
+          isLoading ? (
+            ''
+          ) : (
+            <div className="flex w-full h-full justify-center items-center">
+              <Card className="p-4">
+                <CardBody className="flex-row gap-4 items-start">
+                  <div className="p-1">
+                    <infoIcons.informative className="text-2xl text-sky-400" />
+                  </div>
+                  <div className="flex flex-col gap-4 items-center pt-2">
+                    <h2>{`Currently You don't have any expenses to keep track on. Add one now.`}</h2>
+                    <CreateExpenseModal />
+                  </div>
+                </CardBody>
+              </Card>
+            </div>
+          )
         }
         loadingContent={<Spinner />}
         loadingState={isLoading ? 'loading' : 'idle'}
