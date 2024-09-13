@@ -77,7 +77,9 @@ const LoginForm = () => {
     <div className="w-1/4 min-w-[22rem] xl:min-w-[26rem] transition-all">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col w-full bg-gray-900 px-4 md:px-8 py-6 rounded-lg transition-all"
+        className={`flex flex-col w-full ${
+          theme === 'dark' ? 'bg-content1' : 'bg-neutral-200'
+        } px-4 md:px-8 py-6 rounded-lg transition-all`}
       >
         <h1 className="text-2xl text-center mb-6">Sign Up</h1>
         <div className="flex flex-col w-full items-center gap-3">

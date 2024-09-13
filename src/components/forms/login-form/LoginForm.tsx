@@ -75,7 +75,9 @@ const LoginForm = () => {
     <div className="w-1/4 min-w-[22rem] xl:min-w-[26rem] transition-all">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col w-full bg-gray-900 px-4 md:px-8 py-6 rounded-lg transition-all"
+        className={`flex flex-col w-full ${
+          theme === 'dark' ? 'bg-content1' : 'bg-neutral-200'
+        } px-4 md:px-8 py-6 rounded-lg transition-all`}
       >
         <h1 className="text-2xl text-center mb-6">Sign In</h1>
         <div className="flex flex-col w-full items-center gap-3">
@@ -112,9 +114,13 @@ const LoginForm = () => {
           </FormButton>
         </div>
         <div className="relative h-0.5 mt-8 mb-6 bg-black">
-          <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-900 px-3">
+          <span
+            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${
+              theme === 'dark' ? 'bg-content1' : 'bg-neutral-200'
+            } px-3`}
+          >
             OR
-          </p>
+          </span>
         </div>
         <div className="flex flex-col w-full items-center gap-3">
           <h2 className="w-full text-center text-md">Continue with</h2>
