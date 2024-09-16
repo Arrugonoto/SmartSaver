@@ -8,7 +8,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <NextUIProvider className="flex flex-col w-full h-[100vh] overflow-y-hidden">
       <NextThemesProvider
         attribute="class"
-        defaultTheme="system"
+        defaultTheme="dark"
         enableSystem={true}
       >
         {children}
