@@ -44,7 +44,7 @@ export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
     setTotalResults(totalResults);
   }, [totalResults, setTotalResults]);
 
-  if (isLoading && !spendings) {
+  if (isLoading && dataNotAvailable) {
     return (
       <div className="flex w-full h-full items-center justify-center">
         <Spinner size="lg" />
@@ -58,7 +58,7 @@ export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
         <h1 className="text-2xl mb-4">Expenses overview</h1>
         <CreateExpenseModal />
       </div>
-      {dataNotAvailable ? (
+      {!isLoading && dataNotAvailable ? (
         <div className="flex w-full h-full justify-center items-center">
           <Card className="p-4">
             <CardBody className="flex-row gap-4 items-start">
