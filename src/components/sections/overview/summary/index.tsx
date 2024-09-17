@@ -13,6 +13,7 @@ import { LoadingCard } from '@components/loaders/loading-card';
 import { LoadingTable } from '@components/loaders/loading-table';
 import { getTotalInMonth } from '@lib/helpers/get-total-in-month';
 import { calcTotalExpensesSoFar } from '@lib/helpers/get-total-spendings-so-far';
+import { useExpensesStore } from '@store/expensesStore';
 
 export const ExpensesSummarySection = ({
   spendings,
@@ -21,16 +22,19 @@ export const ExpensesSummarySection = ({
   spendings: Expenses;
   isLoading: boolean;
 }) => {
+  const { data: session } = useSession();
+  const user_id = session?.user.id;
   const [totalInMonth, setTotalInMonth] = useState<number | null>(null);
-  const [budgetLimit, setBudgetLimit] = useState<number | null>(null);
   const [monthlyCommitments, setMonthlyCommitments] = useState<number | null>(
     null
   );
   const [totalSpendingsSoFar, setTotalSpendingsSoFar] = useState<number | null>(
     null
   );
-  const { data: session } = useSession();
-  const user_id = session?.user.id;
+  const { budgetLimit, setBudgetLimit } = useExpensesStore((state) => ({
+    budgetLimit: state.budgetLimit,
+    setBudgetLimit: state.setBudgetLimit,
+  }));
 
   const { data, isLoading } = useFetch<BudgetLimit>({
     action: getBudgetLimit,
@@ -62,7 +66,7 @@ export const ExpensesSummarySection = ({
       const limit = data.budget_limit;
       setBudgetLimit(limit);
     }
-  }, [data, budgetLimit]);
+  }, [data, setBudgetLimit]);
 
   return (
     <section className="flex flex-col w-full gap-4">

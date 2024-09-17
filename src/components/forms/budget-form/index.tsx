@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from '@nextui-org/input';
 import { createBudgetLimit } from '@lib/actions/budget/create-budget-limit';
 import { updateBudgetLimit } from '@lib/actions/budget/update-budget-limit';
@@ -8,40 +8,72 @@ import { useSession } from 'next-auth/react';
 import FormButton from '@components/buttons/FormButton';
 import { useFetch } from '@lib/hooks/useFetch';
 import type { BudgetLimit } from '@lib/constants/types/budget/budget';
+import { pushNotification } from '@lib/helpers/push-notification';
+import { useTheme } from 'next-themes';
+import { useExpensesStore } from '@store/expensesStore';
 
 export const BudgetForm = ({ update }: { update?: boolean }) => {
   const { data: session } = useSession();
+  const { theme } = useTheme();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const user = session?.user;
   const user_id = user?.id;
-  const [budgetLimit, setBudgetLimit] = useState<number | null>(null);
+  const { budgetLimit, setBudgetLimit } = useExpensesStore((state) => ({
+    budgetLimit: state.budgetLimit,
+    setBudgetLimit: state.setBudgetLimit,
+  }));
+  const [newLimit, setNewLimit] = useState<number | null>(null);
 
-  const { data } = useFetch<BudgetLimit>({
+  const { fetchData, data } = useFetch<BudgetLimit>({
     action: getBudgetLimit,
     user_id,
   });
 
+  const handleManualFetch = () => {
+    if (session?.user.id) {
+      fetchData(session?.user.id);
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const parsedLimit = parseFloat(e.target.value);
-    setBudgetLimit(parsedLimit);
+    setNewLimit(parsedLimit);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    if (!update && user && budgetLimit) {
-      await createBudgetLimit({ user_id, budget_limit: budgetLimit });
+    if (!update && user && newLimit) {
+      await createBudgetLimit({ user_id, budget_limit: newLimit });
     }
 
-    if (update && user && budgetLimit) {
-      updateBudgetLimit({ id: data?.id, budget_limit: budgetLimit });
+    if (update && user && newLimit) {
+      updateBudgetLimit({ id: data?.id, budget_limit: newLimit });
     }
 
     resetForm();
+
+    handleManualFetch();
+    setIsLoading(false);
+    pushNotification({
+      status: 'success',
+      text: update ? 'Budget limit updated' : 'Budget limit added',
+      config: {
+        theme: theme,
+      },
+    });
   };
 
   const resetForm = () => {
-    setBudgetLimit(null);
+    setNewLimit(null);
   };
+
+  useEffect(() => {
+    if (data) {
+      setBudgetLimit(data.budget_limit);
+    }
+  }, [data, setBudgetLimit]);
 
   return (
     <div>
@@ -50,11 +82,9 @@ export const BudgetForm = ({ update }: { update?: boolean }) => {
           type="number"
           name="budgetLimit"
           label="Budget limit"
-          placeholder={`${data?.budget_limit ?? ''}`}
-          value={budgetLimit?.toString() || ''}
-          isInvalid={
-            update && budgetLimit !== null && data?.budget_limit == budgetLimit
-          }
+          placeholder={`${budgetLimit ?? ''}`}
+          value={newLimit?.toString() || ''}
+          isInvalid={update && newLimit !== null && newLimit == budgetLimit}
           step="0.01"
           min={1}
           isRequired
@@ -66,16 +96,14 @@ export const BudgetForm = ({ update }: { update?: boolean }) => {
           <FormButton
             type="submit"
             color="primary"
-            isDisabled={
-              budgetLimit !== null &&
-              (data?.budget_limit as number) == budgetLimit
-            }
+            isDisabled={newLimit === budgetLimit}
+            loading={isLoading}
           >
-            Update limit
+            {isLoading ? '' : 'Update limit'}
           </FormButton>
         ) : (
-          <FormButton type="submit" color="primary">
-            Save limit
+          <FormButton type="submit" color="primary" loading={isLoading}>
+            {isLoading ? '' : 'Save limit'}
           </FormButton>
         )}
       </form>
