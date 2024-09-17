@@ -5,6 +5,7 @@ import type { Expenses } from '@lib/constants/types/expenses/expenses';
 type State = {
   userId: string;
   spendings: Expenses;
+  budgetLimit: number;
   page: number;
   resultsPerPage: number;
   totalResults: number;
@@ -14,6 +15,7 @@ type State = {
 type Action = {
   setUserId: (userId: State['userId']) => void;
   setSpendings: (spendings: State['spendings']) => void;
+  setBudgetLimit: (budgetLimit: State['budgetLimit']) => void;
   setPage: (page: State['page']) => void;
   setResultsPerPage: (resultsPerPage: State['resultsPerPage']) => void;
   setTotalResults: (totalResults: State['totalResults']) => void;
@@ -27,12 +29,14 @@ export const useExpensesStore = create(
     (set, get) => ({
       userId: '',
       spendings: { expenses: [], subscriptions: [] },
+      budgetLimit: 0,
       page: 1,
       resultsPerPage: 20,
       totalResults: 0,
       loadingSpendings: true,
       setUserId: (id) => set({ userId: id }),
       setSpendings: (newSpendings) => set({ spendings: newSpendings }),
+      setBudgetLimit: (newLimit) => set({ budgetLimit: newLimit }),
       setPage: (pageNum) => set({ page: pageNum }),
       setResultsPerPage: (resPerPage) =>
         set(() => ({ resultsPerPage: resPerPage })),
