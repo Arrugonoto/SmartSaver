@@ -44,7 +44,7 @@ const ModalExpense = ({
       isDismissable={false}
       isKeyboardDismissDisabled={false}
     >
-      <ModalContent className="">
+      <ModalContent>
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
@@ -77,7 +77,7 @@ const ModalSubscription = ({
       isDismissable={false}
       isKeyboardDismissDisabled={false}
     >
-      <ModalContent className="">
+      <ModalContent>
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">

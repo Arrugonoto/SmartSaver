@@ -53,9 +53,16 @@ export const Header = () => {
                 >
                   <Button
                     isIconOnly={true}
-                    onPress={() =>
-                      setTheme(theme === 'dark' ? 'light' : 'dark')
-                    }
+                    onPress={() => {
+                      if (!theme) {
+                        setTheme('light');
+                        console.log('not theme');
+                      }
+                      if (theme) {
+                        setTheme(theme === 'dark' ? 'light' : 'dark');
+                        console.log('theme');
+                      }
+                    }}
                     className="text-lg bg-transparent"
                   >
                     {theme === 'light' ? (

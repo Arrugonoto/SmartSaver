@@ -46,7 +46,7 @@ export const BudgetLimitModal = ({ update }: { update?: boolean }) => {
         isKeyboardDismissDisabled={false}
         scrollBehavior={'inside'}
       >
-        <ModalContent className="">
+        <ModalContent>
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">

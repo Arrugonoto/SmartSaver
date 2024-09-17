@@ -80,6 +80,7 @@ const LoginForm = () => {
   return (
     <div className="w-1/4 min-w-[22rem] xl:min-w-[26rem] transition-all">
       {!mounted && <LoadingPlainCard />}
+
       {mounted && (
         <form
           onSubmit={handleSubmit}

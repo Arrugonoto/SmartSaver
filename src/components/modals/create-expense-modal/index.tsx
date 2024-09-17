@@ -37,7 +37,7 @@ export const CreateExpenseModal = () => {
         isKeyboardDismissDisabled={false}
         scrollBehavior={'inside'}
       >
-        <ModalContent className="">
+        <ModalContent>
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
