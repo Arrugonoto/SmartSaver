@@ -8,6 +8,7 @@ export type User = {
   email: string;
   password: string;
   profile_image_url: string;
+  with_credentials?: boolean;
   created_at: Date;
 };
 
