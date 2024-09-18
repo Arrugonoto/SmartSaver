@@ -44,7 +44,7 @@ export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
     setTotalResults(totalResults);
   }, [totalResults, setTotalResults]);
 
-  if (isLoading && dataNotAvailable) {
+  if (isLoading || dataNotAvailable) {
     return (
       <div className="flex w-full h-full items-center justify-center">
         <Spinner size="lg" />

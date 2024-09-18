@@ -85,7 +85,7 @@ export const ExpensesSummarySection = ({
         ) : (
           <LoadingCard />
         )}
-        {!budgetLimit ? (
+        {isLoading && !budgetLimit ? (
           <LoadingCard />
         ) : (
           <Card className="relative w-full align-center justify-center">
@@ -102,7 +102,7 @@ export const ExpensesSummarySection = ({
               )}
             </CardBody>
 
-            {!isLoading && budgetLimit && (
+            {!isLoading && budgetLimit > 0 && (
               <div className="absolute top-1 right-1 z-50">
                 <BudgetLimitModal update />
               </div>
@@ -124,19 +124,19 @@ export const ExpensesSummarySection = ({
         ) : (
           <LoadingCard />
         )}
-        {monthlyCommitments ? (
+        {!monthlyCommitments && typeof monthlyCommitments !== 'number' ? (
+          <LoadingCard />
+        ) : (
           <Card className="w-full align-center justify-center">
             <CardHeader className="justify-center">
               <h2 className="text-center text-xl">Monthly commitments</h2>
             </CardHeader>
             <CardBody>
               <p className="text-center text-xl">
-                {monthlyCommitments.toFixed(2)}
+                {monthlyCommitments.toFixed(2) ?? 0}
               </p>
             </CardBody>
           </Card>
-        ) : (
-          <LoadingCard />
         )}
       </div>
 
