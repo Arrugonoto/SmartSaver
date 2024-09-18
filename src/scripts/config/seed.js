@@ -28,7 +28,7 @@ async function createExpensesSummaryTable(client) {
     const createTable = await client.sql`
       CREATE TABLE IF NOT EXISTS expenses_summary (
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-        user_id UUID NOT NULL,
+        user_id TEXT NOT NULL,
         total_amount NUMERIC(200, 2) NOT NULL
       );
     `;
@@ -47,7 +47,7 @@ async function createExpensesTable(client) {
     const createTable = await client.sql`
       CREATE TABLE IF NOT EXISTS expenses (
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-        user_id UUID NOT NULL,
+        user_id TEXT NOT NULL,
         name TEXT NOT NULL,
         amount NUMERIC(100, 2) NOT NULL,
         expense_type TEXT NOT NULL,
@@ -73,7 +73,7 @@ async function createSubscriptionsTable(client) {
     const createTable = await client.sql`
       CREATE TABLE IF NOT EXISTS subscriptions (
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-        user_id UUID NOT NULL,
+        user_id TEXT NOT NULL,
         name TEXT NOT NULL,
         amount NUMERIC(100, 2) NOT NULL,
         expense_type TEXT NOT NULL,
@@ -99,7 +99,7 @@ async function createBudgetLimitTable(client) {
     const createTable = await client.sql`
        CREATE TABLE IF NOT EXISTS budget (
          id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-         user_id UUID NOT NULL,
+         user_id TEXT NOT NULL,
          budget_limit NUMERIC(200, 2) NOT NULL,
          first_limit NUMERIC(200, 2) NOT NULL,
          created_at TIMESTAMP WITH TIME ZONE NOT NULL,

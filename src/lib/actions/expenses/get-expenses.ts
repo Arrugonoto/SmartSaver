@@ -31,12 +31,8 @@ export async function getExpenses(user_id: string) {
     WHERE user_id = ${user_id}
     `;
 
-    if (userExpenses.rows.length === 0) {
+    if (userExpenses.rows.length === 0 && userSubscriptions.rows.length === 0) {
       return { message: `You have no expenses to keep track of.` };
-    }
-
-    if (userSubscriptions.rows.length === 0) {
-      return { message: `You have no subscriptions to keep track of.` };
     }
 
     const totalResults =

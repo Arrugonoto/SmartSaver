@@ -48,8 +48,8 @@ export async function createUser(formData: {
     }
     const hashedPassword = await hash(password, 11);
     const createNewUser = await sql`
-            INSERT INTO users (name, email, password, created_At)
-            VALUES (${name}, ${email}, ${hashedPassword}, ${timeOfCreation} ) 
+            INSERT INTO users (name, email, password, created_At, with_credentials)
+            VALUES (${name}, ${email}, ${hashedPassword}, ${timeOfCreation}, true) 
          `;
   } catch (error) {
     const errorMessage = error instanceof Error && error.message;
