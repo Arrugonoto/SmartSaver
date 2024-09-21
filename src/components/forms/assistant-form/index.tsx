@@ -66,8 +66,6 @@ export const AssistantForm = ({
 
       setThreadId(result.thread_id);
       setMessages(reversedMessages);
-
-      console.log(result);
     } catch (error) {
       console.error(error);
     }

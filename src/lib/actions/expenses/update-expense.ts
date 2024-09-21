@@ -28,8 +28,6 @@ export async function updateExpense(formData: Partial<ExpenseIdRequired>) {
       throw new Error('Fill all necessary fields.');
     }
 
-    console.log(validatedFields.data);
-
     const {
       name,
       amount,

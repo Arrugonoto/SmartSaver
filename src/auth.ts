@@ -35,7 +35,6 @@ export const authConfig = {
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
           const user = await getUser(email);
-          console.log('user: ', user);
           if (!user) return null;
           const passwordsMatch = await compare(password, user.password);
           if (passwordsMatch) {
