@@ -140,12 +140,16 @@ const LoginForm = () => {
                 loading={pending}
                 className="h-20 rounded-md hover:bg-[#6e40c9]"
               >
-                <div className="flex flex-col w-full gap-2 items-center">
-                  <span>
-                    <brandIcons.github className="text-3xl" />
-                  </span>
-                  <p className="text-base">{pending ? '' : 'GitHub'}</p>
-                </div>
+                {pending ? (
+                  ''
+                ) : (
+                  <div className="flex flex-col w-full gap-2 items-center">
+                    <span>
+                      <brandIcons.github className="text-3xl" />
+                    </span>
+                    <p className="text-base">GitHub</p>
+                  </div>
+                )}
               </FormButton>
               <FormButton
                 onPress={() => signIn('google', { callbackUrl: '/dashboard' })}
@@ -153,12 +157,16 @@ const LoginForm = () => {
                 loading={pending}
                 className="h-20 rounded-md hover:bg-[#ea4335]"
               >
-                <div className="flex flex-col w-full gap-2 items-center">
-                  <span>
-                    <brandIcons.google className="text-3xl" />
-                  </span>
-                  <p className="text-base">{pending ? '' : 'Google'}</p>
-                </div>
+                {pending ? (
+                  ''
+                ) : (
+                  <div className="flex flex-col w-full gap-2 items-center">
+                    <span>
+                      <brandIcons.google className="text-3xl" />
+                    </span>
+                    <p className="text-base">Google</p>
+                  </div>
+                )}
               </FormButton>
             </div>
           </div>
