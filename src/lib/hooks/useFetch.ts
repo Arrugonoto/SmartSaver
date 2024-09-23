@@ -11,7 +11,7 @@ export const useFetch = <T>({
   user_id,
   initialFetch = false,
 }: FetchProps<T>) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [totalResults, setTotalResults] = useState<number>(0);
