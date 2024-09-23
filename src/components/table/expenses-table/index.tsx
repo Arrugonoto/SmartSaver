@@ -350,14 +350,16 @@ export const ExpensesTable = () => {
           ) : (
             <div className="flex w-full h-full justify-center items-center">
               <Card className="p-4">
-                <CardBody className="flex-row gap-4 items-start">
-                  <div className="p-1">
-                    <infoIcons.informative className="text-2xl text-sky-400" />
+                <CardBody className="flex-col gap-4 items-center">
+                  <div className="flex gap-2">
+                    <span className="p-1">
+                      <infoIcons.informative className="text-2xl text-[#0266d9]" />
+                    </span>
+                    <div className="flex flex-col gap-4 items-center pt-2">
+                      <h2>{`Currently You don't have any expenses to keep track of. Add one now.`}</h2>
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-4 items-center pt-2">
-                    <h2>{`Currently You don't have any expenses to keep track on. Add one now.`}</h2>
-                    <CreateExpenseModal />
-                  </div>
+                  <CreateExpenseModal />
                 </CardBody>
               </Card>
             </div>

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import type { Expenses } from '@constants/types/expenses/expenses';
 import { getExpenses } from '@lib/actions/expenses/get-expenses';
 import { useFetch } from '@lib/hooks/useFetch';
@@ -28,23 +28,17 @@ export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
   });
 
   const dataNotAvailable =
-    !spendings ||
-    (spendings.expenses.length === 0 && spendings.subscriptions.length === 0);
+    spendings.expenses.length === 0 && spendings.subscriptions.length === 0;
 
   useEffect(() => {
-    if (
-      spendings.expenses.length === 0 &&
-      spendings.subscriptions.length === 0
-    ) {
-      if (data) setSpendings(data);
-    }
-  }, [spendings, setSpendings, data]);
+    if (dataNotAvailable && data) setSpendings(data);
+  }, [dataNotAvailable, setSpendings, data]);
 
   useEffect(() => {
     setTotalResults(totalResults);
   }, [totalResults, setTotalResults]);
 
-  if (isLoading || dataNotAvailable) {
+  if (isLoading) {
     return (
       <div className="flex w-full h-full items-center justify-center">
         <Spinner size="lg" />
@@ -61,14 +55,16 @@ export const ExpensesOverview = ({ user_id }: { user_id: string }) => {
       {!isLoading && dataNotAvailable ? (
         <div className="flex w-full h-full justify-center items-center">
           <Card className="p-4">
-            <CardBody className="flex-row gap-4 items-start">
-              <div className="p-1">
-                <infoIcons.informative className="text-2xl text-sky-400" />
+            <CardBody className="flex-col gap-4 items-center">
+              <div className="flex gap-2">
+                <span className="p-1">
+                  <infoIcons.informative className="text-2xl text-[#0266d9]" />
+                </span>
+                <div className="flex flex-col gap-4 items-center pt-2">
+                  <h2>To enable analytics, add an expense to tracking list</h2>
+                </div>
               </div>
-              <div className="flex flex-col gap-4 items-center pt-2">
-                <h2>To enable analytics, add an expense to tracking list</h2>
-                <CreateExpenseModal />
-              </div>
+              <CreateExpenseModal />
             </CardBody>
           </Card>
         </div>
