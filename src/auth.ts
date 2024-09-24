@@ -57,7 +57,7 @@ export const authConfig = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user, session }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         // pass user id to token
         return {
@@ -66,9 +66,18 @@ export const authConfig = {
           with_credentials: user?.with_credentials ?? false,
         };
       }
+      // update name
+      if (trigger === 'update' && session?.name) {
+        token.name = session.name;
+      }
+
       return token;
     },
-    async session({ session, token, user }) {
+    async session({ session, token, trigger, newSession }) {
+      if (trigger === 'update' && newSession?.name) {
+        session.user.name = newSession.name;
+      }
+
       // pass id to session
       return {
         ...session,
