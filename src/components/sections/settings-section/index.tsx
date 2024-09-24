@@ -48,7 +48,7 @@ export const UserSettingsSection = ({
     onOpenChange: onOpenChangeDelete,
   } = useDisclosure();
 
-  const handleUpdateName = async () => {
+  const handleUpdateName = async (onClose: UseDisclosureProps['onClose']) => {
     setPending(true);
     const formData = {
       newUsername: username,
@@ -63,12 +63,26 @@ export const UserSettingsSection = ({
       console.error(error);
     }
 
-    update();
+    update({ name: username });
     setCurrentPassword('');
     setPending(false);
+
+    pushNotification({
+      status: 'success',
+      text: 'Succesfully changed name',
+      config: {
+        theme: theme,
+      },
+    });
+
+    if (onClose) {
+      onClose();
+    }
   };
 
-  const handleUpdatePassword = async () => {
+  const handleUpdatePassword = async (
+    onClose: UseDisclosureProps['onClose']
+  ) => {
     setPending(true);
     const formData = {
       newPassword: confirmPassword,
@@ -85,6 +99,18 @@ export const UserSettingsSection = ({
 
     setCurrentPassword('');
     setPending(false);
+
+    pushNotification({
+      status: 'success',
+      text: 'Succesfully changed password',
+      config: {
+        theme: theme,
+      },
+    });
+
+    if (onClose) {
+      onClose();
+    }
   };
 
   const handleDeleteAccount = async (
@@ -222,7 +248,7 @@ export const UserSettingsSection = ({
                         <Button
                           color="success"
                           variant="flat"
-                          onPress={() => handleUpdateName()}
+                          onPress={() => handleUpdateName(onClose)}
                           isDisabled={!currentPassword}
                           isLoading={pending}
                         >
@@ -260,12 +286,10 @@ export const UserSettingsSection = ({
                   onPaste={(e) => e.preventDefault()}
                   onDrop={(e) => e.preventDefault()}
                   className="min-w-[200px] md:min-w-[280px] lg:min-w-[360px]"
-                  // value={formData.password}
-                  // onChange={(e) => handleChange(e)}
                 />
                 <Input
                   label="Confirm new password"
-                  // isRequired={!formData.password}
+                  isRequired
                   size="sm"
                   radius="sm"
                   type="password"
@@ -275,8 +299,6 @@ export const UserSettingsSection = ({
                   onPaste={(e) => e.preventDefault()}
                   onDrop={(e) => e.preventDefault()}
                   className="min-w-[200px] md:min-w-[280px] lg:min-w-[360px]"
-                  // value={formData.password}
-                  // onChange={(e) => handleChange(e)}
                 />
                 <Button
                   variant="ghost"
@@ -310,11 +332,10 @@ export const UserSettingsSection = ({
                         <ModalBody>
                           <Input
                             label="Confirm password"
-                            // isRequired={!formData.password}
                             size="sm"
                             radius="sm"
                             type="password"
-                            name="confirmPassword"
+                            name="confirmCurrentPassword"
                             value={currentPassword}
                             onValueChange={(value) => setCurrentPassword(value)}
                             onPaste={(e) => e.preventDefault()}
@@ -335,7 +356,7 @@ export const UserSettingsSection = ({
                           <Button
                             color="success"
                             variant="flat"
-                            onPress={() => handleUpdatePassword()}
+                            onPress={() => handleUpdatePassword(onClose)}
                             isDisabled={!currentPassword}
                             isLoading={pending}
                           >
