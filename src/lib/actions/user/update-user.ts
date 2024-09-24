@@ -2,6 +2,7 @@
 import { sql } from '@vercel/postgres';
 import { compare } from 'bcrypt';
 import { getUser } from '@lib/actions/user/get-user';
+import { hash } from 'bcrypt';
 
 export async function updateName(formData: {
   newUsername: string;
@@ -39,10 +40,12 @@ export async function updatePassword(formData: {
 
   const passwordsMatch = await compare(password, user.password);
 
+  const hashedPassword = await hash(newPassword, 11);
+
   if (passwordsMatch) {
     const changePassword = await sql`
            UPDATE users
-           SET password=${newPassword}
+           SET password=${hashedPassword}
            WHERE email=${email}
         `;
     return { message: 'Password succesfully changed' };
