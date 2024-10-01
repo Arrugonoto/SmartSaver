@@ -84,7 +84,7 @@ export const BudgetForm = ({ update }: { update?: boolean }) => {
           label="Budget limit"
           placeholder={`${budgetLimit ?? ''}`}
           value={newLimit?.toString() || ''}
-          isInvalid={update && newLimit !== null && newLimit == budgetLimit}
+          isInvalid={update && newLimit !== null && newLimit === budgetLimit}
           step="0.01"
           min={1}
           isRequired
@@ -96,13 +96,18 @@ export const BudgetForm = ({ update }: { update?: boolean }) => {
           <FormButton
             type="submit"
             color="primary"
-            isDisabled={newLimit === budgetLimit}
+            isDisabled={newLimit === budgetLimit || (newLimit as number) < 1}
             loading={isLoading}
           >
             {isLoading ? '' : 'Update limit'}
           </FormButton>
         ) : (
-          <FormButton type="submit" color="primary" loading={isLoading}>
+          <FormButton
+            type="submit"
+            color="primary"
+            loading={isLoading}
+            isDisabled={(newLimit as number) < 1}
+          >
             {isLoading ? '' : 'Save limit'}
           </FormButton>
         )}

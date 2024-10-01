@@ -63,8 +63,10 @@ export const ExpensesSummarySection = ({
 
   useEffect(() => {
     if (data) {
-      const limit = data.budget_limit;
-      setBudgetLimit(limit);
+      const stringifiedLimit = data.budget_limit.toString();
+      const parsedLimit = parseFloat(stringifiedLimit);
+
+      setBudgetLimit(parsedLimit);
     }
   }, [data, setBudgetLimit]);
 
