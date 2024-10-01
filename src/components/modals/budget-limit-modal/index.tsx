@@ -19,7 +19,7 @@ export const BudgetLimitModal = ({ update }: { update?: boolean }) => {
     <div>
       {!update && (
         <Button onPress={onOpen} color="primary" variant="flat" size="sm">
-          Set a budget limit
+          Set a limit
         </Button>
       )}
       {update && (
@@ -55,7 +55,6 @@ export const BudgetLimitModal = ({ update }: { update?: boolean }) => {
               <ModalBody>
                 <BudgetForm update={update} />
               </ModalBody>
-              <ModalFooter></ModalFooter>
             </>
           )}
         </ModalContent>
