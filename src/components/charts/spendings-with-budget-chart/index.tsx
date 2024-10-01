@@ -94,10 +94,10 @@ export const SpendingsWithBudgetChart = () => {
 
   useEffect(() => {
     const currentDate = new Date();
-    if (rawData.currentMonthSpendings.length > 0 && budgetData) {
+    if (rawData.currentMonthSpendings.length > 0) {
       const data = formatChartData(
         rawData,
-        budgetData.budget_limit,
+        budgetData?.budget_limit ?? 0,
         currentDate
       );
       setChartData(data);
@@ -105,7 +105,7 @@ export const SpendingsWithBudgetChart = () => {
     //eslint-disable-next-line
   }, [spendings, budgetData]);
 
-  if (!spendings || !budgetData) return <LoadingChart sm />;
+  if (!spendings) return <LoadingChart sm />;
 
   return (
     <div className="flex flex-col w-full gap-4">
