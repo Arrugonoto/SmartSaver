@@ -88,7 +88,9 @@ const LoginForm = () => {
             theme === 'light' && 'bg-neutral-200'
           } px-4 md:px-8 py-6 rounded-lg transition-all`}
         >
-          <h1 className="text-2xl text-center mb-6">Sign In</h1>
+          <h1 className="text-2xl text-center mb-6">
+            Sign In to <span className="text-[#66d297]">saving</span> now
+          </h1>
           <div className="flex flex-col w-full items-center gap-3">
             <Input
               label="Email"
@@ -173,7 +175,7 @@ const LoginForm = () => {
           <p className="text-sm pt-6 pb-2 text-center">
             {`Don't have an account? `}
             <span className="relative text-green-400 after:content-[''] after:absolute after:w-full after:h-px after:bg-transparent after:left-0 after:-bottom-0.5 hover:after:bg-green-400 after:transition-all">
-              <Link href="/signup">Create Now</Link>
+              <Link href="/signup">Create now</Link>
             </span>
           </p>
         </form>

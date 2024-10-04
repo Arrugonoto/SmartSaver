@@ -89,7 +89,9 @@ const LoginForm = () => {
             theme === 'light' ? 'bg-neutral-200' : 'bg-content1'
           } px-4 md:px-8 py-6 rounded-lg transition-all`}
         >
-          <h1 className="text-2xl text-center mb-6">Sign Up</h1>
+          <h1 className="text-2xl text-center mb-6">
+            Enter the world of <span className="text-[#66d297]">saving</span>
+          </h1>
           <div className="flex flex-col w-full items-center gap-3">
             <Input
               label="Name"
