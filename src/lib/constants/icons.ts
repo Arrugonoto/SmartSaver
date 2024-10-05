@@ -20,6 +20,7 @@ import {
   FaCircleInfo,
   FaGithub,
   FaGoogle,
+  FaBars,
 } from 'react-icons/fa6';
 import { TbMessageQuestion } from 'react-icons/tb';
 
@@ -45,6 +46,7 @@ export const chartIcons = {
 
 export const menuIcons = {
   gear: FaGear,
+  menu: FaBars,
 };
 
 export const navMenuIcons = {
