@@ -76,8 +76,8 @@ export const ExpenseCategoryPieChart = ({
 }) => {
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const { width } = useWindowSize();
-  const chartInnerRadius = width > 1024 ? 64 : width > 768 ? 50 : 34;
-  const chartOuterRadius = width > 1024 ? 90 : width > 768 ? 70 : 54;
+  const chartInnerRadius = width! > 1024 ? 64 : width! > 768 ? 50 : 34;
+  const chartOuterRadius = width! > 1024 ? 90 : width! > 768 ? 70 : 54;
 
   useEffect(() => {
     if (expenses) {
