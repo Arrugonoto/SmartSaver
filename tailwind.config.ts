@@ -63,7 +63,7 @@ const config: Config = {
         dark: {
           colors: {
             primary: {
-              DEFAULT: '#60bb8f',
+              DEFAULT: '#4ea37a',
             },
           },
         },
