@@ -50,6 +50,25 @@ const config: Config = {
       },
     },
   },
-  plugins: [nextui()],
+  plugins: [
+    nextui({
+      themes: {
+        light: {
+          colors: {
+            primary: {
+              DEFAULT: '#60bb8f',
+            },
+          },
+        },
+        dark: {
+          colors: {
+            primary: {
+              DEFAULT: '#60bb8f',
+            },
+          },
+        },
+      },
+    }),
+  ],
 };
 export default config;
