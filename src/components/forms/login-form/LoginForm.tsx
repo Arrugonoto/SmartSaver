@@ -171,6 +171,20 @@ const LoginForm = () => {
                 )}
               </FormButton>
             </div>
+            <FormButton
+              type="submit"
+              isDisabled={pending}
+              loading={pending}
+              onPress={() => {
+                setFormData({
+                  email: 'email@email.com',
+                  password: 'test123456',
+                });
+              }}
+              className="hover:bg-[#60bb8f]"
+            >
+              {pending ? '' : 'Log In as Guest'}
+            </FormButton>
           </div>
           <p className="text-sm pt-6 pb-2 text-center">
             {`Don't have an account? `}

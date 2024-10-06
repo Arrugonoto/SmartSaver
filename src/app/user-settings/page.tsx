@@ -8,11 +8,11 @@ export const metadata: Metadata = {
   title: 'User settings',
 };
 
-export default async function Dashboard() {
+export default async function UserSettings() {
   const userSession = await getServerSession(authOptions);
 
   return (
-    <main className="flex flex-col w-full h-full overflow-auto px-4 py-3 rounded-md">
+    <main className="flex relative flex-col w-full h-full overflow-auto px-4 py-3 rounded-md">
       <UserSettingsSection userSession={userSession as Session} />
     </main>
   );
