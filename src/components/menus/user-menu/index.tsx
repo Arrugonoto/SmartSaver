@@ -40,7 +40,9 @@ export const UserMenu = () => {
       <Dropdown placement="bottom-end" closeOnSelect={false}>
         <DropdownTrigger>
           <Avatar
+            showFallback
             name={session?.user.name}
+            src={session?.user.image}
             isBordered
             as="button"
             size="sm"
