@@ -1,5 +1,8 @@
 import type { Config } from 'tailwindcss';
 import { nextui } from '@nextui-org/react';
+const {
+  default: flattenColorPalette,
+} = require('tailwindcss/lib/util/flattenColorPalette');
 
 const config: Config = {
   content: [
@@ -44,9 +47,18 @@ const config: Config = {
               'calc(100%/3) 100%, calc(100%/3) 100%, calc(100%/3) 0%',
           },
         },
+        aurora: {
+          from: {
+            backgroundPosition: '50% 50%, 50% 50%',
+          },
+          to: {
+            backgroundPosition: '350% 50%, 350% 50%',
+          },
+        },
       },
       animation: {
         'loading-dots': 'loading-dots 1s infinite linear',
+        aurora: 'aurora 60s linear infinite',
       },
     },
   },
@@ -69,6 +81,18 @@ const config: Config = {
         },
       },
     }),
+    addVariablesForColors,
   ],
 };
 export default config;
+
+function addVariablesForColors({ addBase, theme }: any) {
+  let allColors = flattenColorPalette(theme('colors'));
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+
+  addBase({
+    ':root': newVars,
+  });
+}
