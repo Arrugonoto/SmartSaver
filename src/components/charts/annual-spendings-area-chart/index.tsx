@@ -45,12 +45,12 @@ const formatChartData = (data: DataByYear, selectedYear: string) => {
     // and filter empty values (undefined)
     const dateToCompare = new Date(parseInt(selectedYear), month.numeric);
 
-    const singleSpendingsInMonth = data.single_spendings.filter(
+    const singleSpendingsInMonth = data?.single_spendings.filter(
       (expense) => new Date(expense.created_at).getMonth() === month.numeric
     );
 
     // return data based on years and months
-    const recurringPayments = data.monthly_spendings
+    const recurringPayments = data?.monthly_spendings
       .map((expense) => {
         const startDate = new Date(
           new Date(expense.created_at).getFullYear(),
@@ -65,7 +65,7 @@ const formatChartData = (data: DataByYear, selectedYear: string) => {
       })
       .filter((expense) => expense !== undefined);
 
-    const subscriptionsInMonth = data.subscriptions
+    const subscriptionsInMonth = data?.subscriptions
       .map((subscription) => {
         const startDate = new Date(
           new Date(subscription.created_at).getFullYear(),
@@ -91,7 +91,7 @@ const formatChartData = (data: DataByYear, selectedYear: string) => {
     const totalInMonth = spendingsInMonth
       .reduce(
         (sum, spending) =>
-          parseFloat(sum as any) + parseFloat(spending.amount as any),
+          parseFloat(sum as any) + parseFloat(spending?.amount as any),
         0
       )
       ?.toFixed(2);
@@ -162,14 +162,14 @@ const getYearsOfData = (data: Expenses) => {
 };
 
 const filterDataByYear = (spendings: Expenses, selectedYear: string) => {
-  const singleSpendings = spendings.expenses
+  const singleSpendings = spendings?.expenses
     .filter((expense) => expense.payment_type === 'one-time')
     .filter(
       (expense) =>
         new Date(expense.created_at).getFullYear().toString() === selectedYear
     );
 
-  const monthlySpendings = spendings.expenses
+  const monthlySpendings = spendings?.expenses
     .filter((expense) => expense.payment_type === 'monthly')
     .map((expense) => {
       const startDate = new Date(expense.created_at);
@@ -183,7 +183,7 @@ const filterDataByYear = (spendings: Expenses, selectedYear: string) => {
     })
     .filter((expense) => expense !== undefined);
 
-  const subscriptions = spendings.subscriptions
+  const subscriptions = spendings?.subscriptions
     .map((subscription) => {
       const startDate = new Date(subscription.created_at);
       const endDate = new Date(
@@ -198,9 +198,9 @@ const filterDataByYear = (spendings: Expenses, selectedYear: string) => {
     })
     .filter((subscription) => subscription !== undefined);
   return {
-    single_spendings: singleSpendings,
-    monthly_spendings: monthlySpendings,
-    subscriptions: subscriptions,
+    single_spendings: singleSpendings as SingleExpense[],
+    monthly_spendings: monthlySpendings as SingleExpense[],
+    subscriptions: subscriptions as Subscription[],
   };
 };
 

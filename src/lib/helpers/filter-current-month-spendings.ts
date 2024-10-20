@@ -1,4 +1,9 @@
 import { Expenses } from '@lib/constants/types/expenses/expenses';
+import type {
+  SingleExpense,
+  Subscription,
+} from '@lib/constants/types/expenses/expenses';
+
 export const filterCurrentMonthData = (data: Expenses, currentDate: Date) => {
   // function for filtering data based on expense creation and duration dates
   const currentYear = currentDate.getFullYear();
@@ -57,8 +62,8 @@ export const filterCurrentMonthData = (data: Expenses, currentDate: Date) => {
     .filter((subscription) => subscription !== undefined);
 
   return [
-    ...filterSingleSpendings,
-    ...filterMonthlySpendings,
-    ...filterSubscriptions,
+    ...(filterSingleSpendings as SingleExpense[]),
+    ...(filterMonthlySpendings as SingleExpense[]),
+    ...(filterSubscriptions as Subscription[]),
   ];
 };

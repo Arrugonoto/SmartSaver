@@ -61,7 +61,7 @@ export const getTotalInMonth = (data: Expenses, currentDate: Date) => {
     .filter((subscription) => subscription !== undefined);
 
   const expensesTotal = filterSingleSpendings.reduce(
-    (sum, expense) => sum + parseFloat(expense.amount as any),
+    (sum, expense) => sum + parseFloat(expense?.amount as any),
     0
   );
 

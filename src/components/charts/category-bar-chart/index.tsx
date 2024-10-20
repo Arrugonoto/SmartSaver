@@ -47,7 +47,7 @@ const formatChartData = (expenses: (SingleExpense | Subscription)[]) => {
     if (expensesByCategory && expensesByCategory.length > 0) {
       return {
         name: category.label,
-        totalSpending: parseFloat(totalInMonth),
+        totalSpending: parseFloat(totalInMonth as string),
         color: category.color,
       };
     }

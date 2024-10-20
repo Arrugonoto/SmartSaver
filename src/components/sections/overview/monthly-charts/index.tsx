@@ -98,9 +98,9 @@ const filterByDateRange = (data: Expenses, monthsRange: number) => {
     .filter((subscription) => subscription !== undefined);
 
   return [
-    ...filterSingleSpendings,
-    ...filterMonthlySpendings,
-    ...filterSubscriptions,
+    ...(filterSingleSpendings as SingleExpense[]),
+    ...(filterMonthlySpendings as SingleExpense[]),
+    ...(filterSubscriptions as Subscription[]),
   ];
 };
 

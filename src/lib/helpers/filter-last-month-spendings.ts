@@ -1,4 +1,8 @@
 import { Expenses } from '@lib/constants/types/expenses/expenses';
+import type {
+  SingleExpense,
+  Subscription,
+} from '@lib/constants/types/expenses/expenses';
 
 export const filterLastMonthData = (data: Expenses, currentDate: Date) => {
   const currentMonth = currentDate.getMonth();
@@ -78,8 +82,8 @@ export const filterLastMonthData = (data: Expenses, currentDate: Date) => {
     .filter((subscription) => subscription !== undefined);
 
   return [
-    ...filterLastMonthSingleSpendings,
-    ...filterLastMonthSpendings,
-    ...filterLastMonthSubscriptions,
+    ...(filterLastMonthSingleSpendings as SingleExpense[]),
+    ...(filterLastMonthSpendings as SingleExpense[]),
+    ...(filterLastMonthSubscriptions as Subscription[]),
   ];
 };
