@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { Textarea } from '@nextui-org/input';
 import FormButton from '@components/buttons/FormButton';
 import { btnIcons } from '@lib/constants/icons';
-import type { Message } from '@constants/types/message';
+import type { Message } from '@lib/constants/types/message/message';
 import { motion } from 'framer-motion';
 
 export const AssistantForm = ({

@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { AssistantForm } from '@components/forms/assistant-form';
 import { AssistantChatWindow } from '@components/assistant/assistant-chat-window';
-import type { Message } from '@lib/constants/types/message';
+import type { Message } from '@lib/constants/types/message/message';
 import { asistantIcons } from '@lib/constants/icons';
 import { Divider } from '@nextui-org/divider';
 
