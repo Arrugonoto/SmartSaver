@@ -30,19 +30,22 @@ export const Header = () => {
         wrapper: ['gap-2'],
       }}
     >
-      <NavbarItem className="sm:hidden">
-        <Button
-          isIconOnly
-          className={`bg-transparent ${
-            theme === 'dark' ? 'hover:bg-gray-200/20' : 'hover:bg-gray-400/40'
-          } `}
-          onPress={() => {
-            setShowMobileMenu((prev) => !prev);
-          }}
-        >
-          <menuIcons.menu className="text-2xl" />
-        </Button>
-      </NavbarItem>
+      {session && (
+        <NavbarItem className="sm:hidden">
+          <Button
+            isIconOnly
+            className={`bg-transparent ${
+              theme === 'dark' ? 'hover:bg-gray-200/20' : 'hover:bg-gray-400/40'
+            } `}
+            onPress={() => {
+              setShowMobileMenu((prev) => !prev);
+            }}
+          >
+            <menuIcons.menu className="text-2xl" />
+          </Button>
+        </NavbarItem>
+      )}
+
       <NavbarBrand className=" overflow-hidden">
         <Link href="/">
           <Image
