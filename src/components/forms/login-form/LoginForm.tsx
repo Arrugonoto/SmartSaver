@@ -26,6 +26,8 @@ const LoginForm = () => {
   const [pending, setPending] = useState<boolean>(false);
   const router = useRouter();
   const [mounted, setMounted] = useState<boolean>(false);
+  const guestLogin = process.env.NEXT_PUBLIC_LOGIN as string;
+  const guestPassword = process.env.NEXT_PUBLIC_PASS as string;
 
   const validateEmail = (formData: FormDataType) =>
     formData.email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
@@ -41,6 +43,37 @@ const LoginForm = () => {
     const formData = new FormData(e.currentTarget);
     const res = await signIn('credentials', {
       ...Object.fromEntries(formData),
+      redirect: false,
+    });
+
+    if (!res?.ok) {
+      if (res?.error?.includes('CredentialsSignin')) {
+        setError('Invalid password');
+      } else {
+        setError(res?.error);
+      }
+      console.error(res);
+    }
+    setPending(false);
+    if (!res?.error) {
+      router.push('/dashboard');
+      router.refresh();
+      pushNotification({
+        status: 'success',
+        text: 'Succesfully logged in',
+        config: {
+          theme: theme,
+        },
+      });
+    }
+  };
+
+  const loginGuest = async () => {
+    setPending(true);
+    const formData = new FormData();
+    const res = await signIn('credentials', {
+      email: guestLogin,
+      password: guestPassword,
       redirect: false,
     });
 
@@ -175,12 +208,7 @@ const LoginForm = () => {
               type="submit"
               isDisabled={pending}
               loading={pending}
-              onPress={() => {
-                setFormData({
-                  email: 'email@email.com',
-                  password: 'test123456',
-                });
-              }}
+              onPress={() => loginGuest()}
               className="hover:bg-[#60bb8f]"
             >
               {pending ? '' : 'Log In as Guest'}
