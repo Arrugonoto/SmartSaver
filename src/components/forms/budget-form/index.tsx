@@ -27,6 +27,7 @@ export const BudgetForm = ({ update }: { update?: boolean }) => {
   const { fetchData, data } = useFetch<BudgetLimit>({
     action: getBudgetLimit,
     user_id,
+    initialFetch: true,
   });
 
   const handleManualFetch = () => {
@@ -49,7 +50,8 @@ export const BudgetForm = ({ update }: { update?: boolean }) => {
     }
 
     if (update && user && newLimit) {
-      updateBudgetLimit({ id: data?.id, budget_limit: newLimit });
+      const budgetData = { id: data?.id, budget_limit: newLimit };
+      await updateBudgetLimit({ id: data?.id, budget_limit: newLimit });
     }
 
     resetForm();
