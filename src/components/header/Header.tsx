@@ -49,11 +49,11 @@ export const Header = () => {
       <NavbarBrand className=" overflow-hidden">
         <Link href="/">
           <Image
-            src="/images/logo.svg"
+            src="/images/logo-alternative.svg"
             alt="App logo"
-            width={60}
-            height={60}
-            className="object-cover "
+            width={44}
+            height={44}
+            className="object-cover"
           />
         </Link>
       </NavbarBrand>
