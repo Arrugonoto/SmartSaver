@@ -5,9 +5,7 @@ import { Subscription } from '@constants/types/expenses/expenses';
 import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
 import FormButton from '@components/buttons/FormButton';
 import { createExpense } from '@lib/actions/expenses/create-expense';
-import { Accordion, AccordionItem } from '@nextui-org/accordion';
 import { Select, SelectItem } from '@nextui-org/select';
-import { Divider } from '@nextui-org/divider';
 import { useExpensesStore } from '@store/expensesStore';
 import { useFetch } from '@lib/hooks/useFetch';
 import { getExpenses } from '@lib/actions/expenses/get-expenses';
@@ -16,14 +14,14 @@ import type { Expenses } from '@constants/types/expenses/expenses';
 import { pushNotification } from '@lib/helpers/push-notification';
 import { useTheme } from 'next-themes';
 
-export const SubscriptionForm = ({ user_id }: { user_id: string }) => {
+export const SubscriptionForm = () => {
   const { data: session } = useSession();
   const { theme } = useTheme();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<
     Omit<Subscription, 'id' | 'created_at'>
   >({
-    user_id: user_id,
+    user_id: session?.user.id,
     name: '',
     amount: 0,
     expense_type: '',
@@ -39,6 +37,7 @@ export const SubscriptionForm = ({ user_id }: { user_id: string }) => {
       setTotalResults: state.setTotalResults,
     })
   );
+
   const { fetchData, data, totalResults } = useFetch<Expenses>({
     action: getExpenses,
     user_id: session?.user.id,
@@ -110,70 +109,65 @@ export const SubscriptionForm = ({ user_id }: { user_id: string }) => {
   }, [data, totalResults, setSpendings, setTotalResults]);
 
   return (
-    <div className="w-full">
-      <Accordion variant="shadow">
-        <AccordionItem
-          key="expense-subscription"
-          aria-label="Accordion subscription form"
-          title="Fill form or select from list"
-        >
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-3 w-full pb-4"
-          >
-            <Input
-              type="text"
-              name="name"
-              label="Subscription name"
-              value={formData.name}
-              isRequired
-              onChange={(e) => handleChange(e)}
-            />
-            <Input
-              type="number"
-              name="amount"
-              label="Subscription amount"
-              value={formData.amount.toString()}
-              step="0.01"
-              min={1}
-              isRequired
-              onChange={(e) => handleChange(e)}
-            />
-            <Input
-              type="number"
-              name="payment_duration"
-              label="Duration(months)"
-              value={formData.payment_duration.toString()}
-              step="1"
-              min={1}
-              isRequired
-              onChange={(e) => handleChange(e)}
-            />
-            <Select
-              label="Expense type"
-              name="expense_type"
-              placeholder="Select expense type"
-              selectedKeys={[`${formData.expense_type}`]}
-              disabledKeys={['']}
-              isRequired
-              onChange={(e) => handleChange(e)}
-            >
-              {expenseCategoriesList.map((expense) => (
-                <SelectItem key={expense.value} value={expense.value}>
-                  {expense.label}
-                </SelectItem>
-              ))}
-            </Select>
-            <FormButton type="submit" color="primary" loading={isLoading}>
-              {isLoading ? '' : 'Add Subscription'}
-            </FormButton>
-          </form>
-        </AccordionItem>
-      </Accordion>
-      <Divider className="my-4" />
-      <div>
-        <p className="text-center">List of popular subscriptions</p>
-      </div>
-    </div>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full pb-4">
+      <Input
+        type="text"
+        name="name"
+        label="Subscription name"
+        value={formData.name}
+        isRequired
+        onChange={(e) => handleChange(e)}
+        classNames={{
+          inputWrapper: ['bg-content1'],
+        }}
+      />
+      <Input
+        type="number"
+        name="amount"
+        label="Subscription amount"
+        value={formData.amount.toString()}
+        step="0.01"
+        min={1}
+        isRequired
+        onChange={(e) => handleChange(e)}
+        classNames={{
+          inputWrapper: ['bg-content1'],
+        }}
+      />
+      <Input
+        type="number"
+        name="payment_duration"
+        label="Duration(months)"
+        value={formData.payment_duration.toString()}
+        step="1"
+        min={1}
+        isRequired
+        onChange={(e) => handleChange(e)}
+        classNames={{
+          inputWrapper: ['bg-content1'],
+        }}
+      />
+      <Select
+        label="Expense type"
+        name="expense_type"
+        placeholder="Select expense type"
+        selectedKeys={[`${formData.expense_type}`]}
+        disabledKeys={['']}
+        isRequired
+        onChange={(e) => handleChange(e)}
+        classNames={{
+          trigger: ['bg-content1'],
+        }}
+      >
+        {expenseCategoriesList.map((expense) => (
+          <SelectItem key={expense.value} value={expense.value}>
+            {expense.label}
+          </SelectItem>
+        ))}
+      </Select>
+      <FormButton type="submit" color="primary" loading={isLoading}>
+        {isLoading ? '' : 'Add Subscription'}
+      </FormButton>
+    </form>
   );
 };
