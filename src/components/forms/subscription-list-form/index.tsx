@@ -1,20 +1,20 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import { useExpensesStore } from '@store/expensesStore';
 import { Input } from '@nextui-org/input';
 import { Subscription } from '@constants/types/expenses/expenses';
-import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
-import FormButton from '@components/buttons/FormButton';
-import { createExpense } from '@lib/actions/expenses/create-expense';
-import { Select, SelectItem } from '@nextui-org/select';
-import { useExpensesStore } from '@store/expensesStore';
-import { useFetch } from '@lib/hooks/useFetch';
-import { getExpenses } from '@lib/actions/expenses/get-expenses';
 import { useSession } from 'next-auth/react';
+import { useTheme } from 'next-themes';
+import { createExpense } from '@lib/actions/expenses/create-expense';
+import { getExpenses } from '@lib/actions/expenses/get-expenses';
+import { useFetch } from '@lib/hooks/useFetch';
 import type { Expenses } from '@constants/types/expenses/expenses';
 import { pushNotification } from '@lib/helpers/push-notification';
-import { useTheme } from 'next-themes';
+import { Select, SelectItem } from '@nextui-org/select';
+import FormButton from '@components/buttons/FormButton';
+import { expenseCategoriesList } from '@lib/constants/data/dummy/expense-categories';
 
-export const SubscriptionForm = () => {
+export const SubscriptionListForm = ({ brandName }: { brandName: string }) => {
   const { data: session } = useSession();
   const { theme } = useTheme();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -22,7 +22,7 @@ export const SubscriptionForm = () => {
     Omit<Subscription, 'id' | 'created_at'>
   >({
     user_id: session?.user.id,
-    name: '',
+    name: brandName,
     amount: 0,
     expense_type: '',
     payment_type: 'subscription',
@@ -52,7 +52,6 @@ export const SubscriptionForm = () => {
   const resetForm = () => {
     setFormData((prev) => ({
       ...prev,
-      name: '',
       amount: 0,
       expense_type: '',
       payment_duration: 0,
@@ -111,17 +110,6 @@ export const SubscriptionForm = () => {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full pb-4">
       <Input
-        type="text"
-        name="name"
-        label="Subscription name"
-        value={formData.name}
-        isRequired
-        onChange={(e) => handleChange(e)}
-        classNames={{
-          inputWrapper: ['bg-content1'],
-        }}
-      />
-      <Input
         type="number"
         name="amount"
         label="Subscription amount"
@@ -130,9 +118,6 @@ export const SubscriptionForm = () => {
         min={1}
         isRequired
         onChange={(e) => handleChange(e)}
-        classNames={{
-          inputWrapper: ['bg-content1'],
-        }}
       />
       <Input
         type="number"
@@ -143,9 +128,6 @@ export const SubscriptionForm = () => {
         min={1}
         isRequired
         onChange={(e) => handleChange(e)}
-        classNames={{
-          inputWrapper: ['bg-content1'],
-        }}
       />
       <Select
         label="Expense type"
@@ -155,9 +137,6 @@ export const SubscriptionForm = () => {
         disabledKeys={['']}
         isRequired
         onChange={(e) => handleChange(e)}
-        classNames={{
-          trigger: ['bg-content1'],
-        }}
       >
         {expenseCategoriesList.map((expense) => (
           <SelectItem key={expense.value} value={expense.value}>

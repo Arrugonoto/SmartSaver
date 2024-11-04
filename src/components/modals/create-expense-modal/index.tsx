@@ -4,15 +4,14 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   useDisclosure,
 } from '@nextui-org/modal';
 import { Button } from '@nextui-org/button';
 import { Tabs, Tab } from '@nextui-org/tabs';
 import { ExpensesForm } from '@/components/forms/expenses-form';
-import { SubscriptionForm } from '@components/forms/subscription-form';
 import { useSession } from 'next-auth/react';
 import { btnIcons } from '@lib/constants/icons';
+import { SubscriptionFormContainer } from '@components/container/subscription-form-container';
 
 export const CreateExpenseModal = () => {
   const { data: session } = useSession();
@@ -44,16 +43,19 @@ export const CreateExpenseModal = () => {
                 Add New Expense
               </ModalHeader>
               <ModalBody>
-                <Tabs aria-label="Options" className="justify-center">
+                <Tabs
+                  aria-label="Options"
+                  className="justify-center"
+                  color="primary"
+                >
                   <Tab key="standard" title="Standard">
                     <ExpensesForm user_id={user_id} />
                   </Tab>
                   <Tab key="subscription" title="Subscription">
-                    <SubscriptionForm user_id={user_id} />
+                    <SubscriptionFormContainer />
                   </Tab>
                 </Tabs>
               </ModalBody>
-              <ModalFooter></ModalFooter>
             </>
           )}
         </ModalContent>

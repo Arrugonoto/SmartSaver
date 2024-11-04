@@ -5,7 +5,7 @@ import type { BudgetLimit } from '@lib/constants/types/budget/budget';
 
 const UpdateBudgetSchema = z.object({
   id: z.string(),
-  budget_limit: z.number().optional(),
+  budget_limit: z.number(),
 });
 
 export async function updateBudgetLimit(formData: Partial<BudgetLimit>) {
@@ -14,7 +14,10 @@ export async function updateBudgetLimit(formData: Partial<BudgetLimit>) {
     budget_limit: formData.budget_limit,
   });
 
+  console.log(formData);
+
   try {
+    console.log(validatedFields.success);
     if (!validatedFields.success) {
       throw new Error('Fill all necessary fields.');
     }
@@ -24,12 +27,12 @@ export async function updateBudgetLimit(formData: Partial<BudgetLimit>) {
     const timeOfUpdate = new Date().toISOString();
 
     const updateBudgetLimit = await sql`
-   UPDATE budget
-   SET
-    budget_limit = COALESCE(${budget_limit}, budget_limit),
-    updated_at = ${timeOfUpdate}
-   WHERE id = ${id}
-   `;
+      UPDATE budget
+      SET
+      budget_limit = COALESCE(${budget_limit}, budget_limit),
+      updated_at = ${timeOfUpdate}
+      WHERE id = ${id}
+    `;
   } catch (error) {
     const errorMessage = error instanceof Error && error.message;
     console.log(error);

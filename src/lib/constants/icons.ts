@@ -21,12 +21,14 @@ import {
   FaGithub,
   FaGoogle,
   FaBars,
+  FaMagnifyingGlass,
 } from 'react-icons/fa6';
 import { TbMessageQuestion } from 'react-icons/tb';
 
 export const brandIcons = {
   google: FaGoogle,
   github: FaGithub,
+  default: FaMoneyCheckDollar,
 };
 
 export const tableIcons = {
@@ -61,6 +63,7 @@ export const btnIcons = {
   send: FaPaperPlane,
   lightMode: FaSun,
   darkMode: FaMoon,
+  search: FaMagnifyingGlass,
 };
 
 export const asistantIcons = {
