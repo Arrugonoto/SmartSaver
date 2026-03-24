@@ -1,63 +1,62 @@
 'use client';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import { capitalizeString } from '@lib/helpers/capitalize';
 import { LoaderDots } from '@components/loaders/loader-dots';
 import { asistantIcons } from '@lib/constants/icons';
-
-type Message = {
-  id: string;
-  role: string;
-  content: [
-    {
-      text: {
-        annotations: [];
-        value: string;
-      };
-    }
-  ];
-};
+import { useAssistantChatConext } from '@context/AsssistantChatContext';
 
 type ChatWindowTypes = {
-  messages: Message[];
   loading: boolean;
   userMessage: string;
 };
 
 export const AssistantChatWindow = forwardRef(
   (
-    { messages, loading, userMessage }: ChatWindowTypes,
-    ref: React.ForwardedRef<HTMLDivElement>
+    { loading, userMessage }: ChatWindowTypes,
+    ref: React.ForwardedRef<HTMLDivElement>,
   ) => {
+    const { chatHistory, resetChat } = useAssistantChatConext();
+
+    useEffect(() => {
+      resetChat();
+    }, []); // eslint-disable-line
+
     return (
       <div
         ref={ref}
-        className="flex flex-col h-full gap-4 overflow-auto scroll-smooth"
+        className="flex flex-col gap-4 scroll-smooth py-2 pl-2 pr-4"
       >
-        <div className="flex gap-2 bg-content3 p-2 rounded-md max-w-[80%]">
+        <div className="flex relative gap-2 bg-content3 p-2 pl-3 rounded-md max-w-[80%] overflow-hidden">
+          <span className="absolute left-0 top-0 w-1 h-full bg-primary" />
           <span>
             <asistantIcons.assistant className="text-[1rem]" />
           </span>
           <p className="text-sm">{`Hi. I'm Your personal Assistant. Sometimes I can make mistakes. Remember, it is always best to contact an experienced professional.`}</p>
         </div>
-        {messages.map((message, index, array) => (
+        {chatHistory.messages.map((message, index, array) => (
           <div
             key={message.id}
             className={` ${
               message.role === 'user' && 'self-end pr-3'
-            } max-w-[80%]`}
+            }relative max-w-[80%]`}
           >
             {message.role !== 'user' &&
-              message.role !== array[index - 1].role && (
+              (!array[index - 1] || message.role !== array[index - 1].role) && (
                 <p>{capitalizeString(message.role)}</p>
               )}
 
             <p
               className={` ${
-                message.role === 'user' ? 'bg-content1' : 'bg-content3'
+                message.role === 'user'
+                  ? 'bg-content1'
+                  : 'relative bg-content3 overflow-hidden pl-3'
               }  p-2 rounded-lg text-sm
       `}
             >
-              {message.content[0].text.value}
+              {message.role !== 'user' && (
+                <span className="absolute left-0 top-0 w-1 h-full bg-primary" />
+              )}
+              {message.text}
             </p>
           </div>
         ))}
@@ -69,7 +68,7 @@ export const AssistantChatWindow = forwardRef(
         {loading && <LoaderDots />}
       </div>
     );
-  }
+  },
 );
 
 AssistantChatWindow.displayName = 'AssistantChatWindow';

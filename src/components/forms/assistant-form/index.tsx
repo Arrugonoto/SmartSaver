@@ -5,20 +5,22 @@ import FormButton from '@components/buttons/FormButton';
 import { btnIcons } from '@lib/constants/icons';
 import type { Message } from '@lib/constants/types/message/message';
 import { motion } from 'framer-motion';
+import { useAssistantChatConext } from '@context/AsssistantChatContext';
+import { v4 as uuidv4 } from 'uuid';
 
 export const AssistantForm = ({
-  setMessages,
   setUserMessage,
+  loading,
   setLoading,
 }: {
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setUserMessage: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const [prompt, setPrompt] = useState<string>('');
-  const [threadId, setThreadId] = useState<string | null>(null);
   const textLimit = 200;
   const formRef = useRef<HTMLFormElement>(null);
+  const { chatHistory, setChatHistory } = useAssistantChatConext();
 
   const handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.length <= 200) {
@@ -27,7 +29,7 @@ export const AssistantForm = ({
   };
 
   const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement> | KeyboardEvent
+    e: React.KeyboardEvent<HTMLInputElement> | KeyboardEvent,
   ) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -36,6 +38,7 @@ export const AssistantForm = ({
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    if (loading) return;
     e.preventDefault();
 
     clearInput();
@@ -44,7 +47,7 @@ export const AssistantForm = ({
 
     const message = {
       prompt: prompt,
-      threadId: threadId,
+      prevResId: chatHistory.conversationId,
     };
 
     try {
@@ -57,15 +60,30 @@ export const AssistantForm = ({
       });
 
       if (!res.ok) {
+        const err = await res.json();
+        console.error('API ERROR:', err);
         console.error(res);
         throw new Error('Network response was not ok');
       }
 
       const result = await res.json();
-      const reversedMessages = result?.messages.reverse();
+      const userMessage: Message = {
+        id: uuidv4(),
+        text: prompt,
+        role: 'user',
+      };
 
-      setThreadId(result.thread_id);
-      setMessages(reversedMessages);
+      const assistantResponse = {
+        id: result.assistantAnswer.responseId,
+        text: result.assistantAnswer.response,
+        role: result.assistantAnswer.role,
+      };
+
+      // add user message and assistant response to chat history
+      setChatHistory((prev) => ({
+        conversationId: result.assistantAnswer.responseId,
+        messages: [...prev.messages, userMessage, assistantResponse],
+      }));
     } catch (error) {
       console.error(error);
     }

@@ -7,30 +7,32 @@ import { Tooltip } from '@nextui-org/react';
 import { Divider } from '@nextui-org/divider';
 import { AssistantForm } from '@components/forms/assistant-form';
 import { AssistantChatWindow } from '@components/assistant/assistant-chat-window';
-import type { Message } from '@lib/constants/types/message/message';
+import { useAssistantChatConext } from '@context/AsssistantChatContext';
 
 export const AssistantModal = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [userMessage, setUserMessage] = useState<string>('');
+  const [userMessagePlaceholder, setUserMessagePlaceholder] =
+    useState<string>('');
   const [initialBtnRender, setInitialBtnRender] = useState<boolean>(true);
   const [scope, animate] = useAnimate();
-  const [messages, setMessages] = useState<Message[]>([]);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+  const { chatHistory, resetChat } = useAssistantChatConext();
+  const messages = chatHistory.messages;
 
   const handleAnimate = async () => {
     if (!isOpen) {
       await animate(
         scope.current,
         { maxHeight: '500px', borderRadius: '6px' },
-        { duration: 0.3 }
+        { duration: 0.3 },
       );
       await animate(scope.current, { maxWidth: '380px' }, { duration: 0.3 });
     } else {
       await animate(
         scope.current,
         { maxWidth: '50px' },
-        { duration: 0.3, delay: 0.3 }
+        { duration: 0.3, delay: 0.3 },
       );
       await animate(scope.current, { maxHeight: '50px' }, { duration: 0.3 });
       await animate(scope.current, { borderRadius: '50%' }, { duration: 0.2 });
@@ -39,7 +41,7 @@ export const AssistantModal = () => {
 
   const handleClick = async () => {
     if (!isOpen) {
-      setMessages([]);
+      resetChat();
     }
 
     setIsOpen(!isOpen);
@@ -114,16 +116,17 @@ export const AssistantModal = () => {
               </Tooltip>
             </div>
             <Divider />
-            <AssistantChatWindow
-              ref={messagesContainerRef}
-              messages={messages}
-              loading={loading}
-              userMessage={userMessage}
-            />
+            <div className="overflow-y-auto flex-1 min-h-0">
+              <AssistantChatWindow
+                ref={messagesContainerRef}
+                loading={loading}
+                userMessage={userMessagePlaceholder}
+              />
+            </div>
             <AssistantForm
-              setMessages={setMessages}
+              loading={loading}
               setLoading={setLoading}
-              setUserMessage={setUserMessage}
+              setUserMessage={setUserMessagePlaceholder}
             />
           </motion.div>
         )}
