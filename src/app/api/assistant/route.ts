@@ -41,12 +41,15 @@ export async function POST(req: Request) {
       input: prompt,
       previous_response_id: prevResId ? prevResId : null, // Pass previous response ID for context if available
     });
-    console.log('response from API: ', response);
 
     let answer = response.output_text;
 
     return NextResponse.json({
-      assistantAnswer: { response: answer, responseId: response.id },
+      assistantAnswer: {
+        response: answer,
+        responseId: response.id,
+        role: 'assistant',
+      },
     });
   } catch (error) {
     console.error(error);
